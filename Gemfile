@@ -7,6 +7,8 @@ gem "rails"
 gem "bootsnap", require: false
 gem "importmap-rails"
 gem "jbuilder"
+gem "omniauth-discord"
+gem "omniauth-rails_csrf_protection"
 gem "pg"
 gem "puma"
 gem "redis"

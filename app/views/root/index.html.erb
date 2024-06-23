@@ -1,0 +1,6 @@
+<h2>
+  root#index
+</h2>
+<%= form_tag("/auth/discord", method: "post", data: { turbo: false }) do %>
+  <button type="submit">Discordでログイン</button>
+<% end %>
