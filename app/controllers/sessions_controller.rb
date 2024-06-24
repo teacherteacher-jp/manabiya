@@ -7,7 +7,6 @@ class SessionsController < ApplicationController
     servers = Discord.new(token).servers
     server = servers.find { |s| s["id"] == Rails.application.credentials.dig("discord", "server_id") }
     pp servers
-    pp [server]
 
     if server
       uid = auth_hash.dig("uid")
