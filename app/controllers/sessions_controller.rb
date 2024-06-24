@@ -19,7 +19,9 @@ class SessionsController < ApplicationController
       member.icon_url = icon_url
       member.save
 
-      redirect_to root_path, notice: "ようこそ、#{member.name}さん！"
+      log_in(member)
+
+      redirect_to root_path
     else
       redirect_to root_path, alert: "Teacher TeacherのDiscordサーバに参加している人のみ利用できます"
     end
