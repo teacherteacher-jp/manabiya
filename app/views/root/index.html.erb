@@ -1,6 +1,13 @@
+<% if logged_in? %>
 <h2>
-  root#index
+  Members
 </h2>
-<%= form_tag("/auth/discord", method: "post", data: { turbo: false }) do %>
-  <button type="submit">Discordでログイン</button>
+<ul class="members-list">
+  <% Member.order(id: :desc).each do |member| %>
+  <li>
+    <%= image_tag(member.icon_url, class: "member-icon", size: "32x32") %>
+    <span><%= member.name %></span>
+  </li>
+  <% end %>
+</ul>
 <% end %>

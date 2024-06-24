@@ -1,0 +1,10 @@
+<% if logged_in? %>
+  <div class="member-you">
+    <%= image_tag(current_member.icon_url, class: "member-icon", size: "32x32") %>
+    <span><%= current_member.name %> としてログイン中</span>
+  </div>
+<% else %>
+  <%= form_tag("/auth/discord", method: "post", data: { turbo: false }) do %>
+    <button type="submit">Discordでログイン</button>
+  <% end %>
+<% end %>
