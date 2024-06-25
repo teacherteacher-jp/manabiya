@@ -45,3 +45,28 @@
     }
   }
 }
+
+.schedules-in-day {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    height: 32px;
+    margin-bottom: 4px;
+
+    span {
+      display: inline-block;
+      line-height: 32px;
+      vertical-align: top;
+    }
+  }
+
+  li.schedule-ok_maybe {
+    opacity: 0.7;
+  }
+
+  li.schedule-ng {
+    opacity: 0.3;
+  }
+}

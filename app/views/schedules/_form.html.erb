@@ -1,7 +1,7 @@
 <% schedule = current_member.schedules.find_or_initialize_by(date: date) %>
 <% status_selected = schedule.new_record? ? nil : schedule.status_before_type_cast %>
 
-<%= form_for(schedule, url: schedules_path, method: :post) do |f| %>
+<%= form_for(schedule, url: schedules_path, data: { turbo: false }) do |f| %>
   <span class="date"><%= date.strftime("%Y-%m-%d") %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</span>
   <%= f.hidden_field(:date) %>
   <%= f.select(:status, Schedule.statuses_in_symbols, { include_blank: true, selected: status_selected }) %>
