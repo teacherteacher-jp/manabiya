@@ -1,0 +1,6 @@
+<h2>
+  自分のスケジュール
+</h2>
+<% @dates.each do |date| %>
+  <%= render(partial: "schedules/form", locals: { date: date }) %>
+<% end %>
