@@ -1,0 +1,29 @@
+<h2>
+  自分のスケジュール
+</h2>
+<% @dates.each do |date| %>
+  <%= render(partial: "schedules/form", locals: { date: date }) %>
+<% end %>
+
+<h2>
+  みんなのスケジュール
+</h2>
+<% @dates.each do |date| %>
+  <h3><%= date.strftime("%Y-%m-%d") %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</h3>
+  <% schedules = @schedules.where(date: date).order(:status) %>
+  <% if schedules.count > 0 %>
+  <ul class="schedules-in-day">
+  <% schedules.each do |schedule| %>
+    <li class="schedule-<%= schedule.status %>">
+      <%= image_tag(schedule.member.icon_url, size: 32, class: "member-icon") %>
+      <span><%= schedule.status_in_symbol %></span>
+      <span><%= schedule.memo %></span>
+    </li>
+  <% end %>
+  </ul>
+  <% else %>
+  <p>
+    まだ登録がありません
+  </p>
+  <% end %>
+<% end %>

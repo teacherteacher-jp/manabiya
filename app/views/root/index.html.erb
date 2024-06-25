@@ -1,5 +1,13 @@
 <h2>
-  Members
+  メニュー
+</h2>
+<ul>
+  <li>
+    <%= link_to("スケジュール", schedules_path) %>
+  </li>
+</ul>
+<h2>
+  メンバーズ
 </h2>
 <ul class="members-list">
   <% Member.order(id: :desc).each do |member| %>

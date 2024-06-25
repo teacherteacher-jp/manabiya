@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_24_065934) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_25_124352) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,4 +23,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_24_065934) do
     t.index ["discord_uid"], name: "index_members_on_discord_uid", unique: true
   end
 
+  create_table "schedules", force: :cascade do |t|
+    t.bigint "member_id", null: false
+    t.date "date", null: false
+    t.integer "status", default: 0, null: false
+    t.string "memo", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_schedules_on_date"
+    t.index ["member_id", "date"], name: "index_schedules_on_member_id_and_date", unique: true
+    t.index ["member_id"], name: "index_schedules_on_member_id"
+  end
+
+  add_foreign_key "schedules", "members"
 end
