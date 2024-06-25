@@ -6,8 +6,4 @@
   <div>
     <%= link_to "ログアウト", session_path, data: { turbo_method: :delete } %>
   </div>
-<% else %>
-  <%= form_tag("/auth/discord", method: "post", data: { turbo: false }) do %>
-    <button type="submit">Discordでログイン</button>
-  <% end %>
 <% end %>
