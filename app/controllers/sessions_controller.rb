@@ -26,4 +26,9 @@ class SessionsController < ApplicationController
       redirect_to root_path, alert: "Teacher TeacherのDiscordサーバに参加している人のみ利用できます"
     end
   end
+
+  def destroy
+    log_out
+    redirect_to root_path, notice: "ログアウトしました"
+  end
 end
