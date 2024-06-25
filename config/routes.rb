@@ -3,5 +3,6 @@ Rails.application.routes.draw do
 
   get    "/auth/discord/callback", to: "sessions#create"
   delete "/session",               to: "sessions#destroy", as: "session"
+  get    "/gate",                  to: "gate#index"
   root   "root#index"
 end

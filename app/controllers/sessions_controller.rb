@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  skip_before_action :redirect_to_gate_unless_logged_in
+
   def create
     auth_hash = request.env["omniauth.auth"]
     pp auth_hash
@@ -23,7 +25,7 @@ class SessionsController < ApplicationController
 
       redirect_to root_path
     else
-      redirect_to root_path, alert: "Teacher TeacherのDiscordサーバに参加している人のみ利用できます"
+      redirect_to gate_path, alert: "当該Discordサーバへの参加が確認できませんでした"
     end
   end
 
