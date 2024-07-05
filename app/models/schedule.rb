@@ -3,7 +3,6 @@ class Schedule < ApplicationRecord
 
   enum status: {
     ok: 0,
-    ok_maybe: 1,
     ng: 2,
   }
 
