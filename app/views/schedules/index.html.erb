@@ -1,8 +1,18 @@
 <h2>
   自分のスケジュール
 </h2>
-<% @dates.each do |date| %>
-  <%= render(partial: "schedules/form", locals: { date: date }) %>
+<%= form_with(url: schedules_path, method: :post, data: { turbo: false }) do |f| %>
+  <% @dates.each do |date| %>
+    <div class="schedule-form">
+      <span class="date"><%= date.strftime("%Y-%m-%d") %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</span>
+      <% schedule = current_member.schedules.find_or_initialize_by(date: date) %>
+      <% status_selected = schedule.new_record? ? nil : schedule.status_before_type_cast %>
+      <%= hidden_field_tag("schedules[][date]", date) %>
+      <%= select_tag("schedules[][status]", options_for_select(Schedule.statuses_in_symbols.map { [_1, _2] }, status_selected), { include_blank: true }) %>
+      <%= text_field_tag("schedules[][memo]", schedule.memo) %>
+    </div>
+  <% end %>
+  <%= f.submit "登録" %>
 <% end %>
 
 <h2>
