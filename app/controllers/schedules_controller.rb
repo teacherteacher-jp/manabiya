@@ -5,7 +5,7 @@ class SchedulesController < ApplicationController
   end
 
   def create
-    schedules_params = params[:schedules].map do |schedule_params|
+    schedules_params = params.require(:schedules).map do |schedule_params|
       schedule_params.permit(:date, :status, :memo).tap do |sp|
         sp[:status] = sp[:status].to_i if sp[:status].present?
       end
