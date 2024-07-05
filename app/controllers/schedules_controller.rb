@@ -19,17 +19,4 @@ class SchedulesController < ApplicationController
 
     redirect_to schedules_path
   end
-
-  def update
-    schedule = current_member.schedules.find_by(date: params[:schedule][:date])
-    schedule.update(schedule_params)
-
-    redirect_to schedules_path
-  end
-
-  def schedule_params
-    params.require(:schedule).permit(:date, :status, :memo).tap do |schedule_params|
-      schedule_params[:status] = schedule_params[:status].to_i
-    end
-  end
 end
