@@ -4,7 +4,7 @@
 <%= form_with(url: schedules_path, method: :post, data: { turbo: false }) do |f| %>
   <% @dates.each do |date| %>
     <div class="schedule-form">
-      <span class="date"><%= date.strftime("%Y-%m-%d") %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</span>
+      <span class="date"><%= "%d月%d日" % [date.month, date.day] %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</span>
       <% schedule = current_member.schedules.find_or_initialize_by(date: date) %>
       <% status_selected = schedule.new_record? ? nil : schedule.status_before_type_cast %>
       <%= hidden_field_tag("schedules[][date]", date) %>
@@ -19,7 +19,7 @@
   みんなのスケジュール
 </h2>
 <% @dates.each do |date| %>
-  <h3><%= date.strftime("%Y-%m-%d") %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</h3>
+  <h3><%= "%d月%d日" % [date.month, date.day] %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</h3>
   <% schedules = @schedules.where(date: date).order(:status) %>
   <% if schedules.count > 0 %>
   <ul class="schedules-in-day">
