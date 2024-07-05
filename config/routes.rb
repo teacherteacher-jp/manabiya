@@ -6,6 +6,5 @@ Rails.application.routes.draw do
   delete "/session",               to: "sessions#destroy",  as: "session"
   get    "/schedules",             to: "schedules#index"
   post   "/schedules",             to: "schedules#create"
-  patch  "/schedules",             to: "schedules#update"
   root   "root#index"
 end
