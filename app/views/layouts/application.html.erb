@@ -11,18 +11,20 @@
   </head>
 
   <body>
-    <header>
-      <h1>
-        <%= link_to "Manabiya", root_path %>
-      </h1>
-    </header>
-    <%= render(partial: "layouts/login") %>
-    <% if notice %>
-      <p class="notice"><%= notice %></p>
-    <% end %>
-    <% if alert %>
-      <p class="alert"><%= alert %></p>
-    <% end %>
-    <%= yield %>
+    <div class="container">
+      <header>
+        <h1>
+          <%= link_to "Manabiya", root_path %>
+        </h1>
+      </header>
+      <%= render(partial: "layouts/login") %>
+      <% if notice %>
+        <p class="notice"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert"><%= alert %></p>
+      <% end %>
+      <%= yield %>
+    </div>
   </body>
 </html>
