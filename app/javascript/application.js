@@ -2,7 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("turbo:load", function() {
   document.querySelectorAll(".status-selection img").forEach(function(img) {
     img.addEventListener("click", function() {
       const status = this.dataset.status;
