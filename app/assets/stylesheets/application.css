@@ -91,18 +91,26 @@ body {
     margin-bottom: 4px;
     text-align: center;
 
-    .date, .status-selection {
+    .date, .time, .status-selection {
       display: inline-block;
       height: 32px;
       line-height: 32px;
       vertical-align: middle;
     }
 
-    .date {
-      width: 160px;
-      font-size: 20px;
+    .date, .time {
       font-weight: bold;
       color: #1e6897;
+    }
+
+    .date {
+      width: 100px;
+      font-size: 18px;
+    }
+
+    .time {
+      width: 96px;
+      font-size: 14px;
     }
 
     .status-selection {

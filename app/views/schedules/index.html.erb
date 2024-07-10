@@ -2,7 +2,7 @@
   みんなのスケジュール
 </h2>
 <% @dates.each do |date| %>
-  <h3><%= "%d月%d日" % [date.month, date.day] %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</h3>
+  <h3><%= "%d/%d" % [date.month, date.day] %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</h3>
   <% schedules = @schedules.where(date: date).order(:status) %>
   <% if schedules.count > 0 %>
   <ul class="schedules-in-day">
