@@ -1,30 +1,3 @@
-<div class="schedules">
-
-<h2>
-  自分のスケジュール
-</h2>
-<%= form_with(url: schedules_path, method: :post, data: { turbo: false }) do |f| %>
-  <% @dates.each do |date| %>
-    <div class="schedule-form">
-      <div class="schedule-date-and-status">
-        <% schedule = current_member.schedules.find_or_initialize_by(date: date) %>
-        <% status_selected = schedule.new_record? ? nil : schedule.status_before_type_cast %>
-        <span class="date"><%= "%d月%d日" % [date.month, date.day] %> (<%= %w[日 月 火 水 木 金 土][date.wday] %>)</span>
-        <%= hidden_field_tag("schedules[][date]", date) %>
-        <%= hidden_field_tag("schedules[][status]", status_selected, id: "#{date}-status") %>
-        <span class="status-selection">
-          <%= image_tag("status-ok.png", size: 32, data: { status: 0, date: date.to_s }, class: "clickable #{'selected' if status_selected == 0}") %>
-          <%= image_tag("status-ng.png", size: 32, data: { status: 2, date: date.to_s }, class: "clickable #{'selected' if status_selected == 2}") %>
-        </span>
-      </div>
-      <div class="schedule-memo">
-        <%= text_field_tag("schedules[][memo]", schedule.memo, placeholder: "メモ") %>
-      </div>
-    </div>
-  <% end %>
-  <%= f.submit("スケジュールを保存する") %>
-<% end %>
-
 <h2>
   みんなのスケジュール
 </h2>
@@ -36,6 +9,7 @@
   <% schedules.each do |schedule| %>
     <li class="schedule-<%= schedule.status %>">
       <%= image_tag(schedule.member.icon_url, size: 32, class: "member-icon") %>
+      <span class="member-name"><%= schedule.member.name %></span>
       <span><%= schedule.status_in_symbol %></span>
       <span><%= schedule.memo %></span>
     </li>
@@ -47,5 +21,3 @@
   </p>
   <% end %>
 <% end %>
-
-</div>

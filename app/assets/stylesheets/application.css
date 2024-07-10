@@ -23,7 +23,7 @@ body {
 .container {
   max-width: 560px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 20px 20px;
   background-color: #fff;
 }
 
@@ -66,7 +66,7 @@ body {
 .schedules {
   position: relative;
   width: 100%;
-  padding-bottom: 80px;
+  padding-bottom: 60px;
 
   form {
     input[type="submit"] {
@@ -140,6 +140,11 @@ body {
       display: inline-block;
       line-height: 32px;
       vertical-align: top;
+    }
+
+    .member-name {
+      width: 120px;
+      margin-left: 4px;
     }
   }
 
