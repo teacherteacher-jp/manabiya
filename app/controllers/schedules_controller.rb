@@ -17,6 +17,6 @@ class SchedulesController < ApplicationController
       schedule.update(schedule_param)
     end
 
-    redirect_to schedules_path
+    redirect_to me_path
   end
 end

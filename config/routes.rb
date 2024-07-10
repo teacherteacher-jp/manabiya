@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get    "/gate",                  to: "gate#index"
   get    "/auth/discord/callback", to: "sessions#create"
   delete "/session",               to: "sessions#destroy",  as: "session"
+  get    "/me",                    to: "me#index"
   get    "/schedules",             to: "schedules#index"
   post   "/schedules",             to: "schedules#create"
   root   "root#index"
