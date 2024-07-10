@@ -5,6 +5,7 @@ ruby "3.3.2"
 gem "rails"
 
 gem "bootsnap", require: false
+gem "holiday_jp"
 gem "importmap-rails"
 gem "jbuilder"
 gem "omniauth-discord"
