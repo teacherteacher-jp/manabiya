@@ -104,18 +104,16 @@ body {
     }
 
     .date {
-      width: 160px;
-      font-size: 20px;
+      width: 100px;
+      font-size: 18px;
     }
 
     .time {
-      width: 100px;
+      width: 96px;
       font-size: 14px;
     }
 
     .status-selection {
-      margin-left: 4px;
-
       img {
         opacity: 0.3;
         padding: 0 5px;
