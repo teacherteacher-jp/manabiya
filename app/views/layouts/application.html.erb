@@ -11,7 +11,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-100">
+  <body class="bg-neutral-100">
     <div class="container mx-auto">
       <header class="bg-white shadow-md py-4 px-4 mb-6 flex justify-between items-center">
         <h1 class="text-3xl font-bold">
@@ -20,7 +20,7 @@
         <%= render(partial: "layouts/login") %>
       </header>
       <% if notice || alert %>
-        <p class="m-4 p-4 bg-blue-500 text-white shadow-md rounded-md"><%= notice || alert %></p>
+        <p class="m-4 mb-6 p-4 bg-rose-500 text-white shadow-md rounded-md"><%= notice || alert %></p>
       <% end %>
       <div class="px-4">
         <%= yield %>
