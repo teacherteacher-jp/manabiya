@@ -1,6 +1,6 @@
-<p>
+<p class="mb-4">
   このアプリケーションは、Teacher TeacherのDiscordサーバに参加している人だけが利用できます。
 </p>
 <%= form_tag("/auth/discord", method: "post", data: { turbo: false }) do %>
-  <button type="submit">Discordでログイン</button>
+  <button type="submit" class="w-full bg-rose-500 hover:bg-rose-400 text-white font-bold py-2 px-4 rounded">Discordでログイン</button>
 <% end %>
