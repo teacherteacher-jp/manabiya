@@ -1,22 +1,23 @@
 <h2 class="text-2xl font-bold mb-4">
   メニュー
 </h2>
-<ul>
-  <li>
-    <%= link_to("マイページ", me_path) %>
+<ul class="mb-6">
+  <% [["マイページ", me_path], ["みんなのスケジュール", schedules_path]].each do |text, path| %>
+  <li class="mb-2">
+    <%= link_to(text, path, class: "inline-block w-full bg-white p-4 rounded-md shadow-md") %>
   </li>
-  <li>
-    <%= link_to("みんなのスケジュール", schedules_path) %>
-  </li>
+  <% end %>
 </ul>
 <h2 class="text-2xl font-bold mb-4">
   メンバーズ
 </h2>
-<ul class="members-list">
+<ul class="mb-6">
   <% Member.order(id: :desc).each do |member| %>
-  <li>
-    <%= image_tag(member.icon_url, class: "member-icon", size: "32x32") %>
-    <span><%= member.name %></span>
+  <% 10.times do |i| %>
+  <li class="mb-4">
+    <%= image_tag(member.icon_url, size: "32x32", class: "inline-block rounded-full mr-1") %>
+    <span class="font-bold"><%= member.name %><%= i %></span>
   </li>
+  <% end %>
   <% end %>
 </ul>

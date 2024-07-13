@@ -13,19 +13,18 @@
 
   <body class="bg-gray-100">
     <div class="container mx-auto">
-      <header class="bg-white shadow-md py-4 px-4 mb-6 flex justify-between items-center">
+      <header class="bg-white shadow-md py-4 px-4 mb-4 flex justify-between items-center">
         <h1 class="text-3xl font-bold">
           <%= link_to "Manabiya", root_path, class: "text-blue-500 hover:text-blue-700" %>
         </h1>
         <%= render(partial: "layouts/login") %>
       </header>
-      <% if notice %>
-        <p class="notice"><%= notice %></p>
+      <% if notice || alert %>
+        <p class="m-4 p-4 bg-blue-500 text-white shadow-md rounded-md"><%= notice || alert %></p>
       <% end %>
-      <% if alert %>
-        <p class="alert"><%= alert %></p>
-      <% end %>
-      <%= yield %>
+      <div class="px-4">
+        <%= yield %>
+      </div>
     </div>
   </body>
 </html>
