@@ -13,3 +13,13 @@
  *= require_tree .
  *= require_self
  */
+
+.status-selection {
+  img {
+    opacity: 0.3;
+  }
+
+  img.selected {
+    opacity: 1;
+  }
+}
