@@ -13,11 +13,9 @@
 </h2>
 <ul class="mb-6">
   <% Member.order(id: :desc).each do |member| %>
-  <% 10.times do |i| %>
   <li class="mb-4">
     <%= image_tag(member.icon_url, size: "32x32", class: "inline-block rounded-full mr-1") %>
-    <span class="font-bold"><%= member.name %><%= i %></span>
+    <span class="font-bold"><%= member.name %></span>
   </li>
-  <% end %>
   <% end %>
 </ul>

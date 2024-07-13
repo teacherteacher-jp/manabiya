@@ -10,7 +10,7 @@
   <% if schedules.count > 0 %>
   <ul>
   <% schedules.each do |schedule| %>
-    <li class="mb-2 <%= schedule.status == 2 ? "opacity-30" : nil %>">
+    <li class="mb-3 <%= schedule.status_before_type_cast == 2 ? "opacity-50" : nil %>">
       <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
       <span class="inline-block w-[130px]"><%= schedule.member.name %></span>
       <span><%= schedule.status_in_symbol %></span>
