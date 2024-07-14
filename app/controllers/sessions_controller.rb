@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
     pp auth_hash
 
     token = auth_hash.dig("credentials", "token")
-    servers = Discord.new(token).servers
+    servers = Discord::User.new(token).servers
     server = servers.find { |s| s["id"] == Rails.application.credentials.dig("discord", "server_id") }
     pp servers
 
