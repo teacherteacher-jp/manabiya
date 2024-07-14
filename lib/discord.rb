@@ -1,22 +1,43 @@
-class Discord
+module Discord
   BASE_URL = "https://discord.com"
   BASE_PATH = "/api/v10"
 
-  def initialize(bot_token)
-    @connection = Faraday.new(
+  class User
+    def initialize(user_token)
+      @connection = Faraday.new(
       url: BASE_URL,
       headers: {
-        "Authorization" => "Bearer #{bot_token}",
+        "Authorization" => "Bearer #{user_token}",
         "Content-Type" => "application/json"
-      }
-    )
+        }
+      )
+    end
+
+    def servers
+      JSON.parse(get("/users/@me/guilds").body)
+    end
+
+    def get(path)
+      @connection.get(BASE_PATH + path)
+    end
   end
 
-  def servers
-    JSON.parse(get("/users/@me/guilds").body)
-  end
+  class Bot
+    def initialize(bot_token)
+      @connection = Faraday.new(
+        url: BASE_URL,
+        headers: {
+          "Authorization" => "Bot #{bot_token}",
+          "Content-Type" => "application/json"
+        }
+      )
+    end
 
-  def get(path)
-    @connection.get(BASE_PATH + path)
+    def send_message(channel_or_thread_id:, content:)
+      response = @connection.post("#{BASE_PATH}/channels/#{channel_or_thread_id}/messages") do |req|
+        req.body = { content: content }.to_json
+      end
+      JSON.parse(response.body)
+    end
   end
 end
