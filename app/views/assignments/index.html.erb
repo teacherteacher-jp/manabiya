@@ -1,4 +1,4 @@
-<h2 class="text-2xl font-bold mb-4">
+<h2 class="text-xl font-bold mb-4">
   <%= mdw(@date.to_date) %>の担当者決め
 </h2>
 <ul class="mb-6">
@@ -20,7 +20,7 @@
 <% if @assignments_yes.count > 0 %>
 <hr class="mb-4">
 
-<div class="mb-2">
+<div class="mb-3">
   <h3 class="font-bold mb-2">
     お願いする人
   </h3>
@@ -35,7 +35,7 @@
 </div>
 
 <% if @assignments_no.count > 0 %>
-<div>
+<div class="mb-3">
   <h3 class="font-bold mb-2">
     お願いしない人
   </h3>
