@@ -13,5 +13,7 @@ Rails.application.routes.draw do
   post   "/schedules/:schedule_id/assignment", to: "assignments#create",
                                                as: "assignment"
   delete "/schedules/:schedule_id/assignment", to: "assignments#destroy"
+  post   "/schedules/:date/notification",      to: "notifications#create",
+                                               as: "notification"
   root   "root#index"
 end

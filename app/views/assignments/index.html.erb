@@ -24,9 +24,9 @@
   <h3 class="font-bold mb-2">
     お願いする人
   </h3>
-  <div class="space-x-3 bg-gray-300 rounded-md p-2">
+  <div class="flex flex-wrap gap-4 bg-gray-300 rounded-md p-2">
   <% @assignments_yes.each do |schedule| %>
-    <span class="inline-block">
+    <span class="flex items-center space-x-2">
       <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
       <span class="font-bold"><%= schedule.member.name %></span>
     </span>
@@ -39,9 +39,9 @@
   <h3 class="font-bold mb-2">
     お願いしない人
   </h3>
-  <div class="space-x-3 bg-gray-300 rounded-md p-2">
+  <div class="flex flex-wrap gap-4 bg-gray-300 rounded-md p-2">
   <% @assignments_no.each do |schedule| %>
-    <span class="inline-block">
+    <span class="flex items-center space-x-2">
       <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
       <span class="font-bold"><%= schedule.member.name %></span>
     </span>
@@ -50,4 +50,5 @@
 </div>
 <% end %>
 
-<%= link_to("この内容でDiscordに通知する", root_path, class: "inline-block w-full mt-6 px-2 py-4 text-center bg-sky-400 text-white rounded-md") %> <% end %>
+<%= link_to("この内容でDiscordに通知する", notification_path(date: @date), data: { turbo_method: :post }, class: "inline-block w-full my-6 px-2 py-4 text-center bg-sky-400 text-white rounded-md") %>
+<% end %>
