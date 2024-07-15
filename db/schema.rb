@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_15_081644) do
     t.bigint "schedule_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["schedule_id"], name: "index_assignments_on_schedule_id"
+    t.index ["schedule_id"], name: "index_assignments_on_schedule_id", unique: true
   end
 
   create_table "members", force: :cascade do |t|
