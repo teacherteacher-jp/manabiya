@@ -1,5 +1,6 @@
 class Schedule < ApplicationRecord
   belongs_to :member
+  has_one :assignment
 
   enum status: {
     ok: 0,
@@ -10,6 +11,8 @@ class Schedule < ApplicationRecord
   validates :date, presence: true
   validates :status, presence: true
   validates :memo, length: { maximum: 255 }
+
+  scope :on, -> (date) { where(date: date) }
 
   class << self
     def statuses_in_symbols

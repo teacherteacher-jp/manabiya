@@ -1,5 +1,6 @@
 class Member < ApplicationRecord
   has_many :schedules, dependent: :destroy
+  has_many :assignments, through: :schedules
 
   validates :discord_uid, presence: true, uniqueness: true
   validates :name, presence: true, length: { maximum: 32 }
