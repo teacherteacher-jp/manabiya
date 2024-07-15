@@ -12,6 +12,8 @@ class Schedule < ApplicationRecord
   validates :status, presence: true
   validates :memo, length: { maximum: 255 }
 
+  scope :on, -> (date) { where(date: date) }
+
   class << self
     def statuses_in_symbols
       self.statuses.map { |key, value|

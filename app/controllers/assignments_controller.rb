@@ -1,7 +1,7 @@
 class AssignmentsController < ApplicationController
   def index
     @date = params[:date]
-    @schedules = Schedule.where(date: @date).where(status: "ok")
+    @schedules = Schedule.ok.on(@date)
     @assignments_yes, @assignments_no = @schedules.partition { |schedule| schedule.assignment }
   end
 
