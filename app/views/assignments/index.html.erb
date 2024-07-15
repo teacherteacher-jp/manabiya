@@ -1,0 +1,53 @@
+<h2 class="text-2xl font-bold mb-4">
+  <%= mdw(@date.to_date) %>の担当者決め
+</h2>
+<ul class="mb-6">
+  <% @schedules.each do |schedule| %>
+  <li class="mb-3 flex justify-between items-center">
+    <div class="flex items-center">
+      <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-2") %>
+      <span class="font-bold"><%= schedule.member.name %></span>
+    </div>
+    <% if schedule.assignment %>
+    <%= link_to("取消", assignment_path(schedule_id: schedule.id), data: { turbo_method: :delete }, class: "bg-red-400 text-white px-4 py-1 rounded-md") %>
+    <% else %>
+    <%= link_to("決定", assignment_path(schedule_id: schedule.id), data: { turbo_method: :post }, class: "bg-sky-400 text-white px-4 py-1 rounded-md") %>
+    <% end %>
+  </li>
+  <% end %>
+</ul>
+
+<% if @assignments_yes.count > 0 %>
+<hr class="mb-4">
+
+<div class="mb-2">
+  <h3 class="font-bold mb-2">
+    お願いする人
+  </h3>
+  <div class="space-x-3 bg-gray-300 rounded-md p-2">
+  <% @assignments_yes.each do |schedule| %>
+    <span class="inline-block">
+      <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
+      <span class="font-bold"><%= schedule.member.name %></span>
+    </span>
+  <% end %>
+  </div>
+</div>
+
+<% if @assignments_no.count > 0 %>
+<div>
+  <h3 class="font-bold mb-2">
+    お願いしない人
+  </h3>
+  <div class="space-x-3 bg-gray-300 rounded-md p-2">
+  <% @assignments_no.each do |schedule| %>
+    <span class="inline-block">
+      <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
+      <span class="font-bold"><%= schedule.member.name %></span>
+    </span>
+  <% end %>
+  </div>
+</div>
+<% end %>
+
+<%= link_to("この内容でDiscordに通知する", root_path, class: "inline-block w-full mt-6 px-2 py-4 text-center bg-sky-400 text-white rounded-md") %> <% end %>

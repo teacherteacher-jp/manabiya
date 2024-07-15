@@ -1,6 +1,6 @@
 class Schedule < ApplicationRecord
   belongs_to :member
-  has_many :assignments
+  has_one :assignment
 
   enum status: {
     ok: 0,

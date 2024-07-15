@@ -1,6 +1,5 @@
 class Assignment < ApplicationRecord
   belongs_to :schedule
-  belongs_to :member, through: :schedule
 
-  validates :schedule, presence: true
+  validates :schedule_id, presence: true, uniqueness: true
 end
