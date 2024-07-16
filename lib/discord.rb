@@ -33,9 +33,9 @@ module Discord
       )
     end
 
-    def send_message(channel_or_thread_id:, content: nil, embeds: nil)
+    def send_message(channel_or_thread_id:, content: nil, embeds: nil, allowed_mentions: nil)
       response = @connection.post("#{BASE_PATH}/channels/#{channel_or_thread_id}/messages") do |req|
-        req.body = { content: content, embeds: embeds }.to_json
+        req.body = { content:, embeds:, allowed_mentions: }.to_json
       end
       JSON.parse(response.body)
     end
