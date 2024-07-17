@@ -9,7 +9,7 @@ class Notification
     with_assignments, without_assignments = schedules.partition(&:assignment)
 
     fields = [{
-      name: "お願いするみなさんです！当日9:00からよろしくです",
+      name: "お願いするみなさんです！",
       value: with_assignments.map { "<@!#{_1.member.discord_uid}>" }.join(" "),
     }]
     fields.push({
@@ -19,10 +19,17 @@ class Notification
 
     embeds = [{
       title: ":date: %d/%d(%s)のボランティアの担当をお知らせ :date:" % [date.month, date.day, %w[日 月 火 水 木 金 土][date.wday]],
-      url: "https://bit.ly/tt-manabiya",
+      description: "9:00になりましたら会場にお入りください！\n :school: [MetaLife会場](%s) ┃ :memo: [案内ドキュメント](%s)" % [
+        ENV["SCHOOL_URL"], ENV["SCHOOL_DOCUMENT_URL"]
+      ],
       fields: fields,
     }]
 
-    pp @bot.send_message(channel_or_thread_id: @thread_id, embeds:)
+    content = schedules.map { "<@!#{_1.member.discord_uid}>" }.join(" ")
+    allowed_mentions = {
+      parse: ["users"]
+    }
+
+    pp @bot.send_message(channel_or_thread_id: @thread_id, content:, embeds:, allowed_mentions:)
   end
 end
