@@ -15,5 +15,10 @@ Rails.application.routes.draw do
   delete "/schedules/:schedule_id/assignment", to: "assignments#destroy"
   post   "/schedules/:date/notification",      to: "notifications#create",
                                                as: "notification"
+  get    "/regions",                           to: "regions#index"
+  post   "/member_regions",                    to: "member_regions#create"
+  delete "/member_regions/:member_region_id",  to: "member_regions#destroy",
+                                               as: "member_region"
+
   root   "root#index"
 end

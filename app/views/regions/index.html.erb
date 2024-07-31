@@ -1,0 +1,39 @@
+<section class="mb-10">
+  <h2 class="text-2xl font-bold mb-4">
+    わたしの居住地
+  </h2>
+
+  <%= form_for(MemberRegion.new) do |f| %>
+    <%= f.select(:region_id, Region.all.map { [_1.name, _1.id] }) %>
+    <%= f.submit("登録する", class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer") %>
+  <% end %>
+
+  <ul class="mt-4">
+    <% @my_regions.each do |member_region| %>
+      <li>
+        <%= member_region.region.name %>
+        <%= link_to("登録を解除する", member_region_path(member_region), data: { turbo_method: :delete }) %>
+      </li>
+    <% end %>
+  </ul>
+</section>
+
+<section>
+  <h2 class="text-2xl font-bold mb-4">
+    みんなの居住地
+  </h2>
+
+  <% @regions.each do |region| %>
+    <h3 class="text-xl mb-2">
+      <%= region.name %>
+    </h3>
+    <ul class="flex flex-wrap gap-4 mb-5">
+      <% region.members.each do |member| %>
+        <li class="flex items-center space-x-2">
+          <%= image_tag(member.icon_url, size: "32x32", class: "rounded-full") %>
+          <span class="font-bold"><%= member.name %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
