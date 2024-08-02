@@ -8,11 +8,15 @@
     <%= f.submit("登録する", class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer") %>
   <% end %>
 
-  <ul class="mt-4">
+  <ul class="mt-8">
     <% @my_regions.each do |member_region| %>
       <li>
-        <%= member_region.region.name %>
-        <%= link_to("登録を解除する", member_region_path(member_region), data: { turbo_method: :delete }) %>
+        <span class="px-4 py-4 bg-gray-200 rounded-md">
+          <%= member_region.category %>
+          :
+          <%= member_region.region.name %>
+        </span>
+        <%= link_to("登録解除", member_region_path(member_region), data: { turbo_method: :delete }, class: "ml-2") %>
       </li>
     <% end %>
   </ul>
