@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_15_081644) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_31_135819) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,6 +21,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_15_081644) do
     t.index ["schedule_id"], name: "index_assignments_on_schedule_id", unique: true
   end
 
+  create_table "member_regions", force: :cascade do |t|
+    t.bigint "member_id", null: false
+    t.bigint "region_id", null: false
+    t.integer "category", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id"], name: "index_member_regions_on_member_id"
+    t.index ["region_id"], name: "index_member_regions_on_region_id"
+  end
+
   create_table "members", force: :cascade do |t|
     t.string "name", limit: 32, null: false
     t.string "icon_url", limit: 2083, null: false
@@ -28,6 +38,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_15_081644) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["discord_uid"], name: "index_members_on_discord_uid", unique: true
+  end
+
+  create_table "regions", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_regions_on_code", unique: true
+    t.index ["name"], name: "index_regions_on_name"
   end
 
   create_table "schedules", force: :cascade do |t|
@@ -43,5 +62,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_15_081644) do
   end
 
   add_foreign_key "assignments", "schedules"
+  add_foreign_key "member_regions", "members"
+  add_foreign_key "member_regions", "regions"
   add_foreign_key "schedules", "members"
 end
