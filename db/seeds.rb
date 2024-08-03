@@ -46,6 +46,8 @@ regions = [
   { code: "JP-45", name: "宮崎県" },
   { code: "JP-46", name: "鹿児島県" },
   { code: "JP-47", name: "沖縄県" },
+  { code: "SG", name: "シンガポール" },
+  { code: "CA", name: "カナダ" },
 ]
 
 regions.each do |r|
