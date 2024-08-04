@@ -7,7 +7,8 @@ document.addEventListener("turbo:load", function() {
     img.addEventListener("click", function() {
       const status = this.dataset.status;
       const date = this.dataset.date;
-      const hiddenField = document.getElementById(`${date}-status`);
+      const slot = this.dataset.slot;
+      const hiddenField = document.getElementById(`${date}-${slot}-status`);
       hiddenField.value = status;
 
       this.parentElement.querySelectorAll("img").forEach(function(sibling) {

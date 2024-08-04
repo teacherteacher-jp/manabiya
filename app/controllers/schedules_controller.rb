@@ -6,15 +6,21 @@ class SchedulesController < ApplicationController
 
   def create
     schedules_params = params.require(:schedules).map do |schedule_params|
-      schedule_params.permit(:date, :status, :memo).tap do |sp|
+      schedule_params.permit(:date, :slot, :status, :memo).tap do |sp|
         sp[:status] = sp[:status].to_i if sp[:status].present?
       end
     end
 
-    schedules_params.each do |schedule_param|
-      next if schedule_param[:status].blank?
-      schedule = current_member.schedules.find_or_initialize_by(date: schedule_param[:date])
-      schedule.update(schedule_param)
+    schedules_params.each do |s_param|
+      status = s_param[:status]
+      next if status.blank?
+
+      date = s_param[:date]
+      slot = s_param[:slot]
+      memo = s_param[:memo]
+
+      schedule = current_member.schedules.find_or_initialize_by(date: date, slot: slot)
+      schedule.update(status: status, memo: memo)
     end
 
     redirect_to(me_path, notice: "スケジュールを保存しました")
