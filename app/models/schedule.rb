@@ -7,6 +7,13 @@ class Schedule < ApplicationRecord
     ng: 2,
   }
 
+  enum slot: {
+    s1: 0,
+    s2: 1,
+    s3: 2,
+    s4: 3,
+  }
+
   validates :member, presence: true
   validates :date, presence: true
   validates :status, presence: true
