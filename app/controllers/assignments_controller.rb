@@ -1,8 +1,8 @@
 class AssignmentsController < ApplicationController
   def index
     @date = params[:date]
-    @schedules = Schedule.ok.on(@date)
-    @assignments_yes, @assignments_no = @schedules.partition(&:assignment)
+    @slots_and_schedules = Schedule.ok.on(@date).group_by(&:slot).sort_by { _1 }.to_h
+    @assignments_yes, @assignments_no = Schedule.ok.on(@date).partition(&:assignment)
   end
 
   def create
