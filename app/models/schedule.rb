@@ -14,6 +14,13 @@ class Schedule < ApplicationRecord
     s4: 3,
   }
 
+  SLOT_NAMES = {
+    s1: "9:00~10:00",
+    s2: "10:35~11:15",
+    s3: "11:20~12:00",
+    s4: "13:10~13:50",
+  }
+
   validates :member, presence: true
   validates :date, presence: true
   validates :status, presence: true
@@ -30,6 +37,10 @@ class Schedule < ApplicationRecord
 
     def status_symbols
       %w[◯ △ ✗]
+    end
+
+    def slot_name_of(slot)
+      SLOT_NAMES[slot.to_sym]
     end
   end
 
