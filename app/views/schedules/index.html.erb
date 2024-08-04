@@ -3,33 +3,42 @@
 </h2>
 <% @dates.each.with_index do |date, index| %>
 <div class="mb-6">
-  <h3 class="text-xl font-bold mb-2">
+  <h3 class="text-2xl font-bold mb-2">
     <%= mdw(date) %>
   </h3>
-  <% Schedule.slots.keys.each do |slot| %>
-    <h4 class="text-lg font-bold mb-2"><%= slot %></h4>
-    <% schedules = @schedules.where(date: date, slot: slot).order(:status) %>
-    <% if schedules.count > 0 %>
-    <ul>
-    <% schedules.each do |schedule| %>
-      <li class="mb-3 <%= schedule.status_before_type_cast == 2 ? "opacity-50" : nil %>">
-        <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
-        <span class="inline-block w-[130px]"><%= schedule.member.name %></span>
-        <span><%= schedule.status_in_symbol %></span>
-        <% if schedule.memo.present? %>
-        <p class="mt-2 p-2 bg-white rounded-md shadow-md relative before:content-[''] before:absolute before:bottom-full before:left-[8px] before:border-8 before:border-transparent before:border-b-white"><%= schedule.memo %></p>
-        <% end %>
-      </li>
-    <% end %>
-    </ul>
-    <% else %>
-    <p class="text-gray-500">
-      まだ登録がありません
-    </p>
-    <% end %>
-  <% end %>
+  <table class="w-full">
+    <tbody>
+      <% Schedule.slots.keys.each do |slot| %>
+        <tr>
+          <td class="border-solid border-2 border-gray-200 p-2 w-[100px] text-center">
+            <%= Schedule.slot_name_of(slot) %>
+          </td>
+          <td class="border-solid border-2 border-gray-200 p-2 space-y-2">
+            <% schedules = @schedules.where(date: date, slot: slot) %>
+            <% if schedules.ok.count > 0 %>
+              <div>
+                <% schedules.ok.each do |schedule| %>
+                  <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
+                <% end %>
+              </div>
+            <% end %>
+            <% if schedules.ng.count > 0 %>
+              <div>
+                <% schedules.ng.each do |schedule| %>
+                  <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1 opacity-30") %>
+                <% end %>
+              </div>
+            <% end %>
+            <% if schedules.count == 0 %>
+              まだ登録がありません
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
   <% if index < 2 %>
-    <%= link_to("担当者を決める", schedule_assignments_path(date), class: "inline-block w-full text-center font-bold px-4 py-2 bg-sky-400 text-white rounded-md") %>
+    <%= link_to("担当者を決める", schedule_assignments_path(date), class: "inline-block w-full text-center font-bold mt-4 px-4 py-2 bg-sky-400 text-white rounded-md") %>
   <% end %>
 </div>
 <% end %>
