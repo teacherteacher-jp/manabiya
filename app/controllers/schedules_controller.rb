@@ -1,6 +1,6 @@
 class SchedulesController < ApplicationController
   def index
-    @dates = Date.today.upto(Date.today + 14.days).reject { Oyasumi.oyasumi?(_1) }
+    @dates = Date.today.upto(Date.today + 14.days)
     @schedules = Schedule.where("date >= ?", Date.today)
   end
 
