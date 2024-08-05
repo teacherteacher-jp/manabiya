@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_31_135819) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_04_063812) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,8 +56,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_135819) do
     t.string "memo", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "slot", default: 0, null: false
     t.index ["date"], name: "index_schedules_on_date"
-    t.index ["member_id", "date"], name: "index_schedules_on_member_id_and_date", unique: true
+    t.index ["member_id", "date", "slot"], name: "index_schedules_on_member_id_and_date_and_slot", unique: true
     t.index ["member_id"], name: "index_schedules_on_member_id"
   end
 

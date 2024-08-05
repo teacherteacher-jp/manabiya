@@ -1,54 +1,65 @@
-<h2 class="text-xl font-bold mb-4">
-  <%= mdw(@date.to_date) %>の担当者決め
+<h2 class="text-2xl font-bold mb-4">
+  <%= mdw(@date.to_date) %>の担当決め
 </h2>
-<ul class="mb-6">
-  <% @schedules.each do |schedule| %>
-  <li class="mb-3 flex justify-between items-center">
-    <div class="flex items-center">
-      <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-2") %>
-      <span class="font-bold"><%= schedule.member.name %></span>
-    </div>
-    <% if schedule.assignment %>
-    <%= link_to("取消", assignment_path(schedule_id: schedule.id), data: { turbo_method: :delete }, class: "bg-red-400 text-white px-4 py-1 rounded-md") %>
-    <% else %>
-    <%= link_to("決定", assignment_path(schedule_id: schedule.id), data: { turbo_method: :post }, class: "bg-sky-400 text-white px-4 py-1 rounded-md") %>
+
+<% @slots_and_schedules.each do |slot, schedules| %>
+  <h3 class="text-xl font-bold mb-2">
+    <%= Schedule.time_of(slot) %> : <%= Schedule.name_of(slot) %>
+  </h3>
+  <ul class="mb-6">
+    <% schedules.each do |schedule| %>
+    <li class="mb-3">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-2") %>
+          <span class="font-bold"><%= schedule.member.name %></span>
+        </div>
+        <% if schedule.assignment %>
+        <%= link_to("取消", assignment_path(schedule_id: schedule.id), data: { turbo_method: :delete }, class: "bg-red-400 text-white px-4 py-1 rounded-md") %>
+        <% else %>
+        <%= link_to("選択", assignment_path(schedule_id: schedule.id), data: { turbo_method: :post }, class: "bg-sky-400 text-white px-4 py-1 rounded-md") %>
+        <% end %>
+      </div>
+      <% if schedule.memo.present? %>
+      <p class="text-sm bg-white rounded-md p-2 mt-1">
+        📝 <%= schedule.memo %>
+      </p>
+      <% end %>
+    </li>
     <% end %>
-  </li>
-  <% end %>
-</ul>
-
-<% if @assignments_yes.count > 0 %>
-<hr class="mb-4">
-
-<div class="mb-3">
-  <h3 class="font-bold mb-2">
-    お願いする人
-  </h3>
-  <div class="flex flex-wrap gap-4 bg-gray-300 rounded-md p-2">
-  <% @assignments_yes.each do |schedule| %>
-    <span class="flex items-center space-x-2">
-      <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
-      <span class="font-bold"><%= schedule.member.name %></span>
-    </span>
-  <% end %>
-  </div>
-</div>
-
-<% if @assignments_no.count > 0 %>
-<div class="mb-3">
-  <h3 class="font-bold mb-2">
-    お願いしない人
-  </h3>
-  <div class="flex flex-wrap gap-4 bg-gray-300 rounded-md p-2">
-  <% @assignments_no.each do |schedule| %>
-    <span class="flex items-center space-x-2">
-      <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
-      <span class="font-bold"><%= schedule.member.name %></span>
-    </span>
-  <% end %>
-  </div>
-</div>
+  </ul>
 <% end %>
 
-<%= link_to("この内容でDiscordに通知する", notification_path(date: @date), data: { turbo_method: :post }, class: "inline-block w-full my-6 px-2 py-4 text-center bg-sky-400 text-white rounded-md") %>
+<% if @schedules_with_assignments.count > 0 %>
+<hr class="mb-4">
+
+<div class="mb-4">
+  <h3 class="text-xl font-bold mb-2">
+    現在の担当表
+  </h3>
+  <table class="w-full">
+    <tbody>
+      <% Schedule.slots.keys.each do |slot| %>
+        <tr>
+          <td class="border-solid border-2 border-gray-200 p-2 w-[100px] text-center">
+            <%= Schedule.time_of(slot) %>
+            <br>
+            <%= Schedule.name_of(slot) %>
+          </td>
+          <td class="border-solid border-2 border-gray-200 p-2 space-y-2">
+            <% schedules = @schedules_with_assignments.where(slot: slot) %>
+            <% schedules.each do |schedule| %>
+              <div class="flex items-center space-x-2">
+                <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
+                <span class="font-bold"><%= schedule.member.name %></span>
+              </div>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= link_to("この内容でDiscordに通知する", notification_path(date: @date), data: { turbo_method: :post }, class: "inline-block w-full mt-4 mb-6 px-2 py-4 text-center bg-sky-400 text-white rounded-md") %>
 <% end %>
