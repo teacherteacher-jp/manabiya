@@ -11,7 +11,7 @@ class Notification
     fields =
       with_assignments.group_by(&:slot).sort_by { _1 }.to_h.map do |slot, schedules_in_slot|
         {
-          name: Schedule.slot_name_of(slot),
+          name: "%s : %s" % [Schedule.time_of(slot), Schedule.name_of(slot)],
           value: schedules_in_slot.map { "<@!#{_1.member.discord_uid}>" }.join(" "),
         }
       end

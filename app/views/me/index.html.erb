@@ -11,8 +11,8 @@
           <% schedule = current_member.schedules.find_or_initialize_by(date: date, slot: slot) %>
           <% status_selected = schedule.new_record? ? nil : schedule.status_before_type_cast %>
           <div class="flex justify-between items-center mb-2">
-            <span class="text-xl font-bold">
-              <%= Schedule.slot_name_of(slot) %>
+            <span class="text-lg font-bold">
+              <%= Schedule.time_of(slot) %> : <%= Schedule.name_of(slot) %>
             </span>
             <span class="status-selection flex space-x-2">
               <%= button_tag(type: 'button', data: { status: 0, date: date.to_s, slot: slot }, class: "inline-block cursor-pointer px-4 py-2 rounded-md text-white bg-sky-400 #{'selected' if status_selected == 0}") do %>

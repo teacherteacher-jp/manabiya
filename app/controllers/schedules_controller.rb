@@ -17,7 +17,7 @@ class SchedulesController < ApplicationController
 
       date = s_param[:date]
       slot = s_param[:slot]
-      memo = s_param[:memo]
+      memo = s_param[:memo].presence
 
       schedule = current_member.schedules.find_or_initialize_by(date: date, slot: slot)
       schedule.update(status: status, memo: memo)
