@@ -6,26 +6,25 @@ class Notification
 
   def notify_schedules(schedules)
     date = schedules.first.date
-    with_assignments, without_assignments = schedules.partition(&:assignment)
+    with_assignments = schedules.select(&:assignment)
 
-    fields = [{
-      name: "お願いするみなさんです！",
-      value: with_assignments.map { "<@!#{_1.member.discord_uid}>" }.join(" "),
-    }]
-    fields.push({
-      name: "こちらの人々は、また別の機会にお願いします！",
-      value: without_assignments.map { "<@!#{_1.member.discord_uid}>" }.join(" "),
-    }) if without_assignments.count > 0
+    fields =
+      with_assignments.group_by(&:slot).sort_by { _1 }.to_h.map do |slot, schedules_in_slot|
+        {
+          name: Schedule.slot_name_of(slot),
+          value: schedules_in_slot.map { "<@!#{_1.member.discord_uid}>" }.join(" "),
+        }
+      end
 
     embeds = [{
       title: ":date: %d/%d(%s)のボランティアの担当をお知らせ :date:" % [date.month, date.day, %w[日 月 火 水 木 金 土][date.wday]],
-      description: "9:00になりましたら会場にお入りください！\n :school: [MetaLife会場](%s) ┃ :memo: [案内ドキュメント](%s)" % [
+      description: "定刻になりましたら会場にお入りください！\n :school: [MetaLife会場](%s) ┃ :memo: [案内ドキュメント](%s)" % [
         ENV["SCHOOL_URL"], ENV["SCHOOL_DOCUMENT_URL"]
       ],
       fields: fields,
     }]
 
-    content = schedules.map { "<@!#{_1.member.discord_uid}>" }.join(" ")
+    content = schedules.map { _1.member.discord_uid }.uniq.map { "<@!#{_1}>" }.join(" ")
     allowed_mentions = {
       parse: ["users"]
     }
