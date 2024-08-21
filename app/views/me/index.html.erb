@@ -1,9 +1,6 @@
-<h2 class="text-2xl font-bold mb-2">
+<h2 class="text-2xl font-bold mb-4">
   わたしのスケジュール
 </h2>
-<div class="mb-4 py-2 px-4 bg-yellow-200 border-l-4 border-yellow-500 text-yellow-700">
-  ⚠️ スケジュール入力機能v2の開発中につき、非営業日の日付も表示しています
-</div>
 <%= form_with(url: schedules_path, method: :post, data: { turbo: false }, class: "mb-24") do |f| %>
   <% @dates.each do |date| %>
     <div class="mb-6">
