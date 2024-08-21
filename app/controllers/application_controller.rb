@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   def force_expected_host
     return unless Rails.env.production?
 
-    redirect_to Rails.application.credentials.base_url if request.host.include?(".herokuapp.com")
+    redirect_to(Rails.application.credentials.base_url, allow_other_host: true) if request.host.include?(".herokuapp.com")
   end
 
   def redirect_to_gate_unless_logged_in
