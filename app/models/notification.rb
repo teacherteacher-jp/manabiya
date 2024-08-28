@@ -33,4 +33,11 @@ class Notification
 
     pp @bot.send_message(channel_or_thread_id: @thread_id, content:, embeds:, allowed_mentions:)
   end
+
+  def notify_call_for_scheduling
+    content = "スケジュール入力、お待ちしています！\n"
+    content += ":calendar: [スケジュールを入力する](%s) :calendar:" % [Rails.application.credentials.base_url + "/me"]
+
+    pp @bot.send_message(channel_or_thread_id: @thread_id, content:)
+  end
 end
