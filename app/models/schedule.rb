@@ -17,7 +17,7 @@ class Schedule < ApplicationRecord
   SLOT_DETAILS = {
     s1: {
       time: "9:00~10:00",
-      name: "探求",
+      name: "探究",
     },
     s2: {
       time: "10:35~11:15",
