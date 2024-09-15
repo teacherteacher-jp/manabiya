@@ -23,6 +23,6 @@ class SchedulesController < ApplicationController
       schedule.update(status: status, memo: memo)
     end
 
-    redirect_to(me_path, notice: "スケジュールを保存しました")
+    redirect_to(my_schedules_path, notice: "スケジュールを保存しました")
   end
 end
