@@ -2,9 +2,9 @@
   メニュー
 </h2>
 <ul class="mb-6">
-  <% [["わたしのスケジュール", me_path], ["みんなのスケジュール", schedules_path], ["みんなの居住地", regions_path]].each do |text, path| %>
+  <% @menu_items.each do |menu_item| %>
   <li class="mb-2">
-    <%= link_to(text, path, class: "inline-block w-full bg-white p-4 rounded-md shadow-md") %>
+    <%= link_to(menu_item[:text], menu_item[:path], class: "inline-block w-full bg-white p-4 rounded-md shadow-md") %>
   </li>
   <% end %>
 </ul>
