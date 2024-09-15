@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   get    "/auth/discord/callback",             to: "sessions#create"
   delete "/session",                           to: "sessions#destroy",
                                                as: "session"
-  get    "/me",                                to: "me#index"
+  get    "/my/schedules",                      to: "my/schedules#index"
   get    "/schedules",                         to: "schedules#index"
   post   "/schedules",                         to: "schedules#create"
   get    "/schedules/:date/assignments",       to: "assignments#index",
