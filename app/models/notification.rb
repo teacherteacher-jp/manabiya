@@ -1,6 +1,18 @@
 class Notification
+  include ApplicationHelper
+
   def initialize
     @bot = Discord::Bot.new(Rails.application.credentials.dig("discord_app", "bot_token"))
+  end
+
+  def notify_member_schedule_input(member:, dates:)
+    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    full_date = dates.sort.uniq.map { mdw(_1.to_date) }.join(", ")
+
+    @bot.send_message(
+      channel_or_thread_id: thread_id,
+      content: "<@!#{member.discord_uid}> さんが #{full_date} のスケジュールを入力しました！"
+    )
   end
 
   def notify_schedules(schedules)
