@@ -1,10 +1,10 @@
 class Notification
   def initialize
     @bot = Discord::Bot.new(Rails.application.credentials.dig("discord_app", "bot_token"))
-    @thread_id = Rails.application.credentials.dig("discord", "thread_id")
   end
 
   def notify_schedules(schedules)
+    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
     date = schedules.first.date
     with_assignments = schedules.select(&:assignment)
 
@@ -31,13 +31,15 @@ class Notification
       parse: ["users"]
     }
 
-    pp @bot.send_message(channel_or_thread_id: @thread_id, content:, embeds:, allowed_mentions:)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:, allowed_mentions:)
   end
 
   def notify_call_for_scheduling
+    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+
     content = "スケジュール入力、お待ちしています！\n"
     content += ":calendar: [スケジュールを入力する](%s) :calendar:" % [Rails.application.credentials.base_url + "/my/schedules"]
 
-    pp @bot.send_message(channel_or_thread_id: @thread_id, content:)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 end

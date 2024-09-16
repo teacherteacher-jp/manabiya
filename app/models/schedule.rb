@@ -2,12 +2,12 @@ class Schedule < ApplicationRecord
   belongs_to :member
   has_one :assignment
 
-  enum status: {
+  enum :status, {
     ok: 0,
     ng: 2,
   }
 
-  enum slot: {
+  enum :slot, {
     s1: 0,
     s2: 1,
     s3: 2,
