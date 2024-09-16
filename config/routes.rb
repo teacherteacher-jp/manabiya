@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   post   "/member_regions",                    to: "member_regions#create"
   delete "/member_regions/:member_region_id",  to: "member_regions#destroy",
                                                as: "member_region"
+  get    "/members/:member_id",                to: "members#show",
+                                               as: "member"
 
   root   "root#index"
 end

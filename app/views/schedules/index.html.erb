@@ -20,14 +20,18 @@
             <% if schedules.ok.count > 0 %>
               <div>
                 <% schedules.ok.each do |schedule| %>
-                  <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
+                  <%= link_to(schedule.member) do %>
+                    <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1") %>
+                  <% end %>
                 <% end %>
               </div>
             <% end %>
             <% if schedules.ng.count > 0 %>
               <div>
                 <% schedules.ng.each do |schedule| %>
-                  <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1 opacity-30") %>
+                  <%= link_to(schedule.member) do %>
+                    <%= image_tag(schedule.member.icon_url, size: 32, class: "inline-block rounded-full mr-1 opacity-30") %>
+                  <% end %>
                 <% end %>
               </div>
             <% end %>

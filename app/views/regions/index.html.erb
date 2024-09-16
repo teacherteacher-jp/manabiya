@@ -34,8 +34,10 @@
     <ul class="flex flex-wrap gap-4 mb-5">
       <% region.members.each do |member| %>
         <li class="flex items-center space-x-2">
-          <%= image_tag(member.icon_url, size: "32x32", class: "rounded-full") %>
-          <span class="font-bold"><%= member.name %></span>
+          <%= link_to(member, class: "flex items-center space-x-2") do %>
+            <%= image_tag(member.icon_url, size: "32x32", class: "rounded-full") %>
+            <span class="font-bold"><%= member.name %></span>
+          <% end %>
         </li>
       <% end %>
     </ul>
