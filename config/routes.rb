@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   get    "/auth/discord/callback",             to: "sessions#create"
   delete "/session",                           to: "sessions#destroy",
                                                as: "session"
-  get    "/my/schedules",                      to: "my/schedules#index"
   get    "/schedules",                         to: "schedules#index"
   post   "/schedules",                         to: "schedules#create"
   get    "/schedules/:date/assignments",       to: "assignments#index",
@@ -21,6 +20,8 @@ Rails.application.routes.draw do
                                                as: "member_region"
   get    "/members/:member_id",                to: "members#show",
                                                as: "member"
+  get    "/my/schedules",                      to: "my/schedules#index"
+  get    "/my/regions",                        to: "my/regions#index"
 
   root   "root#index"
 end
