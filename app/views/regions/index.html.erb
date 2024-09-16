@@ -1,30 +1,8 @@
-<section class="mb-10">
-  <h2 class="text-2xl font-bold mb-4">
-    わたしの居住地
-  </h2>
-
-  <%= form_for(MemberRegion.new) do |f| %>
-    <%= f.select(:region_id, Region.all.map { [_1.name, _1.id] }) %>
-    <%= f.submit("登録する", class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer") %>
-  <% end %>
-
-  <ul class="mt-8">
-    <% @my_regions.each do |member_region| %>
-      <li>
-        <span class="px-4 py-4 bg-gray-200 rounded-md">
-          <%= member_region.category %>
-          :
-          <%= member_region.region.name %>
-        </span>
-        <%= link_to("登録解除", member_region_path(member_region), data: { turbo_method: :delete }, class: "ml-2") %>
-      </li>
-    <% end %>
-  </ul>
-</section>
+<% content_for(:title) { "みんなの居住地" } %>
 
 <section>
   <h2 class="text-2xl font-bold mb-4">
-    みんなの居住地
+    みんなのゆかりの地
   </h2>
 
   <% @regions.each do |region| %>
@@ -32,10 +10,15 @@
       <%= region.name %>
     </h3>
     <ul class="flex flex-wrap gap-4 mb-5">
-      <% region.members.each do |member| %>
+      <% region.member_regions.each do |member_region| %>
         <li class="flex items-center space-x-2">
-          <%= image_tag(member.icon_url, size: "32x32", class: "rounded-full") %>
-          <span class="font-bold"><%= member.name %></span>
+          <%= link_to(member_region.member, class: "flex items-center space-x-2") do %>
+            <%= image_tag(member_region.member.icon_url, size: "32x32", class: "rounded-full") %>
+            <div>
+              <span class="font-bold"><%= member_region.member.name %></span><br>
+              <span class="text-sm text-gray-500"><%= member_region.category_short %></span>
+            </div>
+          <% end %>
         </li>
       <% end %>
     </ul>

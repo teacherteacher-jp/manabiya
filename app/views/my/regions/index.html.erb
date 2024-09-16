@@ -1,0 +1,25 @@
+<% content_for :title, "わたしの地域" %>
+
+<% @member_regions.each do |member_region| %>
+  <div class="bg-gray-200 mb-4 p-4 rounded-md flex justify-between items-center">
+    <div>
+      <p class="text-xl font-bold"><%= member_region.region.name %></p>
+      <p class="text-gray-500"><%= member_region.category %></p>
+    </div>
+    <div>
+      <%= link_to("削除", member_region_path(member_region), data: { turbo_method: :delete }, class: "text-red-500") %>
+    </div>
+  </div>
+<% end %>
+
+<%= form_with(model: MemberRegion.new, url: member_regions_path, method: :post) do |form| %>
+  <div class="flex justify-between items-center">
+    <div>
+      <%= form.select(:category, MemberRegion.categories.map { [_1[0].titleize, _1[0]] }, {}, class: "w-[200px] mr-2 mb-2") %>
+      <%= form.select(:region_id, Region.all.map { [_1.name, _1.id] }, {}, class: "w-[200px]") %>
+    </div>
+    <div>
+      <%= form.submit("登録する", class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer") %>
+    </div>
+  </div>
+<% end %>

@@ -1,10 +1,22 @@
 class Notification
+  include ApplicationHelper
+
   def initialize
     @bot = Discord::Bot.new(Rails.application.credentials.dig("discord_app", "bot_token"))
-    @thread_id = Rails.application.credentials.dig("discord", "thread_id")
+  end
+
+  def notify_member_schedule_input(member:, dates:)
+    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    full_date = dates.sort.uniq.map { mdw(_1.to_date) }.join(", ")
+
+    @bot.send_message(
+      channel_or_thread_id: thread_id,
+      content: "<@!#{member.discord_uid}> さんが #{full_date} のスケジュールを入力しました！"
+    )
   end
 
   def notify_schedules(schedules)
+    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
     date = schedules.first.date
     with_assignments = schedules.select(&:assignment)
 
@@ -31,13 +43,23 @@ class Notification
       parse: ["users"]
     }
 
-    pp @bot.send_message(channel_or_thread_id: @thread_id, content:, embeds:, allowed_mentions:)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:, allowed_mentions:)
   end
 
   def notify_call_for_scheduling
+    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+
     content = "スケジュール入力、お待ちしています！\n"
     content += ":calendar: [スケジュールを入力する](%s) :calendar:" % [Rails.application.credentials.base_url + "/my/schedules"]
 
-    pp @bot.send_message(channel_or_thread_id: @thread_id, content:)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
+  def notify_member_region_created(member_region)
+    thread_id = Rails.application.credentials.dig("discord", "profile_thread_id")
+    region_with_category = "「%s」(%s)" % [member_region.region.name, member_region.category]
+
+    content = "<@!#{member_region.member.discord_uid}> さんが#{region_with_category}を登録しました！"
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 end

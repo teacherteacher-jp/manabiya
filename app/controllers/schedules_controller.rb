@@ -23,6 +23,11 @@ class SchedulesController < ApplicationController
       schedule.update(status: status, memo: memo)
     end
 
+    Notification.new.notify_member_schedule_input(
+      member: current_member,
+      dates: schedules_params.select { _1[:status].present? }.map { _1[:date] },
+    )
+
     redirect_to(my_schedules_path, notice: "スケジュールを保存しました")
   end
 end

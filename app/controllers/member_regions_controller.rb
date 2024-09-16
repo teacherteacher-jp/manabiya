@@ -1,15 +1,19 @@
 class MemberRegionsController < ApplicationController
   def create
-    mr = current_member.member_regions.new(region_id: params[:member_region][:region_id])
+    mr = current_member.member_regions.new(member_region_params)
     mr.save
 
-    redirect_to(regions_path, notice: "居住地を登録しました")
+    redirect_to(my_regions_path, notice: "地域を登録しました")
   end
 
   def destroy
     mr = current_member.member_regions.find(params[:member_region_id])
     mr.destroy
 
-    redirect_to(regions_path, notice: "居住地の登録を解除しました")
+    redirect_to(my_regions_path, notice: "地域の登録を解除しました")
+  end
+
+  def member_region_params
+    params.require(:member_region).permit(:category, :region_id)
   end
 end

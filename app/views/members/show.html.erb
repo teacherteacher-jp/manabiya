@@ -1,0 +1,29 @@
+<% content_for(:title) { @member.name } %>
+
+<header class="text-center">
+  <%= image_tag(@member.icon_url, size: "128x128", class: "rounded-full mx-auto") %>
+  <h2 class="mt-4 text-2xl font-bold">
+    <%= @member.name %>
+  </h2>
+</header>
+
+<section class="mt-8 text-center bg-gray-200 p-4 rounded-md">
+  <h3 class="mb-2 text-xl font-bold">ゆかりのある地</h3>
+  <% if @member.member_regions.count > 0 %>
+    <table class="w-full">
+      <tbody>
+        <% @member.member_regions.order(:category).each do |member_region| %>
+          <tr>
+            <td class="text-right"><span class="text-lg font-bold"><%= member_region.region.name %></span></td>
+            <td class="text-left pl-1"><span class="text-gray-500"><%= member_region.category_short %><span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>登録されていません</p>
+  <% end %>
+  <p class="mt-2">
+    <%= link_to("編集する", my_regions_path, class: "underline text-blue-500") %>
+  </p>
+</section>
