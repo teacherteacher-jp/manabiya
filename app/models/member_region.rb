@@ -12,6 +12,8 @@ class MemberRegion < ApplicationRecord
     "出身地": 2,
   }
 
+  after_create_commit :notify
+
   def category_short
     case category
     when "現在の居住地"
@@ -21,5 +23,9 @@ class MemberRegion < ApplicationRecord
     when "出身地"
       "出身"
     end
+  end
+
+  def notify
+    Notification.new.notify_member_region_created(self)
   end
 end
