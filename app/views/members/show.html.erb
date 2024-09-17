@@ -14,8 +14,8 @@
       <tbody>
         <% @member.member_regions.order(:category).each do |member_region| %>
           <tr>
-            <td class="text-right"><span class="text-lg font-bold"><%= member_region.region.name %></span></td>
-            <td class="text-left pl-1"><span class="text-gray-500"><%= member_region.category_short %><span></td>
+            <td class="text-right w-1/2"><span class="text-lg font-bold"><%= member_region.region.name %></span></td>
+            <td class="text-left w-1/2 pl-1"><span class="text-gray-500"><%= member_region.category_short %><span></td>
           </tr>
         <% end %>
       </tbody>
@@ -23,7 +23,9 @@
   <% else %>
     <p>登録されていません</p>
   <% end %>
-  <p class="mt-2">
-    <%= link_to("編集する", my_regions_path, class: "underline text-blue-500") %>
-  </p>
+  <% if @member == current_member %>
+    <p class="mt-2">
+      <%= link_to("編集する", my_regions_path, class: "underline text-blue-500") %>
+    </p>
+  <% end %>
 </section>
