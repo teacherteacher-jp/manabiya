@@ -8,6 +8,17 @@
 </header>
 
 <section class="mt-4 text-center bg-gray-200 p-4 rounded-md">
+  <h3 class="mb-2 text-xl font-bold">コミュニティ参加時期</h3>
+  <p>
+    <% if @member.server_joined_at %>
+      <%= @member.generation %>期生 (<%= @member.server_joined_at.strftime("%Y-%m-%d") %>)
+    <% else %>
+      <span class="text-gray-500">データなし<br>再ログインすると保存されます</span>
+    <% end %>
+  </p>
+</section>
+
+<section class="mt-4 text-center bg-gray-200 p-4 rounded-md">
   <h3 class="mb-2 text-xl font-bold">ゆかりのある地</h3>
   <% if @member.member_regions.count > 0 %>
     <table class="w-full">
