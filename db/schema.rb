@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_04_063812) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_23_054720) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,7 +37,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_04_063812) do
     t.string "discord_uid", limit: 32, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "server_joined_at"
     t.index ["discord_uid"], name: "index_members_on_discord_uid", unique: true
+    t.index ["server_joined_at"], name: "index_members_on_server_joined_at"
   end
 
   create_table "regions", force: :cascade do |t|
