@@ -22,6 +22,7 @@ Rails.application.routes.draw do
                                                as: "member"
   get    "/my/schedules",                      to: "my/schedules#index"
   get    "/my/regions",                        to: "my/regions#index"
+  post   "/webhooks/metalife",                 to: "webhooks/metalife#create"
 
   root   "root#index"
 end
