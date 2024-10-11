@@ -18,4 +18,18 @@ document.addEventListener("turbo:load", function() {
       this.classList.add("selected");
     });
   });
+
+  const regionSelect = document.getElementById("member_region_region_id");
+
+  if (regionSelect) {
+    const submitButton = document.getElementById("new-member-region-form").querySelector("input[type='submit']");
+
+    regionSelect.addEventListener("change", function() {
+      if (regionSelect.value) {
+        submitButton.disabled = false;
+      } else {
+        submitButton.disabled = true;
+      }
+    });
+  }
 });
