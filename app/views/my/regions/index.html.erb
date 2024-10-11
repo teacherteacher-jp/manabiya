@@ -12,14 +12,14 @@
   </div>
 <% end %>
 
-<%= form_with(model: MemberRegion.new, url: member_regions_path, method: :post) do |form| %>
+<%= form_with(id: "new-member-region-form", model: MemberRegion.new, url: member_regions_path, method: :post) do |form| %>
   <div class="flex justify-between items-center">
     <div>
       <%= form.select(:category, MemberRegion.categories.map { [_1[0].titleize, _1[0]] }, {}, class: "w-[200px] mr-2 mb-2") %>
-      <%= form.select(:region_id, Region.all.map { [_1.name, _1.id] }, {}, class: "w-[200px]") %>
+      <%= form.select(:region_id, Region.all.map { [_1.name, _1.id] }, { include_blank: "地域を選択" }, class: "w-[200px]") %>
     </div>
     <div>
-      <%= form.submit("登録する", class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer") %>
+      <%= form.submit("登録する", disabled: true, class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer disabled:opacity-40") %>
     </div>
   </div>
 <% end %>
