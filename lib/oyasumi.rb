@@ -1,7 +1,7 @@
 class Oyasumi
   class << self
     def oyasumi?(date)
-      return true if date.saturday? || date.sunday?
+      return true if date.wednesday? || date.saturday? || date.sunday?
       return true if HolidayJp.holiday?(date)
       return true if vacation?(date)
 
