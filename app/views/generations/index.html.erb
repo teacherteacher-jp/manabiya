@@ -1,0 +1,21 @@
+<% content_for(:title) { "みんなの参加時期" } %>
+
+<h2 class="text-2xl font-bold mb-4">
+  みんなの参加時期
+</h2>
+
+<% @generations.each do |generation, members| %>
+  <h3 class="text-xl font-bold mb-2">
+    <%= generation %>期生
+  </h3>
+  <ul class="flex flex-wrap gap-2 mb-5">
+  <% members.each do |member| %>
+    <li class="flex items-center space-x-2">
+      <%= link_to(member, class: "flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded-md") do %>
+        <%= image_tag(member.icon_url, size: "32x32", class: "rounded-full") %>
+        <span class="font-bold"><%= member.name %></span>
+      <% end %>
+    </li>
+  <% end %>
+  </ul>
+<% end %>

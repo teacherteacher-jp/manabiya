@@ -20,6 +20,7 @@ Rails.application.routes.draw do
                                                as: "member_region"
   get    "/members/:member_id",                to: "members#show",
                                                as: "member"
+  get    "/generations",                       to: "generations#index"
   get    "/my/schedules",                      to: "my/schedules#index"
   get    "/my/regions",                        to: "my/regions#index"
   post   "/webhooks/metalife",                 to: "webhooks/metalife#create"
