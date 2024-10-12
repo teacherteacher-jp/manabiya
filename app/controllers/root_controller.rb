@@ -5,6 +5,7 @@ class RootController < ApplicationController
       { text: "わたしのスケジュール", path: my_schedules_path },
       { text: "みんなのスケジュール", path: schedules_path },
       { text: "みんなのゆかりの地", path: regions_path },
+      { text: "みんなの参加時期", path: generations_path },
     ]
   end
 end
