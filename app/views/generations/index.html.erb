@@ -8,7 +8,7 @@
   <h3 class="text-xl font-bold mb-2">
     <%= generation %>期生 (<%= members.map(&:server_joined_at).sort.last.strftime("%Y年%-m月") %>)
   </h3>
-  <ul class="flex flex-wrap gap-2 mb-5">
+  <ul class="flex flex-wrap gap-2 mb-8">
   <% members.each do |member| %>
     <li class="flex items-center space-x-2">
       <%= link_to(member, class: "flex items-center space-x-2 bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded-md") do %>
