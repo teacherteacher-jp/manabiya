@@ -32,4 +32,18 @@ document.addEventListener("turbo:load", function() {
       }
     });
   }
+
+  const familyMemberRelationshipSelect = document.getElementById("family_member_relationship");
+
+  if (familyMemberRelationshipSelect) {
+    const submitButton = document.getElementById("new-family-member-form").querySelector("input[type='submit']");
+
+    familyMemberRelationshipSelect.addEventListener("change", function() {
+      if (familyMemberRelationshipSelect.value) {
+        submitButton.disabled = false;
+      } else {
+        submitButton.disabled = true;
+      }
+    });
+  }
 });

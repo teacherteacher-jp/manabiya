@@ -1,0 +1,62 @@
+<% content_for :title, "わたしの家族" %>
+
+<section>
+  <h2 class="text-2xl font-bold mb-2">家族を登録する</h2>
+  <p class="text-gray-500 text-sm mb-6">
+    コミュニティのみなさんに共有したい家族を登録しましょう。子どもだけを登録するもよし、実家にいる家族を登録するもよし。
+  </p>
+  <%= form_with(id: "new-family-member-form", model: FamilyMember.new, url: family_members_path, method: :post) do |form| %>
+    <div class="flex justify-between items-center">
+      <div>
+        <p class="mb-2">
+          <%= form.select(:relationship, FamilyMember.relationship_options, { include_blank: "関係性を選択" }, class: "w-[200px] mr-2 mb-2") %>
+        </p>
+        <p class="mb-2">
+          <%= form.text_field(:display_name, placeholder: "名前(任意)", class: "w-[200px] mr-2 mb-2") %>
+        </p>
+        <p class="mb-4">
+          <%= form.check_box(:cohabiting) %>
+          <%= form.label(:cohabiting, "同居している") %>
+        </p>
+        <p>
+          <%= form.date_field(:birth_date, class: "w-[200px] mr-2 mb-2") %>
+          <p class="text-gray-500 text-sm">
+            生年月日の入力は任意です。自分以外には年齢として表示されます。小中学生の場合は学年も併記します。
+          </p>
+        </p>
+      </div>
+      <div>
+        <%= form.submit("登録する", disabled: true, class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer disabled:opacity-40") %>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+<section class="mt-8">
+  <h2 class="text-2xl font-bold mb-4">登録家族の一覧</h2>
+  <% @family_members.each do |family_member| %>
+    <div class="bg-gray-200 mb-4 p-4 rounded-md flex justify-between items-center">
+      <div>
+        <span class="font-bold"><%= family_member.relationship_in_japanese %></span>
+        <% if family_member.display_name %>
+          <span>/ <%= family_member.display_name %></span>
+        <% end %>
+        <% if family_member.cohabiting %>
+          <span>/ 同居</span>
+        <% end %>
+        <% if family_member.birth_date %>
+          <span>/ <%= family_member.birth_date.strftime("%Y年%-m月%-d日") %>生まれ</span>
+        <% end %>
+        <% if family_member.age %>
+          <span>/ <%= family_member.age %>歳</span>
+        <% end %>
+        <% if family_member.school_grade_jp %>
+          <span>/ <%= family_member.school_grade_jp %></span>
+        <% end %>
+      </div>
+      <div>
+        <%= link_to("削除", family_member_path(family_member), data: { turbo_method: :delete }, class: "text-red-500") %>
+      </div>
+    </div>
+  <% end %>
+</section>

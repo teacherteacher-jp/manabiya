@@ -19,6 +19,33 @@
 </section>
 
 <section class="mt-4 text-center bg-gray-200 p-4 rounded-md">
+  <h3 class="mb-2 text-xl font-bold">家族</h3>
+  <% if @member.family_members.count > 0 %>
+    <div class="flex flex-wrap gap-2 justify-center">
+      <% @member.family_members.each do |family_member| %>
+        <p class="bg-white rounded-md p-2">
+          <% if family_member.cohabiting %><span>🏠️</span><% end %>
+          <span class="font-bold text-lg"><%= family_member.relationship_in_japanese %></span>
+          <span><%= family_member.display_name %></span>
+          <% if family_member.school_grade_jp %>
+            <span>(<%= family_member.school_grade_jp %>)</span>
+          <% elsif family_member.age %>
+            <span>(<%= family_member.age %>歳)</span>
+          <% end %>
+        </p>
+      <% end %>
+    </div>
+  <% else %>
+    <p>登録されていません</p>
+  <% end %>
+  <% if @member == current_member %>
+    <p class="mt-2">
+      <%= link_to("編集する", my_family_members_path, class: "underline text-blue-500") %>
+    </p>
+  <% end %>
+</section>
+
+<section class="mt-4 text-center bg-gray-200 p-4 rounded-md">
   <h3 class="mb-2 text-xl font-bold">ゆかりのある地</h3>
   <% if @member.member_regions.count > 0 %>
     <table class="w-full">
