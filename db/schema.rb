@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_23_054720) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_13_093336) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,6 +19,18 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_23_054720) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["schedule_id"], name: "index_assignments_on_schedule_id", unique: true
+  end
+
+  create_table "family_members", force: :cascade do |t|
+    t.bigint "member_id", null: false
+    t.integer "relationship", null: false
+    t.boolean "cohabiting", default: true, null: false
+    t.string "display_name"
+    t.date "birth_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id", "cohabiting"], name: "index_family_members_on_member_id_and_cohabiting"
+    t.index ["member_id"], name: "index_family_members_on_member_id"
   end
 
   create_table "member_regions", force: :cascade do |t|
@@ -65,6 +77,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_23_054720) do
   end
 
   add_foreign_key "assignments", "schedules"
+  add_foreign_key "family_members", "members"
   add_foreign_key "member_regions", "members"
   add_foreign_key "member_regions", "regions"
   add_foreign_key "schedules", "members"
