@@ -62,4 +62,11 @@ class Notification
     content = "<@!#{member_region.member.discord_uid}> さんが#{region_with_category}を登録しました！"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
+
+  def notify_family_member_created(family_member)
+    thread_id = Rails.application.credentials.dig("discord", "profile_thread_id")
+
+    content = "<@!#{family_member.member.discord_uid}> さんが「%s」を登録しました！" % [family_member.relationship_in_japanese]
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
 end

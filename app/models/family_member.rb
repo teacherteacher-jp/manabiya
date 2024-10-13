@@ -20,6 +20,8 @@ class FamilyMember < ApplicationRecord
 
   validates :relationship, presence: true
 
+  after_create_commit :notify
+
   class << self
     def relationship_in_japanese
       {
@@ -86,5 +88,9 @@ class FamilyMember < ApplicationRecord
     end
   
     nil
+  end
+
+  def notify
+    Notification.new.notify_family_member_created(self)
   end
 end
