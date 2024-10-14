@@ -55,7 +55,7 @@
         <% end %>
       </div>
       <div>
-        <%= link_to("削除", family_member_path(family_member), data: { turbo_method: :delete }, class: "text-red-500") %>
+        <%= link_to("削除", family_member_path(family_member), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "text-red-500") %>
       </div>
     </div>
   <% end %>
