@@ -14,12 +14,14 @@ class FamilyMember < ApplicationRecord
     older_brother: 9,
     younger_sister: 10,
     younger_brother: 11,
+    partner: 12,
     pet: 90,
     other: 99
   }
 
   validates :relationship, presence: true
 
+  before_save :normalize_display_name
   after_create_commit :notify
 
   class << self
@@ -37,6 +39,7 @@ class FamilyMember < ApplicationRecord
         older_brother: "兄",
         younger_sister: "妹",
         younger_brother: "弟",
+        partner: "パートナー",
         pet: "ペット",
         other: "その他",
       }
@@ -49,6 +52,10 @@ class FamilyMember < ApplicationRecord
 
   def relationship_in_japanese
     FamilyMember.relationship_in_japanese[relationship.to_sym]
+  end
+
+  def normalize_display_name
+    self.display_name = nil if display_name.blank?
   end
 
   def age
@@ -88,6 +95,20 @@ class FamilyMember < ApplicationRecord
     end
   
     nil
+  end
+
+  def order_score
+    score = 0
+    score += 100000 if cohabiting
+    score += 10000 if relationship != "pet"
+
+    if age
+      score += age
+    else
+      score += 1000
+    end
+
+    score * -1
   end
 
   def notify
