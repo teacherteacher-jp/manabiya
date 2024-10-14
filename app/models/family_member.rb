@@ -101,7 +101,12 @@ class FamilyMember < ApplicationRecord
     score = 0
     score += 100000 if cohabiting
     score += 10000 if relationship != "pet"
-    score += (1000 - age.to_i)
+
+    if age
+      score += age
+    else
+      score += 1000
+    end
 
     score * -1
   end
