@@ -20,9 +20,9 @@
 
 <section class="mt-4 text-center bg-gray-200 p-4 rounded-md">
   <h3 class="mb-2 text-xl font-bold">家族</h3>
-  <% if @member.family_members.count > 0 %>
+  <% if @family_members.count > 0 %>
     <div class="flex flex-wrap gap-2 justify-center">
-      <% @member.family_members.each do |family_member| %>
+      <% @family_members.each do |family_member| %>
         <p class="bg-white rounded-md p-2">
           <% if family_member.cohabiting %><span>🏠️</span><% end %>
           <span class="font-bold text-lg"><%= family_member.relationship_in_japanese %></span>

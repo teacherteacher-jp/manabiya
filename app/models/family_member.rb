@@ -97,6 +97,15 @@ class FamilyMember < ApplicationRecord
     nil
   end
 
+  def order_score
+    score = 0
+    score += 100000 if cohabiting
+    score += 10000 if relationship != "pet"
+    score += (1000 - age.to_i)
+
+    score * -1
+  end
+
   def notify
     Notification.new.notify_family_member_created(self)
   end
