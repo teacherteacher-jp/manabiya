@@ -14,6 +14,7 @@ class FamilyMember < ApplicationRecord
     older_brother: 9,
     younger_sister: 10,
     younger_brother: 11,
+    partner: 12,
     pet: 90,
     other: 99
   }
@@ -37,6 +38,7 @@ class FamilyMember < ApplicationRecord
         older_brother: "兄",
         younger_sister: "妹",
         younger_brother: "弟",
+        partner: "パートナー",
         pet: "ペット",
         other: "その他",
       }
