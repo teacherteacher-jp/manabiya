@@ -21,6 +21,7 @@ class FamilyMember < ApplicationRecord
 
   validates :relationship, presence: true
 
+  before_save :normalize_display_name
   after_create_commit :notify
 
   class << self
@@ -51,6 +52,10 @@ class FamilyMember < ApplicationRecord
 
   def relationship_in_japanese
     FamilyMember.relationship_in_japanese[relationship.to_sym]
+  end
+
+  def normalize_display_name
+    self.display_name = nil if display_name.blank?
   end
 
   def age
