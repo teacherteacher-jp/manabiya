@@ -5,31 +5,7 @@
   <p class="text-gray-500 text-sm mb-6">
     コミュニティのみなさんに共有したい家族を登録しましょう。子どもだけを登録するもよし、実家にいる家族を登録するもよし。
   </p>
-  <%= form_with(id: "new-family-member-form", model: FamilyMember.new, url: family_members_path, method: :post) do |form| %>
-    <div class="flex justify-between items-center">
-      <div>
-        <p class="mb-2">
-          <%= form.select(:relationship, FamilyMember.relationship_options, { include_blank: "関係性を選択" }, class: "w-[200px] mr-2 mb-2") %>
-        </p>
-        <p class="mb-2">
-          <%= form.text_field(:display_name, placeholder: "名前(任意)", class: "w-[200px] mr-2 mb-2") %>
-        </p>
-        <p class="mb-4">
-          <%= form.check_box(:cohabiting) %>
-          <%= form.label(:cohabiting, "同居している") %>
-        </p>
-        <p>
-          <%= form.date_field(:birth_date, class: "w-[200px] mr-2 mb-2") %>
-          <p class="text-gray-500 text-sm">
-            生年月日の入力は任意です。自分以外には年齢として表示されます。小中学生の場合は学年も併記します。
-          </p>
-        </p>
-      </div>
-      <div>
-        <%= form.submit("登録する", disabled: true, class: "bg-rose-500 text-white px-4 py-2 rounded-md hover:cursor-pointer disabled:opacity-40") %>
-      </div>
-    </div>
-  <% end %>
+  <%= render("family_members/form", html_id: "new-family-member-form", family_member: FamilyMember.new, form_url: family_members_path, form_method: :post) %>
 </section>
 
 <section class="mt-8">
@@ -55,6 +31,7 @@
         <% end %>
       </div>
       <div>
+        <%= link_to("編集", edit_family_member_path(family_member), class: "text-blue-500 mr-2") %>
         <%= link_to("削除", family_member_path(family_member), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "text-red-500") %>
       </div>
     </div>
