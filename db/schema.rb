@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_13_093336) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_10_135358) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,6 +50,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_13_093336) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "server_joined_at"
+    t.boolean "admin", default: false
     t.index ["discord_uid"], name: "index_members_on_discord_uid", unique: true
     t.index ["server_joined_at"], name: "index_members_on_server_joined_at"
   end
