@@ -1,38 +1,42 @@
-<%= form_with(model: event, local: true, data: { turbo: false },class: "bg-white rounded-lg shadow-lg p-8") do |f| %>
-  <% if event.errors.any? %>
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-      <h2><%= pluralize(event.errors.count, "error") %> prohibited this event from being saved:</h2>
-      <ul>
-        <% event.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= form_with(model: event, local: true, data: { turbo: false }, class: "bg-white rounded-lg shadow-lg p-8") do |f| %>
   <div class="mb-6">
     <%= f.label :title, 'タイトル', class: "block text-gray-700 text-sm font-bold mb-2" %>
-    <%= f.text_field :title, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <%= f.text_field :title, class: "shadow appearance-none border #{'border-red-500' if event.errors[:title].any?} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <% if event.errors[:title].any? %>
+      <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:title].join(', ') %></p>
+    <% end %>
   </div>
 
   <div class="mb-6">
     <%= f.label :description, '説明', class: "block text-gray-700 text-sm font-bold mb-2" %>
-    <%= f.text_area :description, rows: 4, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <%= f.text_area :description, rows: 4, class: "shadow appearance-none border #{'border-red-500' if event.errors[:description].any?} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <% if event.errors[:description].any? %>
+      <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:description].join(', ') %></p>
+    <% end %>
   </div>
 
   <div class="mb-6">
     <%= f.label :start_at, '開始日時', class: "block text-gray-700 text-sm font-bold mb-2" %>
-    <%= f.datetime_local_field :start_at, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <%= f.datetime_local_field :start_at, class: "shadow appearance-none border #{'border-red-500' if event.errors[:start_at].any?} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <% if event.errors[:start_at].any? %>
+      <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:start_at].join(', ') %></p>
+    <% end %>
   </div>
 
   <div class="mb-6">
     <%= f.label :venue, '会場', class: "block text-gray-700 text-sm font-bold mb-2" %>
-    <%= f.text_field :venue, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <%= f.text_field :venue, class: "shadow appearance-none border #{'border-red-500' if event.errors[:venue].any?} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <% if event.errors[:venue].any? %>
+      <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:venue].join(', ') %></p>
+    <% end %>
   </div>
 
   <div class="mb-6">
     <%= f.label :source_link, '詳細リンク', class: "block text-gray-700 text-sm font-bold mb-2" %>
-    <%= f.text_field :source_link, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <%= f.text_field :source_link, class: "shadow appearance-none border #{'border-red-500' if event.errors[:source_link].any?} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+    <% if event.errors[:source_link].any? %>
+      <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:source_link].join(', ') %></p>
+    <% end %>
   </div>
 
   <div class="flex items-center justify-between">
