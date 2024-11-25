@@ -24,6 +24,7 @@
 
     <div class="flex space-x-4">
       <%= link_to '編集', edit_event_path(@event), class: 'bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700' %>
+      <%= link_to '削除', event_path(@event), data: { turbo_method: :delete, turbo_confirm: '本当に削除してもよろしいですか？' }, class: 'bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700' %>
       <%= link_to '戻る', events_path, class: 'bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600' %>
     </div>
   </div>
