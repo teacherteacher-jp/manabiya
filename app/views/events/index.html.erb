@@ -3,18 +3,15 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <% @events.each do |event| %>
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="font-bold text-xl mb-2"><%= event.title %></h2>
-        <p class="text-gray-600 mb-4"><%= event.description %></p>
-        <div class="text-sm text-gray-500">
-          <p>開始: <%= event.start_at.strftime('%Y年%m月%d日 %H:%M') %></p>
-          <p>会場: <%= event.venue %></p>
-          <p><%= link_to '詳細リンク', event.source_link, target: '_blank', class: 'text-blue-600 hover:text-blue-800' %></p>
+      <%= link_to event_path(event), class: 'block hover:shadow-lg transition duration-200' do %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="font-bold text-xl mb-2"><%= event.title %></h2>
+          <div class="text-sm text-gray-500">
+            <p>開始: <%= event.start_at.strftime('%Y年%m月%d日 %H:%M') %></p>
+            <p>会場: <%= event.venue %></p>
+          </div>
         </div>
-        <div class="mt-4 space-x-4">
-          <%= link_to '詳細', event_path(event), class: 'text-blue-600 hover:text-blue-800' %>
-        </div>
-      </div>
+      <% end %>
     <% end %>
   </div>
 
