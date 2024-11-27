@@ -69,4 +69,11 @@ class Notification
     content = "<@!#{family_member.member.discord_uid}> さんが「%s」を登録しました！" % [family_member.relationship_in_japanese]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
+
+  def notify_events(event)
+    thread_id = "1261928341183664158" # ソフトウェア開発室
+    content = "#{event.title} が開催予定です"
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
 end
