@@ -14,7 +14,7 @@
       <div class="bg-white rounded-lg shadow p-6">
         <h2 class="font-bold text-xl mb-2"><%= event.title %></h2>
         <div class="text-sm text-gray-500">
-          <p>開始: <%= event.start_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+          <p>開始: <%= mdwhm(event.start_at) %></p>
           <p>会場: <%= event.venue %></p>
         </div>
       </div>
