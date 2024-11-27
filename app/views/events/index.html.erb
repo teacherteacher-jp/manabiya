@@ -8,7 +8,7 @@
   <%= link_to("イベントを登録する", new_event_path, class: "fixed bottom-4 right-4 bg-rose-500 text-lg font-bold text-white px-6 py-4 rounded-md cursor-pointer") %>
 </p>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
   <% @events.each do |event| %>
     <%= link_to event_path(event), class: "block hover:shadow-lg transition duration-200" do %>
       <div class="bg-white rounded-lg shadow p-6">
