@@ -1,19 +1,23 @@
-<div class="container mx-auto px-4 py-8">
-  <h1 class="font-bold text-4xl mb-6">イベント一覧</h1>
+<% content_for(:title) { "イベント一覧" } %>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @events.each do |event| %>
-      <%= link_to event_path(event), class: 'block hover:shadow-lg transition duration-200' do %>
-        <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="font-bold text-xl mb-2"><%= event.title %></h2>
-          <div class="text-sm text-gray-500">
-            <p>開始: <%= event.start_at.strftime('%Y年%m月%d日 %H:%M') %></p>
-            <p>会場: <%= event.venue %></p>
-          </div>
+<h2 class="text-2xl font-bold mb-4">
+  イベント一覧
+</h2>
+
+<p>
+  <%= link_to("イベントを登録する", new_event_path, class: "fixed bottom-4 right-4 bg-rose-500 text-lg font-bold text-white px-6 py-4 rounded-md cursor-pointer") %>
+</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+  <% @events.each do |event| %>
+    <%= link_to event_path(event), class: "block hover:shadow-lg transition duration-200" do %>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="font-bold text-xl mb-2"><%= event.title %></h2>
+        <div class="text-sm text-gray-500">
+          <p>開始: <%= mdwhm(event.start_at) %></p>
+          <p>会場: <%= event.venue %></p>
         </div>
-      <% end %>
+      </div>
     <% end %>
-  </div>
-
-  <%= link_to '新規イベントを作成', new_event_path, class: 'mt-8 inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700' %>
+  <% end %>
 </div>
