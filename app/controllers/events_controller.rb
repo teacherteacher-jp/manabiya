@@ -17,7 +17,7 @@ class EventsController < ApplicationController
     if @event.save
       redirect_to @event, notice: 'イベントが作成されました'
 
-      Notification.new.notify_events(@event)
+      Notification.new.notify_created_event(@event)
     else
       render :new
     end
