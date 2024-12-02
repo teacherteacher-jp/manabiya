@@ -71,7 +71,7 @@ class Notification
   end
 
   def notify_event_created(event)
-    thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
+    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
     content = "新しいイベントが作成されました"
     embeds = [event.to_embed]
 
@@ -79,7 +79,7 @@ class Notification
   end
 
   def notify_upcoming_events
-    thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
+    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
     upcoming_events = Event.where(start_at: Date.today..Date.today.days_since(2).end_of_day)
     content = "近日開催のイベントをおしらせ"
     embeds = upcoming_events.map(&:to_embed)
@@ -88,7 +88,7 @@ class Notification
   end
 
   def notify_next_week_events
-    thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
+    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
     next_monday = Date.today.next_occurring(:monday)
     next_sunday = next_monday.end_of_week.end_of_day
     next_week_events = Event.where(start_at: next_monday..next_sunday)
