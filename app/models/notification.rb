@@ -85,7 +85,7 @@ class Notification
       {
         title: event.title,
         fields: [
-          { name: "#{event.start_at.strftime('%H:%M')}~", value: "詳細: #{event.source_link}" }
+          { name: "#{mdwhm(event.start_at)}~", value: "詳細: #{event.source_link}" }
         ]
       }
     end
