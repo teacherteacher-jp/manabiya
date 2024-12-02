@@ -7,6 +7,8 @@ class Event < ApplicationRecord
   validates :venue, presence: true, length: { maximum: 50 }
   validates :source_link, presence: true
 
+  after_create_commit :notify
+
   def link_to_add_to_google_calendar
     dates = "#{start_at.strftime('%Y%m%dT%H%M%S')}/#{(start_at + 1.hour).strftime('%Y%m%dT%H%M%S')}"
     "https://calendar.google.com/calendar/render?action=TEMPLATE&text=#{title}&dates=#{dates}&details=#{description}&location=#{venue}&ctz=Asia/Tokyo"
@@ -20,5 +22,9 @@ class Event < ApplicationRecord
         { name: "詳細", value: source_link },
       ]
     }
+  end
+
+  def notify
+    Notification.new.notify_event_created(self)
   end
 end
