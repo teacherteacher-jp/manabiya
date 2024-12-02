@@ -9,4 +9,11 @@ class Event < ApplicationRecord
     dates = "#{start_at.strftime('%Y%m%dT%H%M%S')}/#{(start_at + 1.hour).strftime('%Y%m%dT%H%M%S')}"
     "https://calendar.google.com/calendar/render?action=TEMPLATE&text=#{title}&dates=#{dates}&details=#{description}&location=#{venue}&ctz=Asia/Tokyo"
   end
+
+  def to_embed
+    {
+      title: title,
+      fields: [{ name: "詳細", value: source_link }]
+    }
+  end
 end

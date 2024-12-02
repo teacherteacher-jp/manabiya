@@ -73,32 +73,18 @@ class Notification
   def notify_event_created(event)
     thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
     content = "新しいイベントが作成されました"
+    embeds = [event.to_embed]
 
-    embeds = [{
-      title: event.title,
-      fields: [
-          { name: "#{mdwhm(event.start_at)}~", value: "詳細: #{event.source_link}" }
-        ]
-      }
-    ]
-
-    pp @bot.send_message(channel_or_thread_id: thread_id, content: content, embeds: embeds)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
 
   def notify_upcoming_events
     thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
     upcoming_events = Event.where(start_at: Date.today..Date.today.days_since(2).end_of_day)
     content = "近日開催のイベントをおしらせ"
-    embeds = upcoming_events.map do |event|
-      {
-        title: event.title,
-        fields: [
-          { name: "#{mdwhm(event.start_at)}~", value: "詳細: #{event.source_link}" }
-        ]
-      }
-    end
+    embeds = upcoming_events.map(&:to_embed)
 
-    pp @bot.send_message(channel_or_thread_id: thread_id, content: content, embeds: embeds)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
 
   def notify_next_week_events
@@ -106,17 +92,9 @@ class Notification
     next_monday = Date.today.next_occurring(:monday)
     next_sunday = next_monday.end_of_week.end_of_day
     next_week_events = Event.where(start_at: next_monday..next_sunday)
-
     content = "来週(月~日)開催のイベントをおしらせ"
-    embeds = next_week_events.map do |event|
-      {
-        title: event.title,
-        fields: [
-          { name: "#{mdwhm(event.start_at)}~", value: "詳細: #{event.source_link}" }
-        ]
-      }
-    end
+    embeds = next_week_events.map(&:to_embed)
 
-    pp @bot.send_message(channel_or_thread_id: thread_id, content: content, embeds: embeds)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
 end
