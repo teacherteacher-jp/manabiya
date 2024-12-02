@@ -92,4 +92,23 @@ class Notification
 
     pp @bot.send_message(channel_or_thread_id: thread_id, content: content, embeds: embeds)
   end
+
+  def notify_next_week_events
+    thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
+    next_monday = Date.today.next_occurring(:monday)
+    next_sunday = next_monday.end_of_week.end_of_day
+    next_week_events = Event.where(start_at: next_monday..next_sunday)
+
+    content = "来週(月~日)開催のイベントをおしらせ"
+    embeds = next_week_events.map do |event|
+      {
+        title: event.title,
+        fields: [
+          { name: "#{mdwhm(event.start_at)}~", value: "詳細: #{event.source_link}" }
+        ]
+      }
+    end
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content: content, embeds: embeds)
+  end
 end
