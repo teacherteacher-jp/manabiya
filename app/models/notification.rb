@@ -72,9 +72,17 @@ class Notification
 
   def notify_event_created(event)
     thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
-    content = "#{event.title} が開催予定です"
+    content = "新しいイベントが作成されました"
 
-    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+    embeds = [{
+      title: event.title,
+      fields: [
+          { name: "#{mdwhm(event.start_at)}~", value: "詳細: #{event.source_link}" }
+        ]
+      }
+    ]
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content: content, embeds: embeds)
   end
 
   def notify_upcoming_events
