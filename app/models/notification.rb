@@ -79,16 +79,17 @@ class Notification
 
   def notify_upcoming_events
     thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
-
+    upcoming_events = Event.where(start_at: Date.today..Date.today.days_since(2).end_of_day)
     content = "近日開催のイベントをおしらせ"
+    embeds = upcoming_events.map do |event|
+      {
+        title: event.title,
+        fields: [
+          { name: "#{event.start_at.strftime('%H:%M')}~", value: "詳細: #{event.source_link}" }
+        ]
+      }
+    end
 
-    embeds = [{
-      title: Event.first.title,
-      fields: [
-        { name: "#{Event.first.start_at.strftime("%H:%M")}~}", value: "詳細: #{Event.first.source_link}"}
-      ]
-    }]
-    # 通知を送信
     pp @bot.send_message(channel_or_thread_id: thread_id, content: content, embeds: embeds)
   end
 end
