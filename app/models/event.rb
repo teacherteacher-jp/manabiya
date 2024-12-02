@@ -1,4 +1,6 @@
 class Event < ApplicationRecord
+  include ApplicationHelper
+
   validates :title, presence: true, length: { maximum: 50 }
   validates :description, presence: true, length: { maximum: 200 }
   validates :start_at, presence: true
@@ -13,7 +15,10 @@ class Event < ApplicationRecord
   def to_embed
     {
       title: title,
-      fields: [{ name: "詳細", value: source_link }]
+      fields: [
+        { name: "開始日時", value: "#{mdwhm(start_at)}~" },
+        { name: "詳細", value: source_link },
+      ]
     }
   end
 end
