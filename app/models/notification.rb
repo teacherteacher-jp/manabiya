@@ -71,7 +71,7 @@ class Notification
   end
 
   def notify_event_created(event)
-    thread_id = "1261928341183664158" # ソフトウェア開発室
+    thread_id = Rails.application.credentials.dig("discord", "software_development_office_id") # ソフトウェア開発室
     content = "#{event.title} が開催予定です"
 
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
