@@ -30,8 +30,10 @@ class Event < ApplicationRecord
     {
       title: title,
       fields: [
-        { name: "開始日時", value: "#{mdwhm(start_at)}~" },
-        { name: "詳細", value: source_link },
+        { name: "開始日時", value: mdwhm(start_at), inline: true },
+        { name: "場所", value: venue, inline: true },
+        { name: "詳細", value: "[リンクを開く](#{source_link})", inline: true },
+        { name: "便利リンク", value: "[Googleカレンダーに追加する](#{link_to_add_to_google_calendar})", inline: true },
       ]
     }
   end
