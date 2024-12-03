@@ -6,4 +6,9 @@ class Event < ApplicationRecord
   validates :source_link, presence: true
 
   scope :in_future, -> { where("start_at > ?", Time.current) }
+
+  def link_to_add_to_google_calendar
+    dates = "#{start_at.strftime('%Y%m%dT%H%M%S')}/#{(start_at + 1.hour).strftime('%Y%m%dT%H%M%S')}"
+    "https://calendar.google.com/calendar/render?action=TEMPLATE&text=#{title}&dates=#{dates}&details=#{description}&location=#{venue}&ctz=Asia/Tokyo"
+  end
 end
