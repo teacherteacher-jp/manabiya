@@ -9,6 +9,18 @@ class Event < ApplicationRecord
 
   after_create_commit :notify
 
+  class << self
+    def notify_upcoming_events
+      events = Event.where(start_at: Date.today..Date.today.days_since(2).end_of_day)
+      Notification.new.notify_events(events:, content: "近日開催のイベントをお知らせ")
+    end
+
+    def notify_events_in_this_week
+      events = Event.where(start_at: Date.today.all_week)
+      Notification.new.notify_events(events:, content: "今週開催のイベントをお知らせ")
+    end
+  end
+
   def link_to_add_to_google_calendar
     dates = "#{start_at.strftime('%Y%m%dT%H%M%S')}/#{(start_at + 1.hour).strftime('%Y%m%dT%H%M%S')}"
     "https://calendar.google.com/calendar/render?action=TEMPLATE&text=#{title}&dates=#{dates}&details=#{description}&location=#{venue}&ctz=Asia/Tokyo"
@@ -25,6 +37,6 @@ class Event < ApplicationRecord
   end
 
   def notify
-    Notification.new.notify_event_created(self)
+    Notification.new.notify_event(event: self, content: "新着イベントをお知らせ")
   end
 end

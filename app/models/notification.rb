@@ -70,31 +70,17 @@ class Notification
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
-  def notify_event_created(event)
+  def notify_event(event:, content:)
     thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
-    content = "新しいイベントが作成されました"
     embeds = [event.to_embed]
-
     pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
 
-  def notify_upcoming_events
+  def notify_events(events:, content:)
+    return if events.empty?
+
     thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
-    upcoming_events = Event.where(start_at: Date.today..Date.today.days_since(2).end_of_day)
-    content = "近日開催のイベントをおしらせ"
-    embeds = upcoming_events.map(&:to_embed)
-
-    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
-  end
-
-  def notify_next_week_events
-    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
-    next_monday = Date.today.next_occurring(:monday)
-    next_sunday = next_monday.end_of_week.end_of_day
-    next_week_events = Event.where(start_at: next_monday..next_sunday)
-    content = "来週(月~日)開催のイベントをおしらせ"
-    embeds = next_week_events.map(&:to_embed)
-
+    embeds = events.map(&:to_embed)
     pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
 end
