@@ -13,7 +13,7 @@ class Event < ApplicationRecord
     def notify_upcoming_events
       beginning_of_today = Time.current.beginning_of_day
       end_of_day_after_tommorow = 2.days.since.end_of_day
-      events = Event.where(start_at: start_of_today..end_of_two_days_later).order(start_at: :asc)
+      events = Event.where(start_at: beginning_of_today..end_of_day_after_tommorow).order(start_at: :asc)
       Notification.new.notify_events(events:, content: "近日開催のイベントをお知らせ")
     end
 
