@@ -32,6 +32,7 @@ class Event < ApplicationRecord
   def to_embed
     {
       title: title,
+      url: Rails.application.routes.url_helpers.event_url(self),
       fields: [
         { name: "開始日時", value: mdwhm(start_at), inline: true },
         { name: "場所", value: venue, inline: true },
