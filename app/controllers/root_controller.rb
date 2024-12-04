@@ -10,5 +10,7 @@ class RootController < ApplicationController
     @admin_menu_items = [
       { text: "みんなのスケジュール", path: schedules_path },
     ]
+
+    @recent_events = Event.in_future.order(start_at: :asc).limit(3)
   end
 end

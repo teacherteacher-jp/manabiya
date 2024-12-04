@@ -7,6 +7,7 @@ class Event < ApplicationRecord
   validates :venue, presence: true, length: { maximum: 50 }
   validates :source_link, presence: true
 
+  scope :in_future, -> { where("start_at > ?", Time.current) }
   after_create_commit :notify
 
   class << self
