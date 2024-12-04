@@ -11,12 +11,14 @@ class Event < ApplicationRecord
 
   class << self
     def notify_upcoming_events
-      events = Event.where(start_at: Date.today..Date.today.days_since(2).end_of_day).order(start_at: :asc)
+      start_of_today = Time.current.beginning_of_day
+      end_of_two_days_later = Time.current.days_since(2).end_of_day
+      events = Event.where(start_at: start_of_today..end_of_two_days_later).order(start_at: :asc)
       Notification.new.notify_events(events:, content: "近日開催のイベントをお知らせ")
     end
 
     def notify_events_in_this_week
-      events = Event.where(start_at: Date.today.all_week).order(start_at: :asc)
+      events = Event.where(start_at: Time.current.all_week).order(start_at: :asc)
       Notification.new.notify_events(events:, content: "今週開催のイベントをお知らせ")
     end
   end
