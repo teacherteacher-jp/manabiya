@@ -11,6 +11,6 @@ class RootController < ApplicationController
       { text: "みんなのスケジュール", path: schedules_path },
     ]
 
-    @recent_events = Event.in_future.order(start_at: :asc)
+    @recent_events = Event.in_future.order(start_at: :asc).limit(3)
   end
 end
