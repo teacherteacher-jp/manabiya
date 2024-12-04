@@ -69,4 +69,18 @@ class Notification
     content = "<@!#{family_member.member.discord_uid}> さんが「%s」を登録しました！" % [family_member.relationship_in_japanese]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
+
+  def notify_event(event:, content:)
+    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
+    embeds = [event.to_embed]
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+  end
+
+  def notify_events(events:, content:)
+    return if events.empty?
+
+    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
+    embeds = events.map(&:to_embed)
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+  end
 end
