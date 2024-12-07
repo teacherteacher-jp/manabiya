@@ -41,5 +41,7 @@ Rails.application.routes.draw do
                                                    as: "edit_event"
   patch  "/events/:id",                            to: "events#update"
 
+  get    "/public/events.ics",                     to: "public/events#index",
+                                                   as: "public_events"
   root   "root#index"
 end
