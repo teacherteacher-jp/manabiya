@@ -2,12 +2,22 @@ BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
 X-WR-CALNAME:TT村のイベント
+X-WR-TIMEZONE:Asia/Tokyo
+BEGIN:VTIMEZONE
+TZID:Asia/Tokyo
+BEGIN:STANDARD
+DTSTART:19700101T000000
+TZOFFSETFROM:+0900
+TZOFFSETTO:+0900
+TZNAME:JST
+END:STANDARD
+END:VTIMEZONE
 <% @events.each do |event| %>
 BEGIN:VEVENT
 UID:manabiya:event:<%= event.id %>
 DTSTAMP:<%= event.updated_at.strftime("%Y%m%dT%H%M%SZ") %>
-DTSTART:<%= event.start_at.strftime("%Y%m%dT%H%M%S") %>
-DTEND:<%= (event.start_at + 1.hour).strftime("%Y%m%dT%H%M%S") %>
+DTSTART;TZID=Asia/Tokyo:<%= event.start_at.strftime("%Y%m%dT%H%M%S") %>
+DTEND;TZID=Asia/Tokyo:<%= (event.start_at + 1.hour).strftime("%Y%m%dT%H%M%S") %>
 SUMMARY:<%= event.title %>
 DESCRIPTION:
 LOCATION:<%= event.venue %>
