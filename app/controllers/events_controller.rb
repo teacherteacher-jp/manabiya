@@ -3,6 +3,11 @@ class EventsController < ApplicationController
 
   def index
     @events = Event.order(start_at: :asc)
+
+    respond_to do |format|
+      format.html
+      format.ics
+    end
   end
 
   def show
