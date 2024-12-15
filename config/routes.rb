@@ -45,5 +45,6 @@ Rails.application.routes.draw do
                                                    as: "public_events"
   get    "/public/a.ics",                          to: "public/events#index"
   get    "/public/b.ics",                          to: "public/events#index"
+  get    "/public/c.ics",                          to: "public/events#index"
   root   "root#index"
 end
