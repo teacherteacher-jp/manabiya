@@ -45,7 +45,7 @@
       <% end %>
     </tbody>
   </table>
-  <% if index < 3 %>
+  <% if current_member.admin? && index < 3 %>
     <%= link_to("担当を決める", schedule_assignments_path(date), class: "inline-block w-full text-center font-bold mt-4 px-4 py-2 bg-sky-400 text-white rounded-md") %>
   <% end %>
 </div>

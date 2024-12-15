@@ -11,21 +11,6 @@
   </ul>
 </section>
 
-<% if current_member.admin? %>
-<section class="mb-6">
-  <h2 class="text-2xl font-bold mb-4">
-    管理者メニュー
-  </h2>
-  <ul>
-    <% @admin_menu_items.each do |menu_item| %>
-    <li class="mb-2">
-      <%= link_to(menu_item[:text], menu_item[:path], class: "inline-block w-full bg-white p-4 rounded-md shadow-md") %>
-    </li>
-    <% end %>
-  </ul>
-</section>
-<% end %>
-
 <section class="mb-6">
   <h2 class="text-2xl font-bold mb-4">
     イベント情報
