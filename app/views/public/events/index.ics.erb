@@ -1,11 +1,13 @@
 BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
+X-WR-CALNAME:TT村のイベント
 <% @events.each do |event| %>
 BEGIN:VEVENT
 UID:manabiya:event:<%= event.id %>
-DTSTAMP:<%= event.created_at.strftime('%Y%m%dT%H%M%SZ') %>
-DTSTART:<%= event.start_at.strftime('%Y%m%dT%H%M%S') %>
+DTSTAMP:<%= event.updated_at.utc.strftime("%Y%m%dT%H%M%SZ") %>
+DTSTART:<%= event.start_at.utc.strftime("%Y%m%dT%H%M%SZ") %>
+DTEND:<%= (event.start_at + 1.hour).utc.strftime("%Y%m%dT%H%M%SZ") %>
 SUMMARY:<%= event.title %>
 DESCRIPTION:
 LOCATION:<%= event.venue %>
