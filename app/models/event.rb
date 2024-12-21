@@ -27,7 +27,8 @@ class Event < ApplicationRecord
   def link_to_add_to_google_calendar
     dates = "#{start_at.strftime('%Y%m%dT%H%M%S')}/#{(start_at + 1.hour).strftime('%Y%m%dT%H%M%S')}"
     encoded_title = URI.encode_www_form_component(title)
-    "https://calendar.google.com/calendar/render?action=TEMPLATE&text=#{encoded_title}&dates=#{dates}&location=#{venue}&ctz=Asia/Tokyo"
+    encoded_venue = URI.encode_www_form_component(venue)
+    "https://calendar.google.com/calendar/render?action=TEMPLATE&text=#{encoded_title}&dates=#{dates}&location=#{encoded_venue}&ctz=Asia/Tokyo"
   end
 
   def to_embed
