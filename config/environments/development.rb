@@ -72,4 +72,6 @@ Rails.application.configure do
   config.action_controller.default_url_options = url_options
   config.action_mailer.default_url_options = url_options
   Rails.application.routes.default_url_options = url_options
+
+  config.hosts << /.*\.ngrok-free\.app/
 end
