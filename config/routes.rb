@@ -30,7 +30,6 @@ Rails.application.routes.draw do
   get    "/my/schedules",                          to: "my/schedules#index"
   get    "/my/regions",                            to: "my/regions#index"
   get    "/my/family_members",                     to: "my/family_members#index"
-  post   "/webhooks/metalife",                     to: "webhooks/metalife#create"
   get    "/events",                                to: "events#index"
   get    "/events/new",                            to: "events#new",
                                                    as: "new_event"
@@ -43,5 +42,7 @@ Rails.application.routes.draw do
 
   get    "/public/events.ics",                     to: "public/events#index",
                                                    as: "public_events"
+  post   "/webhooks/metalife",                     to: "webhooks/metalife#create"
+  post   "/webhooks/line",                         to: "webhooks/line#create"
   root   "root#index"
 end
