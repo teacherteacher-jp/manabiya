@@ -8,6 +8,7 @@ class Event < ApplicationRecord
   validates :source_link, presence: true
 
   scope :in_future, -> { where("start_at > ?", Time.current) }
+  scope :in_past, -> { where("start_at <= ?", Time.current) }
   after_create_commit :notify
 
   class << self

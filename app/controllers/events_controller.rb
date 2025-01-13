@@ -2,7 +2,7 @@ class EventsController < ApplicationController
   before_action :set_event, only: [:show, :edit, :update]
 
   def index
-    @events = Event.order(start_at: :asc)
+    @events = Event.in_future.order(start_at: :asc)
   end
 
   def show
