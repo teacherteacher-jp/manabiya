@@ -35,11 +35,12 @@ Rails.application.routes.draw do
                                                    as: "new_event"
   post   "/events",                                to: "events#create"
   get    "/events/:id",                            to: "events#show",
-                                                   as: "event"
+                                                   as: "event",
+                                                   constraints: { id: /\d+/ }
   get    "/events/:id/edit",                       to: "events#edit",
                                                    as: "edit_event"
   patch  "/events/:id",                            to: "events#update"
-
+  get    "/events/in_past",                        to: "events/in_past#index"
   get    "/public/events.ics",                     to: "public/events#index",
                                                    as: "public_events"
   post   "/webhooks/metalife",                     to: "webhooks/metalife#create"
