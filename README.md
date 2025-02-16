@@ -22,3 +22,15 @@ $ bin/setup
 $ bin/dev 
 ```
 http://localhost:3000 にアクセス。
+
+## バックグラウンドジョブ
+
+このアプリケーションはバックグラウンドジョブの処理にSolid Queueを使用しています。ジョブワーカーを起動するには：
+
+```
+$ bin/solid_queue
+```
+
+以下の環境変数で、ワーカー数とポーリング間隔を設定できます：
+- SOLID_QUEUE_CONCURRENCY (デフォルト: 5)
+- SOLID_QUEUE_POLLING_INTERVAL (デフォルト: 0.1)

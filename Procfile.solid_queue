@@ -1,0 +1,2 @@
+dispatcher: bundle exec rails solid_queue:dispatcher
+worker: bundle exec rails solid_queue:worker

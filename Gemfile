@@ -3,6 +3,7 @@ source "https://rubygems.org"
 ruby "3.4.1"
 
 gem "rails"
+gem "solid_queue"
 
 gem "bootsnap", require: false
 gem "holiday_jp"
