@@ -1,20 +1,5 @@
-@config {
-  content: [
-    './public/*.html',
-    './app/helpers/**/*.rb',
-    './app/javascript/**/*.js',
-    './app/views/**/*.{erb,haml,html,slim}'
-  ],
-  theme: {
-    extend: {}
-  },
-  plugins: [
-    '@tailwindcss/forms',
-    '@tailwindcss/typography',
-    '@tailwindcss/container-queries'
-  ]
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@config "../../../config/tailwind.config.js";
