@@ -2,4 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-@config "../../../config/tailwind.config.js";
+@config "../../config/tailwind.config.js";
