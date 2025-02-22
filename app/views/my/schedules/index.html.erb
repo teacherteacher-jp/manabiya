@@ -29,7 +29,7 @@
             <%= hidden_field_tag("schedules[][status]", status_selected, id: "#{date}-#{slot}-status") %>
           </div>
           <div class="mb-4">
-            <%= text_field_tag("schedules[][memo]", schedule.memo, placeholder: "メモ", class: "w-full border-none") %>
+            <%= text_field_tag("schedules[][memo]", schedule.memo, placeholder: "メモ", class: "w-full border-none p-2 border-1 border-gray-500 rounded-md bg-white") %>
           </div>
         <% end %>
       </div>
