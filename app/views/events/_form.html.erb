@@ -1,7 +1,7 @@
 <%= form_with(model: event, local: true, data: { disable_with: "保存中..." }) do |f| %>
   <div class="mb-6">
     <%= f.label(:title, "タイトル", class: "block text-gray-700 font-bold mb-2") %>
-    <%= f.text_field(:title, placeholder: "イベントのタイトル (最大50文字)", class: "shadow-sm appearance-none border #{'border-red-500' if event.errors[:title].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
+    <%= f.text_field(:title, placeholder: "イベントのタイトル (最大50文字)", class: "shadow-sm appearance-none border bg-white #{'border-red-500' if event.errors[:title].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
     <% if event.errors[:title].any? %>
       <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:title].join(", ") %></p>
     <% end %>
@@ -9,7 +9,7 @@
 
   <div class="mb-6">
     <%= f.label(:description, "説明", class: "block text-gray-700 font-bold mb-2") %>
-    <%= f.text_area(:description, placeholder: "イベントの概要 (最大200文字)", rows: 4, class: "shadow-sm appearance-none border #{'border-red-500' if event.errors[:description].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
+    <%= f.text_area(:description, placeholder: "イベントの概要 (最大200文字)", rows: 4, class: "shadow-sm appearance-none border bg-white #{'border-red-500' if event.errors[:description].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
     <% if event.errors[:description].any? %>
       <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:description].join(", ") %></p>
     <% end %>
@@ -17,7 +17,7 @@
 
   <div class="mb-6">
     <%= f.label(:start_at, "開始日時", class: "block text-gray-700 font-bold mb-2") %>
-    <%= f.datetime_local_field(:start_at, class: "shadow-sm appearance-none border #{'border-red-500' if event.errors[:start_at].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
+    <%= f.datetime_local_field(:start_at, class: "shadow-sm appearance-none border bg-white #{'border-red-500' if event.errors[:start_at].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
     <% if event.errors[:start_at].any? %>
       <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:start_at].join(", ") %></p>
     <% end %>
@@ -25,7 +25,7 @@
 
   <div class="mb-6">
     <%= f.label(:venue, "会場", class: "block text-gray-700 font-bold mb-2") %>
-    <%= f.text_field(:venue, placeholder: "談話室 or 公民館 or ...", class: "shadow-sm appearance-none border #{'border-red-500' if event.errors[:venue].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
+    <%= f.text_field(:venue, placeholder: "談話室 or 公民館 or ...", class: "shadow-sm appearance-none border bg-white #{'border-red-500' if event.errors[:venue].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
     <% if event.errors[:venue].any? %>
       <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:venue].join(", ") %></p>
     <% end %>
@@ -33,7 +33,7 @@
 
   <div class="mb-6">
     <%= f.label(:source_link, "詳細リンク", class: "block text-gray-700 font-bold mb-2") %>
-    <%= f.text_field(:source_link, placeholder: "https://discord.com/...", class: "shadow-sm appearance-none border #{'border-red-500' if event.errors[:source_link].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
+    <%= f.text_field(:source_link, placeholder: "https://discord.com/...", class: "shadow-sm appearance-none border bg-white #{'border-red-500' if event.errors[:source_link].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline") %>
     <% if event.errors[:source_link].any? %>
       <p class="text-red-500 text-xs italic mt-1"><%= event.errors[:source_link].join(", ") %></p>
     <% end %>
