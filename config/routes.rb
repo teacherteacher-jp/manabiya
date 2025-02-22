@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "up", to: "rails/health#show", as: :rails_health_check
+  mount MissionControl::Jobs::Engine, at: "/jobs"
 
   get    "/gate",                                  to: "gate#index"
   get    "/auth/discord/callback",                 to: "sessions#create"
