@@ -26,6 +26,5 @@ module Manabiya
     config.time_zone = "Asia/Tokyo"
 
     config.active_job.queue_adapter = :solid_queue
-    config.solid_queue.connects_to = { database: { writing: :queue } }
   end
 end
