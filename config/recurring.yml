@@ -1,4 +1,8 @@
 default: &default
+  invitation_watcher:
+    class: InvitationWatcherJob
+    queue: default
+    schedule: every day at 8:00
   school_stats_notifier:
     class: SchoolStatsNotifierJob
     queue: default
