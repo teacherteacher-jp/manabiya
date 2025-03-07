@@ -41,12 +41,19 @@ module Discord
     end
 
     def server_member(member_id)
-      server_id = Rails.application.credentials.dig("discord", "server_id")
       JSON.parse(get("/guilds/#{server_id}/members/#{member_id}").body)
+    end
+
+    def invitations
+      JSON.parse(get("/guilds/#{server_id}/invites").body)
     end
 
     def get(path)
       @connection.get(BASE_PATH + path)
+    end
+
+    def server_id
+      Rails.application.credentials.dig("discord", "server_id")
     end
   end
 end
