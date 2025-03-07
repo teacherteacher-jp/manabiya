@@ -55,6 +55,20 @@ class Notification
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
+  def notify_school_stats
+    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+
+    schedules = Schedule.joins(:assignment).where("schedules.date >= ?", 30.days.ago.to_date)
+    content = "実状把握のため、参加される方はManabiyaからスケジュール登録してもらえるとうれしいです :dizzy:"
+    title = "過去30日間のコンボラ参加は%d件でした" % schedules.count
+    description = schedules.
+                  group(:member).count.sort_by { _2 }.reverse.
+                  map { |m, c| "<@!%s> %d件" % [m.discord_uid, c] }.join(" / ")
+    embeds = [{ title:, description:, }]
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+  end
+
   def notify_member_region_created(member_region)
     thread_id = Rails.application.credentials.dig("discord", "profile_thread_id")
     region_with_category = "「%s」(%s)" % [member_region.region.name, member_region.category]
