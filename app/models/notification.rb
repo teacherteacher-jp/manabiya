@@ -58,15 +58,36 @@ class Notification
   def notify_school_stats
     thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
 
+    content = [
+      "実状把握のため、参加される方はManabiyaからスケジュール登録してもらえるとうれしいです :dizzy:",
+      "データが実態と合っていない場合は修正してください :pray:",
+      Rails.application.credentials.base_url
+    ].join("\n")
+    embeds = [school_stats_today, school_stats_30days]
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+  end
+
+  def school_stats_today
+    schedules = Schedule.joins(:assignment).where("schedules.date = ?", Date.today)
+    title = "今日のコンボラ参加は %d人 %d件 でした" % [schedules.pluck(:member_id).uniq.count, schedules.count]
+    fields =
+      schedules.group_by(&:slot).sort_by { _1 }.to_h.map { |slot, schedules_in_slot|
+        {
+          name: "%s : %s" % [Schedule.time_of(slot), Schedule.name_of(slot)],
+          value: schedules_in_slot.map { "<@!#{_1.member.discord_uid}>" }.join(" "),
+        }
+      }
+    { title:, fields: }
+  end
+
+  def school_stats_30days
     schedules = Schedule.joins(:assignment).where("schedules.date >= ?", 30.days.ago.to_date)
-    content = "実状把握のため、参加される方はManabiyaからスケジュール登録してもらえるとうれしいです :dizzy:"
-    title = "過去30日間のコンボラ参加は%d件でした" % schedules.count
+    title = "過去30日間のコンボラ参加は %d人 %d件 です" % [schedules.pluck(:member_id).uniq.count, schedules.count]
     description = schedules.
                   group(:member).count.sort_by { _2 }.reverse.
                   map { |m, c| "<@!%s> %d件" % [m.discord_uid, c] }.join(" / ")
-    embeds = [{ title:, description:, }]
-
-    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+    { title:, description:, }
   end
 
   def notify_member_region_created(member_region)
