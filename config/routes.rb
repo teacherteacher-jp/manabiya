@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get    "/auth/discord/callback",                 to: "sessions#create"
   delete "/session",                               to: "sessions#destroy",
                                                    as: "session"
+
   get    "/schedules",                             to: "schedules#index"
   post   "/schedules",                             to: "schedules#create"
   get    "/schedules/:date/assignments",           to: "assignments#index",
@@ -15,6 +16,12 @@ Rails.application.routes.draw do
   delete "/schedules/:schedule_id/assignment",     to: "assignments#destroy"
   post   "/schedules/:date/notification",          to: "notifications#create",
                                                    as: "notification"
+  get    "/students",                              to: "students#index",
+                                                   as: "students"
+  get    "/students/new",                          to: "students#new",
+                                                   as: "new_student"
+  post   "/students",                              to: "students#create"
+
   get    "/regions",                               to: "regions#index"
   post   "/member_regions",                        to: "member_regions#create"
   delete "/member_regions/:member_region_id",      to: "member_regions#destroy",
