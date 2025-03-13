@@ -1,5 +1,6 @@
 class Student < ApplicationRecord
-  belongs_to :parent, class_name: 'Member', optional: true
+  belongs_to :parent_member, class_name: 'Member', optional: true
+  has_many :memos, dependent: :destroy, class_name: 'StudentMemo'
 
   validates :name, presence: true, length: { maximum: 20 }
   validates :grade, presence: true
