@@ -5,8 +5,25 @@ class Notification
     @bot = Discord::Bot.new(Rails.application.credentials.dig("discord_app", "bot_token"))
   end
 
+  def notify_student_created(student)
+    thread_id = Rails.application.credentials.dig("discord", "school_general_thread_id")
+    content = "#{student.grade}の生徒さんが登録されました！"
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
+  def notify_student_memo_created(student_memo)
+    thread_id = Rails.application.credentials.dig("discord", "school_general_thread_id")
+    content = "<@!#{student_memo.member.discord_uid}> さんが #{student_memo.student.grade}の生徒さんついてのメモを投稿しました！"
+    link = Rails.application.credentials.base_url + "/students/#{student_memo.student.id}"
+    embeds = [{
+      description: [student_memo.content, link].join("\n\n"),
+      author: { name: student_memo.category, icon_url: student_memo.member.icon_url },
+    }]
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+  end
+
   def notify_member_schedule_input(member:, dates:)
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = Rails.application.credentials.dig("discord", "school_contact_thread_id")
     full_date = dates.sort.uniq.map { mdw(_1.to_date) }.join(", ")
 
     @bot.send_message(
@@ -16,7 +33,7 @@ class Notification
   end
 
   def notify_schedules(schedules)
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = Rails.application.credentials.dig("discord", "school_contact_thread_id")
     date = schedules.first.date
     with_assignments = schedules.select(&:assignment)
 
@@ -47,7 +64,7 @@ class Notification
   end
 
   def notify_call_for_scheduling
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = Rails.application.credentials.dig("discord", "school_contact_thread_id")
 
     content = "スケジュール入力、お待ちしています！\n"
     content += ":calendar: [スケジュールを入力する](%s) :calendar:" % [Rails.application.credentials.base_url + "/my/schedules"]
@@ -56,7 +73,7 @@ class Notification
   end
 
   def notify_school_stats
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = Rails.application.credentials.dig("discord", "school_contact_thread_id")
 
     content = [
       "実状把握のため、参加される方はManabiyaからスケジュール登録してもらえるとうれしいです :dizzy:",
