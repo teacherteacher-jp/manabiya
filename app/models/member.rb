@@ -4,6 +4,7 @@ class Member < ApplicationRecord
   has_many :member_regions, dependent: :destroy
   has_many :regions, through: :member_regions
   has_many :family_members, dependent: :destroy
+  has_many :children_as_students, foreign_key: :parent_member_id, class_name: "Student"
 
   validates :discord_uid, presence: true, uniqueness: true
   validates :name, presence: true, length: { maximum: 32 }
@@ -28,5 +29,20 @@ class Member < ApplicationRecord
     joined_date = server_joined_at.to_date
     months_difference = (joined_date.year * 12 + joined_date.month) - (base_date.year * 12 + base_date.month)
     months_difference + 1
+  end
+
+  def can_access_student_info?
+    return true if admin?
+    return true if children_as_students.exists?
+
+    recent_assignments_exist =
+      Schedule.joins(:assignment).
+        where(member_id: id).
+        where(date: (7.days.ago)..(7.days.since)).
+        exists?
+
+    return true if recent_assignments_exist
+
+    false
   end
 end
