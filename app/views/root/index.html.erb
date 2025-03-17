@@ -1,9 +1,22 @@
 <section class="mb-6">
   <h2 class="text-2xl font-bold mb-4">
-    メニュー
+    スクールのメニュー
   </h2>
   <ul>
-    <% @menu_items.each do |menu_item| %>
+    <% @school_menu_items.each do |menu_item| %>
+    <li class="mb-2">
+      <%= link_to(menu_item[:text], menu_item[:path], class: "inline-block w-full bg-white p-4 rounded-md shadow-md") %>
+      </li>
+    <% end %>
+  </ul>
+</section>
+
+<section class="mb-6">
+  <h2 class="text-2xl font-bold mb-4">
+    コミュニティのメニュー
+  </h2>
+  <ul>
+    <% @community_menu_items.each do |menu_item| %>
     <li class="mb-2">
       <%= link_to(menu_item[:text], menu_item[:path], class: "inline-block w-full bg-white p-4 rounded-md shadow-md") %>
       </li>
