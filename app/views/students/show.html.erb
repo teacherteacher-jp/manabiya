@@ -12,6 +12,16 @@
         <dt class="text-sm font-medium text-gray-500">学年</dt>
         <dd class="mt-1 text-lg font-medium text-gray-900"><%= @student.grade %></dd>
       </div>
+      <div class="sm:col-span-1">
+        <dt class="text-sm font-medium text-gray-500">保護者</dt>
+        <dd class="mt-1 text-lg font-medium text-gray-900">
+          <% if @student.parent_member.present? %>
+            <%= @student.parent_member.name %>
+          <% else %>
+            <span class="text-gray-400">未登録</span>
+          <% end %>
+        </dd>
+      </div>
     </dl>
   </div>
 
