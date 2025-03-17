@@ -5,6 +5,7 @@ class StudentsController < ApplicationController
 
   def show
     @student = Student.find(params[:id])
+    @memos = @student.memos.order(id: :desc)
   end
 
   def new

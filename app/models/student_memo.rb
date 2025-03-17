@@ -6,8 +6,8 @@ class StudentMemo < ApplicationRecord
   validates :category, presence: true
 
   enum :category, {
-    家庭:         0,
-    学校:         1,
-    ボランティア: 2
+    家庭から:         0,
+    学校から:         1,
+    ボランティアから: 2
   }
 end

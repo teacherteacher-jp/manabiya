@@ -23,6 +23,8 @@ Rails.application.routes.draw do
   get    "/students/:id",                          to: "students#show",
                                                    as: "student"
   post   "/students",                              to: "students#create"
+  post   "/students/:student_id/memos",            to: "student_memos#create",
+                                                   as: "student_memos"
 
   get    "/regions",                               to: "regions#index"
   post   "/member_regions",                        to: "member_regions#create"
@@ -55,5 +57,6 @@ Rails.application.routes.draw do
                                                    as: "public_events"
   post   "/webhooks/metalife",                     to: "webhooks/metalife#create"
   post   "/webhooks/line",                         to: "webhooks/line#create"
+
   root   "root#index"
 end
