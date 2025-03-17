@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get    "/auth/discord/callback",                 to: "sessions#create"
   delete "/session",                               to: "sessions#destroy",
                                                    as: "session"
+
   get    "/schedules",                             to: "schedules#index"
   post   "/schedules",                             to: "schedules#create"
   get    "/schedules/:date/assignments",           to: "assignments#index",
@@ -15,6 +16,21 @@ Rails.application.routes.draw do
   delete "/schedules/:schedule_id/assignment",     to: "assignments#destroy"
   post   "/schedules/:date/notification",          to: "notifications#create",
                                                    as: "notification"
+  get    "/students",                              to: "students#index",
+                                                   as: "students"
+  get    "/students/new",                          to: "students#new",
+                                                   as: "new_student"
+  get    "/students/:id",                          to: "students#show",
+                                                   as: "student"
+  post   "/students",                              to: "students#create"
+  post   "/students/:student_id/memos",            to: "student_memos#create",
+                                                   as: "student_memos"
+  get    "/student_memos/:id/edit",                to: "student_memos#edit",
+                                                   as: "edit_student_memo"
+  patch  "/student_memos/:id",                     to: "student_memos#update",
+                                                   as: "student_memo"
+  delete "/student_memos/:id",                     to: "student_memos#destroy"
+
   get    "/regions",                               to: "regions#index"
   post   "/member_regions",                        to: "member_regions#create"
   delete "/member_regions/:member_region_id",      to: "member_regions#destroy",
@@ -46,5 +62,6 @@ Rails.application.routes.draw do
                                                    as: "public_events"
   post   "/webhooks/metalife",                     to: "webhooks/metalife#create"
   post   "/webhooks/line",                         to: "webhooks/line#create"
+
   root   "root#index"
 end

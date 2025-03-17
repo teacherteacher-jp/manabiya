@@ -1,12 +1,40 @@
 class Notification
   include ApplicationHelper
 
+  THREAD_TYPES = {
+    school_general: "school_general_thread_id",
+    school_contact: "school_contact_thread_id",
+    profile: "profile_thread_id",
+    event: "event_thread_id"
+  }.freeze
+
   def initialize
     @bot = Discord::Bot.new(Rails.application.credentials.dig("discord_app", "bot_token"))
   end
 
+  def thread_id_for(type)
+    Rails.application.credentials.dig("discord", THREAD_TYPES[type])
+  end
+
+  def notify_student_created(student)
+    thread_id = thread_id_for(:school_general)
+    content = "#{student.grade}の生徒さんが登録されました！"
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
+  def notify_student_memo_created(student_memo)
+    thread_id = thread_id_for(:school_general)
+    content = "<@!#{student_memo.member.discord_uid}> さんが #{student_memo.student.grade}の生徒さんついてのメモを投稿しました！"
+    link = Rails.application.credentials.base_url + "/students/#{student_memo.student.id}"
+    embeds = [{
+      description: [student_memo.content, link].join("\n\n"),
+      author: { name: student_memo.category, icon_url: student_memo.member.icon_url },
+    }]
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+  end
+
   def notify_member_schedule_input(member:, dates:)
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = thread_id_for(:school_contact)
     full_date = dates.sort.uniq.map { mdw(_1.to_date) }.join(", ")
 
     @bot.send_message(
@@ -16,7 +44,7 @@ class Notification
   end
 
   def notify_schedules(schedules)
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = thread_id_for(:school_contact)
     date = schedules.first.date
     with_assignments = schedules.select(&:assignment)
 
@@ -47,7 +75,7 @@ class Notification
   end
 
   def notify_call_for_scheduling
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = thread_id_for(:school_contact)
 
     content = "スケジュール入力、お待ちしています！\n"
     content += ":calendar: [スケジュールを入力する](%s) :calendar:" % [Rails.application.credentials.base_url + "/my/schedules"]
@@ -56,7 +84,7 @@ class Notification
   end
 
   def notify_school_stats
-    thread_id = Rails.application.credentials.dig("discord", "school_thread_id")
+    thread_id = thread_id_for(:school_contact)
 
     content = [
       "実状把握のため、参加される方はManabiyaからスケジュール登録してもらえるとうれしいです :dizzy:",
@@ -91,7 +119,7 @@ class Notification
   end
 
   def notify_member_region_created(member_region)
-    thread_id = Rails.application.credentials.dig("discord", "profile_thread_id")
+    thread_id = thread_id_for(:profile)
     region_with_category = "「%s」(%s)" % [member_region.region.name, member_region.category]
 
     content = "<@!#{member_region.member.discord_uid}> さんが#{region_with_category}を登録しました！"
@@ -99,14 +127,14 @@ class Notification
   end
 
   def notify_family_member_created(family_member)
-    thread_id = Rails.application.credentials.dig("discord", "profile_thread_id")
+    thread_id = thread_id_for(:profile)
 
     content = "<@!#{family_member.member.discord_uid}> さんが「%s」を登録しました！" % [family_member.relationship_in_japanese]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
   def notify_event(event:, content:)
-    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
+    thread_id = thread_id_for(:event)
     embeds = [event.to_embed]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
@@ -114,7 +142,7 @@ class Notification
   def notify_events(events:, content:)
     return if events.empty?
 
-    thread_id = Rails.application.credentials.dig("discord", "event_thread_id")
+    thread_id = thread_id_for(:event)
     embeds = events.map(&:to_embed)
     pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end

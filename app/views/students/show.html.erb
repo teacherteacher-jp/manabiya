@@ -1,0 +1,100 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-12">
+    <h3 class="text-xl font-bold text-gray-900 mb-4">
+      生徒情報
+    </h3>
+    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="sm:col-span-1">
+        <dt class="text-sm font-medium text-gray-500">名前</dt>
+        <dd class="mt-1 text-lg font-medium text-gray-900"><%= @student.name %></dd>
+      </div>
+      <div class="sm:col-span-1">
+        <dt class="text-sm font-medium text-gray-500">学年</dt>
+        <dd class="mt-1 text-lg font-medium text-gray-900"><%= @student.grade %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="mb-12">
+    <h3 class="text-xl font-bold text-gray-900 mb-4">
+      メモを追加
+    </h3>
+    <%= form_with(url: student_memos_path(@student), local: true, scope: :student_memo,
+        class: "max-w-2xl space-y-4",
+        data: { controller: "character-counter" }
+    ) do |f| %>
+      <div>
+        <%= f.label(:content, "メモ内容", class: "block text-sm font-medium text-gray-700") %>
+        <div class="relative">
+          <%= f.text_area(:content, rows: 3,
+              class: "mt-1 p-2 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm field-sizing-content",
+              data: {
+                character_counter_target: "input",
+                action: "input->character-counter#updateCounter"
+              }
+          ) %>
+          <div class="absolute bottom-2 right-2 text-sm text-gray-500" data-character-counter-target="counter">
+            <span>0</span>/1000文字
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label(:category, "カテゴリー", class: "block text-sm font-medium text-gray-700") %>
+        <%= f.select(:category, StudentMemo.categories.keys.map { |k| [k, k] }, { selected: "ボランティアから" }, class: "mt-1 p-2 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") %>
+      </div>
+
+      <div class="pt-2">
+        <%= f.submit("メモを追加",
+            class: "inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+            data: { character_counter_target: "submit" }
+        ) %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-12">
+    <h3 class="text-xl font-bold text-gray-900 mb-4">
+      メモ一覧
+    </h3>
+    <% if @student.memos.exists? %>
+      <div class="space-y-6">
+        <% @student.memos.order(created_at: :desc).each do |memo| %>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div class="text-base text-gray-900 flex-grow mr-4">
+                <%= simple_format(memo.content, class: "m-0") %>
+              </div>
+              <div class="ml-2 flex-shrink-0">
+                <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                  <%= memo.category %>
+                </p>
+              </div>
+            </div>
+            <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
+              <p class="flex items-center">
+                <%= memo.member.name %>
+                <% if memo.member == current_member %>
+                  <%= link_to edit_student_memo_path(memo), class: "ml-2 text-indigo-600 hover:text-indigo-900" do %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  <% end %>
+                <% end %>
+              </p>
+              <p>
+                <%= memo.created_at.strftime("%Y/%m/%d %H:%M") %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-500">メモはまだありません</p>
+    <% end %>
+  </div>
+
+  <div class="flex justify-end">
+    <%= link_to '生徒一覧に戻る', students_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+</div>
