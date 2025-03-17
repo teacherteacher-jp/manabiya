@@ -1,6 +1,6 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="mb-12">
-    <h3 class="text-xl font-bold text-gray-900 mb-4">
+<div class="max-w-7xl mx-auto">
+  <div class="mb-8 sm:mb-12">
+    <h3 class="text-xl font-bold text-gray-900 mb-3 sm:mb-4">
       生徒情報
     </h3>
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -25,8 +25,8 @@
     </dl>
   </div>
 
-  <div class="mb-12">
-    <h3 class="text-xl font-bold text-gray-900 mb-4">
+  <div class="mb-8 sm:mb-12">
+    <h3 class="text-xl font-bold text-gray-900 mb-3 sm:mb-4">
       メモを追加
     </h3>
     <%= form_with(url: student_memos_path(@student), local: true, scope: :student_memo,
@@ -63,38 +63,45 @@
     <% end %>
   </div>
 
-  <div class="mb-12">
-    <h3 class="text-xl font-bold text-gray-900 mb-4">
+  <div class="mb-8 sm:mb-12">
+    <h3 class="text-xl font-bold text-gray-900 mb-3 sm:mb-4">
       メモ一覧
     </h3>
     <% if @student.memos.exists? %>
-      <div class="space-y-6">
+      <div class="space-y-4 sm:space-y-6">
         <% @student.memos.order(created_at: :desc).each do |memo| %>
-          <div class="bg-gray-50 rounded-lg p-4">
-            <div class="flex items-center justify-between">
-              <div class="text-base text-gray-900 flex-grow mr-4">
-                <%= simple_format(memo.content, class: "m-0") %>
+          <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex flex-col space-y-1 flex-grow">
+                <div class="flex items-center">
+                  <div class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                    <%= memo.category %>
+                  </div>
+                  <div class="ml-3 text-xs text-gray-500">
+                    <%= memo.created_at.strftime("%Y/%m/%d %H:%M") %>
+                  </div>
+                </div>
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <%= image_tag memo.member.icon_url, class: "h-6 w-6 rounded-full mr-1" %>
+                  </div>
+                  <div class="ml-1 text-sm font-medium text-gray-700">
+                    <%= memo.member.name %>
+                  </div>
+                </div>
               </div>
-              <div class="ml-2 flex-shrink-0">
-                <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
-                  <%= memo.category %>
-                </p>
-              </div>
-            </div>
-            <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
-              <p class="flex items-center">
-                <%= memo.member.name %>
+              <div>
                 <% if memo.member == current_member %>
-                  <%= link_to edit_student_memo_path(memo), class: "ml-2 text-indigo-600 hover:text-indigo-900" do %>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <%= link_to edit_student_memo_path(memo), class: "text-indigo-600 hover:text-indigo-900" do %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   <% end %>
                 <% end %>
-              </p>
-              <p>
-                <%= memo.created_at.strftime("%Y/%m/%d %H:%M") %>
-              </p>
+              </div>
+            </div>
+            <div class="text-base text-gray-900">
+              <%= simple_format(memo.content, class: "m-0") %>
             </div>
           </div>
         <% end %>
