@@ -41,7 +41,7 @@
 
       <div>
         <%= f.label(:category, "カテゴリー", class: "block text-sm font-medium text-gray-700") %>
-        <%= f.select(:category, StudentMemo.categories.keys.map { |k| [k, k] }, {}, class: "mt-1 p-2 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") %>
+        <%= f.select(:category, StudentMemo.categories.keys.map { |k| [k, k] }, { selected: "ボランティアから" }, class: "mt-1 p-2 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") %>
       </div>
 
       <div class="pt-2">
