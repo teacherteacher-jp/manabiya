@@ -20,6 +20,8 @@ Rails.application.routes.draw do
                                                    as: "students"
   get    "/students/new",                          to: "students#new",
                                                    as: "new_student"
+  get    "/students/:id",                          to: "students#show",
+                                                   as: "student"
   post   "/students",                              to: "students#create"
 
   get    "/regions",                               to: "regions#index"
