@@ -25,6 +25,11 @@ Rails.application.routes.draw do
   post   "/students",                              to: "students#create"
   post   "/students/:student_id/memos",            to: "student_memos#create",
                                                    as: "student_memos"
+  get    "/student_memos/:id/edit",                to: "student_memos#edit",
+                                                   as: "edit_student_memo"
+  patch  "/student_memos/:id",                     to: "student_memos#update",
+                                                   as: "student_memo"
+  delete "/student_memos/:id",                     to: "student_memos#destroy"
 
   get    "/regions",                               to: "regions#index"
   post   "/member_regions",                        to: "member_regions#create"
