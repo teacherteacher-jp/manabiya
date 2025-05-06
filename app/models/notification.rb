@@ -22,6 +22,12 @@ class Notification
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
+  def notify_student_updated(student)
+    thread_id = thread_id_for(:school_general)
+    content = "#{student.grade}の生徒さんの情報が更新されました！"
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
   def notify_student_memo_created(student_memo)
     thread_id = thread_id_for(:school_general)
     content = "<@!#{student_memo.member.discord_uid}> さんが #{student_memo.student.grade}の生徒さんついてのメモを投稿しました！"

@@ -5,7 +5,8 @@ class Student < ApplicationRecord
   validates :name, presence: true, length: { maximum: 20 }
   validates :grade, presence: true
 
-  after_create_commit :notify
+  after_create_commit :notify_created
+  after_update_commit :notify_updated
 
   enum :grade, {
     小学校1年生: 0,
@@ -20,7 +21,11 @@ class Student < ApplicationRecord
     それ以外:    9
   }
 
-  def notify
+  def notify_created
     Notification.new.notify_student_created(self)
+  end
+
+  def notify_updated
+    Notification.new.notify_student_updated(self)
   end
 end
