@@ -18,7 +18,17 @@ class Notification
 
   def notify_student_created(student)
     thread_id = thread_id_for(:school_general)
-    content = "#{student.grade}の生徒さんが登録されました！"
+    content = "#{student.grade}の生徒さんが登録されました！\n%s" % [
+      Rails.application.credentials.base_url + "/students/#{student.id}"
+    ]
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
+  def notify_student_updated(student)
+    thread_id = thread_id_for(:school_general)
+    content = "#{student.grade}の生徒さんの情報が更新されました！\n%s" % [
+      Rails.application.credentials.base_url + "/students/#{student.id}"
+    ]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
@@ -122,14 +132,19 @@ class Notification
     thread_id = thread_id_for(:profile)
     region_with_category = "「%s」(%s)" % [member_region.region.name, member_region.category]
 
-    content = "<@!#{member_region.member.discord_uid}> さんが#{region_with_category}を登録しました！"
+    content = "<@!#{member_region.member.discord_uid}> さんが#{region_with_category}を登録しました！\n%s" % [
+      Rails.application.credentials.base_url + "/members/#{member_region.member_id}"
+    ]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
   def notify_family_member_created(family_member)
     thread_id = thread_id_for(:profile)
 
-    content = "<@!#{family_member.member.discord_uid}> さんが「%s」を登録しました！" % [family_member.relationship_in_japanese]
+    content = "<@!#{family_member.member.discord_uid}> さんが「%s」を登録しました！\n%s" % [
+      family_member.relationship_in_japanese,
+      Rails.application.credentials.base_url + "/members/#{family_member.member_id}"
+    ]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
