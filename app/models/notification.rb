@@ -43,6 +43,19 @@ class Notification
     pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
 
+  def notify_school_memo_created(school_memo)
+    thread_id = thread_id_for(:school_general)
+    student_mentions = school_memo.students.map { |s| "#{s.grade}の生徒さん" }.join("、")
+    content = "<@!#{school_memo.member.discord_uid}> さんがメモを投稿しました！"
+    content += "\n関連する生徒: #{student_mentions}" if student_mentions.present?
+
+    embeds = [{
+      description: school_memo.content,
+      author: { name: school_memo.category, icon_url: school_memo.member.icon_url },
+    }]
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
+  end
+
   def notify_member_schedule_input(member:, dates:)
     thread_id = thread_id_for(:school_contact)
     full_date = dates.sort.uniq.map { mdw(_1.to_date) }.join(", ")

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_13_131255) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_07_050309) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,6 +86,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_131255) do
     t.index ["date"], name: "index_schedules_on_date"
     t.index ["member_id", "date", "slot"], name: "index_schedules_on_member_id_and_date_and_slot", unique: true
     t.index ["member_id"], name: "index_schedules_on_member_id"
+  end
+
+  create_table "school_memo_students", force: :cascade do |t|
+    t.bigint "school_memo_id", null: false
+    t.bigint "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["school_memo_id"], name: "index_school_memo_students_on_school_memo_id"
+    t.index ["student_id"], name: "index_school_memo_students_on_student_id"
+  end
+
+  create_table "school_memos", force: :cascade do |t|
+    t.bigint "member_id", null: false
+    t.text "content", null: false
+    t.integer "category", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id"], name: "index_school_memos_on_member_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -233,6 +251,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_13_131255) do
   add_foreign_key "member_regions", "members"
   add_foreign_key "member_regions", "regions"
   add_foreign_key "schedules", "members"
+  add_foreign_key "school_memo_students", "school_memos"
+  add_foreign_key "school_memo_students", "students"
+  add_foreign_key "school_memos", "members"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
