@@ -1,4 +1,7 @@
 class SchoolMemosController < ApplicationController
+  before_action :set_school_memo, only: [:edit, :update, :destroy]
+  before_action :redirect_if_not_authorized, only: [:edit, :update, :destroy]
+
   def index
     @school_memos = SchoolMemo.includes(:member, :students).order(id: :desc)
   end
@@ -22,8 +25,10 @@ class SchoolMemosController < ApplicationController
     end
   end
 
+  def edit
+  end
+
   def update
-    @school_memo = SchoolMemo.find(params[:id])
     if @school_memo.update(school_memo_params)
       if @school_memo.students.any?
         redirect_to student_path(@school_memo.students.first), notice: "メモを更新しました"
@@ -36,7 +41,6 @@ class SchoolMemosController < ApplicationController
   end
 
   def destroy
-    @school_memo = SchoolMemo.find(params[:id])
     student = @school_memo.students.first
     @school_memo.destroy
     if student
@@ -47,6 +51,16 @@ class SchoolMemosController < ApplicationController
   end
 
   private
+
+  def set_school_memo
+    @school_memo = SchoolMemo.find(params[:id])
+  end
+
+  def redirect_if_not_authorized
+    unless current_member.can_edit?(@school_memo)
+      redirect_to root_path, alert: "権限がありません"
+    end
+  end
 
   def school_memo_params
     params.require(:school_memo).permit(:content, :category, student_ids: [])

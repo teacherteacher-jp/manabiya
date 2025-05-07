@@ -45,4 +45,8 @@ class Member < ApplicationRecord
 
     false
   end
+
+  def can_edit?(school_memo)
+    admin? || school_memo.member == self
+  end
 end

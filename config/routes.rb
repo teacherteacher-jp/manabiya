@@ -31,6 +31,8 @@ Rails.application.routes.draw do
   get    "/school_memos/new",                      to: "school_memos#new",
                                                    as: "new_school_memo"
   post   "/school_memos",                          to: "school_memos#create"
+  get    "/school_memos/:id/edit",                 to: "school_memos#edit",
+                                                   as: "edit_school_memo"
   patch  "/school_memos/:id",                      to: "school_memos#update",
                                                    as: "school_memo"
   delete "/school_memos/:id",                      to: "school_memos#destroy"
