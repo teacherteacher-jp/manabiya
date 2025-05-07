@@ -45,9 +45,15 @@ class Notification
 
   def notify_school_memo_created(school_memo)
     thread_id = thread_id_for(:school_general)
-    student_mentions = school_memo.students.map { |s| "#{s.grade}の生徒さん" }.join("、")
     content = "<@!#{school_memo.member.discord_uid}> さんがメモを投稿しました！"
-    content += "\n関連する生徒: #{student_mentions}" if student_mentions.present?
+
+    if school_memo.students.count > 0
+      students = school_memo.students.map { |student|
+        mention = "#{student.grade}の生徒さん"
+        student.parent_member.present? ? mention += "(保護者 <@!#{student.parent_member.discord_uid}>)" : mention
+      }.join("、")
+      content += "\n関連する生徒: #{students}"
+    end
 
     embeds = [{
       description: school_memo.content,

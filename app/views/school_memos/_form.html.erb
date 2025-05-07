@@ -5,11 +5,13 @@
 ) do |f| %>
   <div>
     <%= f.label(:student_ids, "関連する生徒", class: "block text-sm font-medium text-gray-700 mb-2") %>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <% Student.all.each do |student| %>
-        <div class="flex items-center">
-          <%= f.check_box :student_ids, { multiple: true, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" }, student.id, nil %>
-          <%= f.label "student_ids_#{student.id}", student.name, class: "ml-2 block text-sm text-gray-900" %>
+        <div class="flex items-start">
+          <%= f.check_box :student_ids, { multiple: true, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-1" }, student.id, nil %>
+          <%= f.label "student_ids_#{student.id}",
+              student.parent_member.present? ? "#{student.name} (保護者 #{student.parent_member.name})" : student.name,
+              class: "ml-2 block text-sm text-gray-900" %>
         </div>
       <% end %>
     </div>
