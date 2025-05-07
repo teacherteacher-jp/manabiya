@@ -35,9 +35,9 @@
         メモを追加
       <% end %>
     </div>
-    <% if @student.school_memos.exists? %>
+    <% if @school_memos.exists? %>
       <div class="space-y-4 sm:space-y-6">
-        <%= render partial: "school_memos/block", collection: @student.school_memos.order(id: :desc), as: :memo %>
+        <%= render partial: "school_memos/block", collection: @school_memos, as: :memo %>
       </div>
     <% else %>
       <p class="text-sm text-gray-500">メモはまだありません</p>

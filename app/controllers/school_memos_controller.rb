@@ -1,6 +1,6 @@
 class SchoolMemosController < ApplicationController
   before_action :set_school_memo, only: [:edit, :update, :destroy]
-  before_action :redirect_if_not_authorized, only: [:edit, :update, :destroy]
+  before_action :redirect_if_no_student_info_access
 
   def index
     @school_memos = SchoolMemo.includes(:member, :students).order(id: :desc)
@@ -15,13 +15,9 @@ class SchoolMemosController < ApplicationController
     @school_memo = current_member.school_memos.new(school_memo_params)
 
     if @school_memo.save
-      if @school_memo.students.any?
-        redirect_to student_path(@school_memo.students.first), notice: "メモを追加しました"
-      else
-        redirect_to root_path, notice: "メモを追加しました"
-      end
+      redirect_to school_memos_path, notice: 'メモを追加しました'
     else
-      render :new, status: :unprocessable_entity
+      render :new
     end
   end
 
@@ -30,36 +26,21 @@ class SchoolMemosController < ApplicationController
 
   def update
     if @school_memo.update(school_memo_params)
-      if @school_memo.students.any?
-        redirect_to student_path(@school_memo.students.first), notice: "メモを更新しました"
-      else
-        redirect_to root_path, notice: "メモを更新しました"
-      end
+      redirect_to school_memos_path, notice: 'メモを更新しました'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit
     end
   end
 
   def destroy
-    student = @school_memo.students.first
     @school_memo.destroy
-    if student
-      redirect_to student_path(student), notice: "メモを削除しました"
-    else
-      redirect_to root_path, notice: "メモを削除しました"
-    end
+    redirect_to school_memos_path, notice: 'メモを削除しました'
   end
 
   private
 
   def set_school_memo
     @school_memo = SchoolMemo.find(params[:id])
-  end
-
-  def redirect_if_not_authorized
-    unless current_member.can_edit?(@school_memo)
-      redirect_to root_path, alert: "権限がありません"
-    end
   end
 
   def school_memo_params

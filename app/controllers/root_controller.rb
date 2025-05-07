@@ -3,9 +3,13 @@ class RootController < ApplicationController
     @school_menu_items = [
       { text: "ボランティアのスケジュール入力", path: my_schedules_path },
       { text: "ボランティアのスケジュール確認", path: schedules_path },
-      { text: "スクールに関するメモ", path: school_memos_path },
-      { text: "生徒さんたちの情報", path: students_path },
     ]
+    if current_member.can_access_student_info?
+      [
+        { text: "生徒さんたちの情報", path: students_path },
+        { text: "スクールに関するメモ", path: school_memos_path },
+      ].each { |item| @school_menu_items << item }
+    end
 
     @community_menu_items = [
       { text: "わたしのプロフィール", path: member_path(current_member) },

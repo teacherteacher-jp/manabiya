@@ -1,13 +1,13 @@
 class StudentsController < ApplicationController
-  before_action :set_student, only: [:show, :edit, :update]
-  before_action :check_authorization, only: [:new, :create, :edit, :update]
+  before_action :set_student, only: [:show, :edit, :update, :destroy]
+  before_action :redirect_if_no_student_info_access
 
   def index
     @students = Student.order(id: :desc)
   end
 
   def show
-    @memos = @student.memos.order(id: :desc)
+    @school_memos = @student.school_memos.order(id: :desc)
   end
 
   def new
@@ -18,9 +18,9 @@ class StudentsController < ApplicationController
     @student = Student.new(student_params)
 
     if @student.save
-      redirect_to students_path, notice: '生徒を登録しました'
+      redirect_to @student, notice: '生徒を登録しました'
     else
-      render :new, status: :unprocessable_entity
+      render :new
     end
   end
 
@@ -29,22 +29,21 @@ class StudentsController < ApplicationController
 
   def update
     if @student.update(student_params)
-      redirect_to student_path(@student), notice: '生徒情報を更新しました'
+      redirect_to @student, notice: '生徒情報を更新しました'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit
     end
+  end
+
+  def destroy
+    @student.destroy
+    redirect_to students_path, notice: '生徒を削除しました'
   end
 
   private
 
   def set_student
     @student = Student.find(params[:id])
-  end
-
-  def check_authorization
-    unless current_member.admin?
-      redirect_to root_path, alert: "権限がありません"
-    end
   end
 
   def student_params
