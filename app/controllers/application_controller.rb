@@ -12,4 +12,12 @@ class ApplicationController < ActionController::Base
   def redirect_to_gate_unless_logged_in
     redirect_to gate_path unless logged_in?
   end
+
+  private
+
+  def redirect_if_no_student_info_access
+    unless current_member.can_access_student_info?
+      redirect_to root_path, alert: 'アクセス権限がありません'
+    end
+  end
 end

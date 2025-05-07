@@ -5,6 +5,7 @@ class Member < ApplicationRecord
   has_many :regions, through: :member_regions
   has_many :family_members, dependent: :destroy
   has_many :children_as_students, foreign_key: :parent_member_id, class_name: "Student"
+  has_many :school_memos, dependent: :destroy
 
   validates :discord_uid, presence: true, uniqueness: true
   validates :name, presence: true, length: { maximum: 32 }
@@ -44,5 +45,9 @@ class Member < ApplicationRecord
     return true if recent_assignments_exist
 
     false
+  end
+
+  def can_edit?(school_memo)
+    admin? || school_memo.member == self
   end
 end

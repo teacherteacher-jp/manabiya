@@ -1,0 +1,48 @@
+<div class="bg-gray-50 rounded-lg p-3 sm:p-4">
+  <div class="flex items-center justify-between mb-2">
+    <div class="flex flex-col space-y-1 flex-grow">
+      <div class="flex items-center">
+        <div class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+          <%= memo.category %>
+        </div>
+        <div class="ml-3 text-xs text-gray-500">
+          <%= memo.created_at.strftime("%Y/%m/%d %H:%M") %>
+        </div>
+      </div>
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <%= image_tag memo.member.icon_url, class: "h-6 w-6 rounded-full mr-1" %>
+        </div>
+        <div class="ml-1 text-sm font-medium text-gray-700">
+          <%= memo.member.name %>
+        </div>
+      </div>
+    </div>
+    <% if current_member.can_edit?(memo) %>
+      <div class="flex items-center space-x-2">
+        <%= link_to edit_school_memo_path(memo), class: "text-gray-400 hover:text-gray-500" do %>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        <% end %>
+        <%= button_to school_memo_path(memo), method: :delete, class: "text-gray-400 hover:text-gray-500", form: { data: { turbo_confirm: "本当に削除しますか？" } } do %>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <div class="text-base text-gray-900">
+    <%= simple_format(memo.content, class: "m-0") %>
+  </div>
+  <% if memo.students.any? %>
+    <div class="mt-2 flex flex-wrap gap-2">
+      <% memo.students.each do |student| %>
+        <%= link_to student_path(student), class: "inline-flex items-center px-2 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-800 hover:bg-gray-200" do %>
+          <%= student.name %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
