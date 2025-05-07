@@ -1,10 +1,12 @@
 class StudentsController < ApplicationController
+  before_action :set_student, only: [:show, :edit, :update]
+  before_action :check_authorization, only: [:new, :create, :edit, :update]
+
   def index
     @students = Student.order(id: :desc)
   end
 
   def show
-    @student = Student.find(params[:id])
     @memos = @student.memos.order(id: :desc)
   end
 
@@ -23,12 +25,9 @@ class StudentsController < ApplicationController
   end
 
   def edit
-    @student = Student.find(params[:id])
   end
 
   def update
-    @student = Student.find(params[:id])
-
     if @student.update(student_params)
       redirect_to student_path(@student), notice: '生徒情報を更新しました'
     else
@@ -37,6 +36,16 @@ class StudentsController < ApplicationController
   end
 
   private
+
+  def set_student
+    @student = Student.find(params[:id])
+  end
+
+  def check_authorization
+    unless current_member.admin?
+      redirect_to root_path, alert: "権限がありません"
+    end
+  end
 
   def student_params
     params.require(:student).permit(:name, :grade, :parent_member_id)
