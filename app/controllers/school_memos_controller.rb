@@ -1,4 +1,8 @@
 class SchoolMemosController < ApplicationController
+  def index
+    @school_memos = SchoolMemo.includes(:member, :students).order(id: :desc)
+  end
+
   def new
     @school_memo = SchoolMemo.new
     @school_memo.student_ids = params[:student_ids].presence

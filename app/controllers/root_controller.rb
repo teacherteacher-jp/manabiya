@@ -1,9 +1,10 @@
 class RootController < ApplicationController
   def index
     @school_menu_items = [
-      { text: "生徒さんたちの情報", path: students_path },
       { text: "ボランティアのスケジュール入力", path: my_schedules_path },
       { text: "ボランティアのスケジュール確認", path: schedules_path },
+      { text: "スクールに関するメモ", path: school_memos_path },
+      { text: "生徒さんたちの情報", path: students_path },
     ]
 
     @community_menu_items = [
