@@ -8,7 +8,7 @@ class SchoolMemosController < ApplicationController
 
   def new
     @school_memo = SchoolMemo.new
-    @school_memo.student_ids = params[:student_ids].presence
+    @school_memo.student_ids = params[:student_ids].split(",").map(&:to_i) if params[:student_ids].present?
   end
 
   def create
