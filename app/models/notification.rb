@@ -49,8 +49,11 @@ class Notification
 
     if school_memo.students.count > 0
       students = school_memo.students.map { |student|
-        mention = "#{student.grade}の生徒さん"
-        student.parent_member.present? ? mention += "(保護者 <@!#{student.parent_member.discord_uid}>)" : mention
+        student_string = "#{student.grade}の生徒さん"
+        if student.parent_member && school_memo.category != "家庭から"
+          student_string += "(保護者 <@!#{student.parent_member.discord_uid}>)"
+        end
+        student_string
       }.join("、")
       content += "\n関連する生徒: #{students}"
     end
