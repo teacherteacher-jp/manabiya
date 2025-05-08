@@ -117,11 +117,16 @@ class Notification
 
   def notify_school_stats
     thread_id = thread_id_for(:school_contact)
+    schedules = Schedule.joins(:assignment).where("schedules.date = ?", Date.today)
 
     content = [
       "実状把握のため、参加される方はManabiyaからスケジュール登録してもらえるとうれしいです :dizzy:",
       "データが実態と合っていない場合は修正してください :pray:",
-      app_base_url + "/my/schedules"
+      app_base_url + "/my/schedules",
+      "",
+      schedules.map { _1.member }.uniq.map { "<@#{_1.discord_uid}>" }.join(" "),
+      "よかったら今日の様子を下記フォームからご共有ください :relaxed:",
+      app_base_url + "/school_memos/new"
     ].join("\n")
     embeds = [school_stats_today, school_stats_30days]
 
