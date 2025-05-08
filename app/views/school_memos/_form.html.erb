@@ -19,7 +19,14 @@
 
   <div>
     <%= f.label(:category, "カテゴリー", class: "block text-sm font-medium text-gray-700") %>
-    <%= f.select(:category, SchoolMemo.categories.keys.map { |k| [k, k] }, {}, class: "mt-1 p-2 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") %>
+    <% default_category = if current_member.admin?
+                           "コンコンから"
+                         elsif current_member.children_as_students.any? { |student| school_memo.students.include?(student) }
+                           "家庭から"
+                         else
+                           "ボランティアから"
+                         end %>
+    <%= f.select(:category, SchoolMemo.categories.keys.map { |k| [k, k] }, { selected: default_category }, class: "mt-1 p-2 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") %>
   </div>
 
   <div>

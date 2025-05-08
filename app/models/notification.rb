@@ -16,26 +16,26 @@ class Notification
     Rails.application.credentials.dig("discord", THREAD_TYPES[type])
   end
 
+  def app_base_url
+    Rails.application.credentials.base_url
+  end
+
   def notify_student_created(student)
     thread_id = thread_id_for(:school_general)
-    content = "#{student.grade}の生徒さんが登録されました！\n%s" % [
-      Rails.application.credentials.base_url + "/students/#{student.id}"
-    ]
+    content = "#{student.grade}の生徒さんが登録されました！"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
   def notify_student_updated(student)
     thread_id = thread_id_for(:school_general)
-    content = "#{student.grade}の生徒さんの情報が更新されました！\n%s" % [
-      Rails.application.credentials.base_url + "/students/#{student.id}"
-    ]
+    content = "#{student.grade}の生徒さんの情報が更新されました！"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
   def notify_student_memo_created(student_memo)
     thread_id = thread_id_for(:school_general)
     content = "<@!#{student_memo.member.discord_uid}> さんが #{student_memo.student.grade}の生徒さんついてのメモを投稿しました！"
-    link = Rails.application.credentials.base_url + "/students/#{student_memo.student.id}"
+    link = app_base_url + "/students/#{student_memo.student.id}"
     embeds = [{
       description: [student_memo.content, link].join("\n\n"),
       author: { name: student_memo.category, icon_url: student_memo.member.icon_url },
@@ -49,8 +49,11 @@ class Notification
 
     if school_memo.students.count > 0
       students = school_memo.students.map { |student|
-        mention = "#{student.grade}の生徒さん"
-        student.parent_member.present? ? mention += "(保護者 <@!#{student.parent_member.discord_uid}>)" : mention
+        student_string = "#{student.grade}の生徒さん"
+        if student.parent_member && school_memo.category != "家庭から"
+          student_string += "(保護者 <@!#{student.parent_member.discord_uid}>)"
+        end
+        student_string
       }.join("、")
       content += "\n関連する生徒: #{students}"
     end
@@ -87,7 +90,7 @@ class Notification
 
     description = "定刻になりましたら会場にお入りください！\n"
     description += ":school: [MetaLife会場](%s) | :memo: [案内ドキュメント](%s) | :calendar: [スケジュール入力](%s)" % [
-      ENV["SCHOOL_URL"], ENV["SCHOOL_DOCUMENT_URL"], Rails.application.credentials.base_url + "/my/schedules"
+      ENV["SCHOOL_URL"], ENV["SCHOOL_DOCUMENT_URL"], app_base_url + "/my/schedules"
     ]
     embeds = [{
       title: "%d/%d(%s)のボランティアの担当をお知らせ" % [date.month, date.day, %w[日 月 火 水 木 金 土][date.wday]],
@@ -107,18 +110,23 @@ class Notification
     thread_id = thread_id_for(:school_contact)
 
     content = "スケジュール入力、お待ちしています！\n"
-    content += ":calendar: [スケジュールを入力する](%s) :calendar:" % [Rails.application.credentials.base_url + "/my/schedules"]
+    content += ":calendar: [スケジュールを入力する](%s) :calendar:" % [app_base_url + "/my/schedules"]
 
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
   def notify_school_stats
     thread_id = thread_id_for(:school_contact)
+    schedules = Schedule.joins(:assignment).where("schedules.date = ?", Date.today)
 
     content = [
       "実状把握のため、参加される方はManabiyaからスケジュール登録してもらえるとうれしいです :dizzy:",
       "データが実態と合っていない場合は修正してください :pray:",
-      Rails.application.credentials.base_url
+      app_base_url + "/my/schedules",
+      "",
+      schedules.map { _1.member }.uniq.map { "<@#{_1.discord_uid}>" }.join(" "),
+      "よかったら今日の様子を下記フォームからご共有ください :relaxed:",
+      app_base_url + "/school_memos/new"
     ].join("\n")
     embeds = [school_stats_today, school_stats_30days]
 
@@ -152,7 +160,7 @@ class Notification
     region_with_category = "「%s」(%s)" % [member_region.region.name, member_region.category]
 
     content = "<@!#{member_region.member.discord_uid}> さんが#{region_with_category}を登録しました！\n%s" % [
-      Rails.application.credentials.base_url + "/members/#{member_region.member_id}"
+      app_base_url + "/members/#{member_region.member_id}"
     ]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
@@ -162,7 +170,7 @@ class Notification
 
     content = "<@!#{family_member.member.discord_uid}> さんが「%s」を登録しました！\n%s" % [
       family_member.relationship_in_japanese,
-      Rails.application.credentials.base_url + "/members/#{family_member.member_id}"
+      app_base_url + "/members/#{family_member.member_id}"
     ]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
