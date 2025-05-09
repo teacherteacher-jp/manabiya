@@ -17,7 +17,12 @@
         <dt class="text-sm font-medium text-gray-500">保護者</dt>
         <dd class="mt-1 text-lg font-medium text-gray-900">
           <% if @student.parent_member.present? %>
-            <%= @student.parent_member.name %>
+            <%= link_to member_path(@student.parent_member), class: "inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800" do %>
+              <div class="flex-shrink-0 h-8 w-8">
+                <%= image_tag @student.parent_member.icon_url, class: "h-8 w-8 rounded-full" %>
+              </div>
+              <span><%= @student.parent_member.name %></span>
+            <% end %>
           <% else %>
             <span class="text-gray-400">未登録</span>
           <% end %>
@@ -33,7 +38,7 @@
         <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
-        メモを追加
+        この生徒さんに関するメモを追加
       <% end %>
     </div>
     <% if @school_memos.exists? %>

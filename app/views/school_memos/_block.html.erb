@@ -1,7 +1,7 @@
 <div class="bg-gray-50 rounded-lg p-3 sm:p-4">
-  <div class="flex items-center justify-between mb-2">
+  <div class="flex items-center justify-between">
     <div class="flex flex-col space-y-1 flex-grow">
-      <div class="flex items-center">
+      <div class="flex items-center mb-2">
         <div class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
           <%= memo.category %>
         </div>
@@ -33,10 +33,7 @@
       </div>
     <% end %>
   </div>
-  <div class="text-base text-gray-900">
-    <%= simple_format(memo.content, class: "m-0") %>
-  </div>
-  <% if memo.students.any? %>
+  <% if memo.students.count > 0 %>
     <div class="mt-2 flex flex-wrap gap-2">
       <% memo.students.each do |student| %>
         <%= link_to student_path(student), class: "inline-flex items-center px-2 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-800 hover:bg-gray-200" do %>
@@ -45,4 +42,7 @@
       <% end %>
     </div>
   <% end %>
+  <div class="text-base text-gray-900">
+    <%= simple_format(memo.content, class: "mt-2") %>
+  </div>
 </div>
