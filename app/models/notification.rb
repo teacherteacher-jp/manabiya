@@ -2,10 +2,11 @@ class Notification
   include ApplicationHelper
 
   THREAD_TYPES = {
-    school_general: "school_general_thread_id",
-    school_contact: "school_contact_thread_id",
+    event: "event_thread_id",
     profile: "profile_thread_id",
-    event: "event_thread_id"
+    school_contact: "school_contact_thread_id",
+    school_general: "school_general_thread_id",
+    school_report: "school_report_thread_id",
   }.freeze
 
   def initialize
@@ -21,19 +22,19 @@ class Notification
   end
 
   def notify_student_created(student)
-    thread_id = thread_id_for(:school_general)
+    thread_id = thread_id_for(:school_report)
     content = "#{student.grade}の生徒さんが登録されました！"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
   def notify_student_updated(student)
-    thread_id = thread_id_for(:school_general)
+    thread_id = thread_id_for(:school_report)
     content = "#{student.grade}の生徒さんの情報が更新されました！"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
   def notify_student_memo_created(student_memo)
-    thread_id = thread_id_for(:school_general)
+    thread_id = thread_id_for(:school_report)
     content = "<@!#{student_memo.member.discord_uid}> さんが #{student_memo.student.grade}の生徒さんついてのメモを投稿しました！"
     link = app_base_url + "/students/#{student_memo.student.id}"
     embeds = [{
@@ -44,7 +45,7 @@ class Notification
   end
 
   def notify_school_memo_created(school_memo)
-    thread_id = thread_id_for(:school_general)
+    thread_id = thread_id_for(:school_report)
     content = "<@!#{school_memo.member.discord_uid}> さんがメモを投稿しました！"
 
     if school_memo.students.count > 0
