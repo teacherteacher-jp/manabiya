@@ -53,6 +53,7 @@ regions = [
   { code: "CN", name: "中国" },
   { code: "IN", name: "インド" },
   { code: "NZ", name: "ニュージーランド" },
+  { code: "TH", name: "タイ" },
 ]
 
 regions.each do |r|
