@@ -8,6 +8,7 @@ gem "bootsnap", require: false
 gem "holiday_jp"
 gem "importmap-rails"
 gem "jbuilder"
+gem "kaminari"
 gem "mission_control-jobs"
 gem "omniauth-discord"
 gem "omniauth-rails_csrf_protection"

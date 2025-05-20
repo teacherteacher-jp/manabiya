@@ -3,7 +3,9 @@ class SchoolMemosController < ApplicationController
   before_action :redirect_if_no_student_info_access
 
   def index
-    @school_memos = SchoolMemo.includes(:member, :students).order(id: :desc)
+    @page = params[:page].present? ? params[:page].to_i : 1
+    @school_memos_count = SchoolMemo.count
+    @school_memos = SchoolMemo.includes(:member, :students).order(id: :desc).page(@page).per(20)
   end
 
   def new
