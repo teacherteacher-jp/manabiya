@@ -7,7 +7,8 @@ class StudentsController < ApplicationController
   end
 
   def show
-    @school_memos = @student.school_memos.order(id: :desc)
+    @page = params[:page].present? ? params[:page].to_i : 1
+    @school_memos = @student.school_memos.order(id: :desc).page(@page).per(10)
   end
 
   def new
