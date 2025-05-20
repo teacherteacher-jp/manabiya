@@ -133,6 +133,18 @@ GEM
     json (2.12.0)
     jwt (2.10.1)
       base64
+    kaminari (1.2.2)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.2)
+      kaminari-activerecord (= 1.2.2)
+      kaminari-core (= 1.2.2)
+    kaminari-actionview (1.2.2)
+      actionview
+      kaminari-core (= 1.2.2)
+    kaminari-activerecord (1.2.2)
+      activerecord
+      kaminari-core (= 1.2.2)
+    kaminari-core (1.2.2)
     logger (1.7.0)
     loofah (2.24.1)
       crass (~> 1.0.2)
@@ -353,6 +365,7 @@ DEPENDENCIES
   holiday_jp
   importmap-rails
   jbuilder
+  kaminari
   mission_control-jobs
   omniauth-discord
   omniauth-rails_csrf_protection
