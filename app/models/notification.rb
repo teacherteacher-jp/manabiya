@@ -156,6 +156,13 @@ class Notification
     { title:, description:, }
   end
 
+  def notify_assignment_created(assignment)
+    thread_id = thread_id_for(:school_contact)
+    schedule = assignment.schedule
+    content = "#{mdw(schedule.date)}の#{Schedule.name_of(schedule.slot)}の時間に#{schedule.member.name}さんが登録されました！"
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
   def notify_member_region_created(member_region)
     thread_id = thread_id_for(:profile)
     region_with_category = "「%s」(%s)" % [member_region.region.name, member_region.category]
