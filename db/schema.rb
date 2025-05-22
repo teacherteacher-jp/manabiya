@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_07_050309) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_22_134627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -227,17 +227,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_050309) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
-  create_table "student_memos", force: :cascade do |t|
-    t.bigint "student_id", null: false
-    t.text "content", null: false
-    t.integer "category", null: false
-    t.bigint "member_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["member_id"], name: "index_student_memos_on_member_id"
-    t.index ["student_id"], name: "index_student_memos_on_student_id"
-  end
-
   create_table "students", force: :cascade do |t|
     t.string "name", limit: 20, null: false
     t.integer "grade", null: false
@@ -260,7 +249,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_050309) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
-  add_foreign_key "student_memos", "members"
-  add_foreign_key "student_memos", "students"
   add_foreign_key "students", "members", column: "parent_member_id"
 end

@@ -33,17 +33,6 @@ class Notification
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
-  def notify_student_memo_created(student_memo)
-    thread_id = thread_id_for(:school_report)
-    content = "<@!#{student_memo.member.discord_uid}> さんが #{student_memo.student.grade}の生徒さんついてのメモを投稿しました！"
-    link = app_base_url + "/students/#{student_memo.student.id}"
-    embeds = [{
-      description: [student_memo.content, link].join("\n\n"),
-      author: { name: student_memo.category, icon_url: student_memo.member.icon_url },
-    }]
-    pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
-  end
-
   def notify_school_memo_created(school_memo)
     thread_id = thread_id_for(:school_report)
     content = "<@!#{school_memo.member.discord_uid}> さんがメモを投稿しました！"

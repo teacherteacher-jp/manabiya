@@ -1,6 +1,5 @@
 class Student < ApplicationRecord
   belongs_to :parent_member, class_name: 'Member', optional: true
-  has_many :memos, dependent: :destroy, class_name: 'StudentMemo'
   has_many :school_memo_students, dependent: :destroy
   has_many :school_memos, through: :school_memo_students
 
