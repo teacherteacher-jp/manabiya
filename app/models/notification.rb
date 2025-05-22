@@ -49,8 +49,9 @@ class Notification
     end
 
     embeds = [{
-      description: school_memo.content,
       author: { name: school_memo.category, icon_url: school_memo.member.icon_url },
+      title: ymdw(school_memo.date),
+      description: school_memo.content,
     }]
     pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
