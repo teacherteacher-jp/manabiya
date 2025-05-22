@@ -159,8 +159,11 @@ class Notification
   def notify_assignment_created(assignment)
     thread_id = thread_id_for(:school_contact)
     schedule = assignment.schedule
-    content = "#{mdw(schedule.date)}の#{Schedule.name_of(schedule.slot)}の時間に#{schedule.member.name}さんが登録されました！"
-    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+    embeds = [{
+      title: ":white_check_mark: 参加登録されました",
+      description: [mdw(schedule.date), Schedule.name_of(schedule.slot), Schedule.time_of(schedule.slot)].join(" ") + " | <@!#{schedule.member.discord_uid}>さん"
+    }]
+    pp @bot.send_message(channel_or_thread_id: thread_id, embeds:)
   end
 
   def notify_member_region_created(member_region)
