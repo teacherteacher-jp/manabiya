@@ -5,7 +5,7 @@ class SchoolMemo < ApplicationRecord
 
   validates :content, presence: true, length: { maximum: 1000 }
   validates :category, presence: true
-
+  validates :date, presence: true
   after_create_commit :notify
 
   enum :category, {
