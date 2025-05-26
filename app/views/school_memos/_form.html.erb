@@ -39,7 +39,7 @@
     <%= f.label(:content, "メモ内容", class: "block text-sm font-medium text-gray-700") %>
     <div class="relative">
       <%= f.text_area(:content, rows: 3,
-          class: "mt-1 p-2 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm field-sizing-content",
+          class: "mt-1 p-2 pb-8 block w-full rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm field-sizing-content",
           data: {
             character_counter_target: "input",
             action: "input->character-counter#updateCounter"
