@@ -18,6 +18,9 @@ class Member < ApplicationRecord
 
     bot = Discord::Bot.new(Rails.application.credentials.dig("discord_app", "bot_token"))
     server_member = bot.server_member(discord_uid)
+
+    return unless server_member
+
     self.update_columns(server_joined_at: server_member.dig("joined_at"))
   end
 
