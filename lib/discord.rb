@@ -41,7 +41,13 @@ module Discord
     end
 
     def server_member(member_id)
-      JSON.parse(get("/guilds/#{server_id}/members/#{member_id}").body)
+      response = get("/guilds/#{server_id}/members/#{member_id}")
+
+      if response.status == 200
+        JSON.parse(response.body)
+      else
+        Rails.logger.error "Failed to get server member: #{response.status} - #{response.body}"
+      end
     end
 
     def invitations
