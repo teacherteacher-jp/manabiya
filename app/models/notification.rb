@@ -6,7 +6,7 @@ class Notification
     profile: "profile_thread_id",
     school_contact: "school_contact_thread_id",
     school_general: "school_general_thread_id",
-    school_report: "school_report_thread_id",
+    school_report: "admin_school_thread_id",
   }.freeze
 
   def initialize
