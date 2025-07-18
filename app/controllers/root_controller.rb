@@ -21,5 +21,6 @@ class RootController < ApplicationController
     ]
 
     @recent_events = Event.in_future.order(start_at: :asc).limit(3)
+    @vacation_period = Oyasumi.current_vacation_period
   end
 end
