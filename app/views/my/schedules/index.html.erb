@@ -3,6 +3,8 @@
 <h2 class="text-2xl font-bold mb-4">
   わたしのスケジュール
 </h2>
+
+<%= render "shared/vacation_notice", vacation_period: @vacation_period %>
 <%= form_with(url: schedules_path, method: :post, data: { turbo: false }, class: "mb-24") do |f| %>
   <% @dates.each do |date| %>
     <div class="mb-6">
