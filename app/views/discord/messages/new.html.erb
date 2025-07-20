@@ -9,7 +9,7 @@
 
   <div class="bg-white shadow rounded-lg">
     <div class="px-4 py-5 sm:p-6">
-      <%= form_with url: discord_messages_path, local: true do |form| %>
+      <%= form_with url: discord_messages_path, local: true, html: { multipart: true } do |form| %>
         <div class="space-y-6">
           <div>
             <%= form.label :channel_id, "チャンネル/スレッドID", class: "block text-sm font-medium text-gray-700" %>
@@ -32,6 +32,17 @@
                   placeholder: "送信するメッセージを入力してください",
                   required: true %>
             </div>
+          </div>
+
+          <div>
+            <%= form.label :images, "画像（複数選択可）", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= form.file_field :images,
+                  multiple: true,
+                  accept: "image/*",
+                  class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" %>
+            </div>
+            <p class="mt-2 text-sm text-gray-500">最大10ファイル、各ファイル25MBまで（ブーストサーバーは50MB）</p>
           </div>
         </div>
 

@@ -9,9 +9,17 @@ class Discord::MessagesController < ApplicationController
     bot_token = Rails.application.credentials.dig("discord_app", "bot_token")
     bot = ::Discord::Bot.new(bot_token)
 
+    # アップロードされたファイルを配列に変換
+    files = if params[:images].present?
+      Array(params[:images]).select(&:present?)
+    else
+      nil
+    end
+
     result = bot.send_message(
       channel_or_thread_id: params[:channel_id],
-      content: params[:content]
+      content: params[:content],
+      files: files
     )
 
     pp result
