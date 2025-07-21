@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_22_140928) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_21_140018) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_22_140928) do
     t.boolean "admin", default: false
     t.index ["discord_uid"], name: "index_members_on_discord_uid", unique: true
     t.index ["server_joined_at"], name: "index_members_on_server_joined_at"
+  end
+
+  create_table "metalife_users", force: :cascade do |t|
+    t.string "metalife_id"
+    t.string "name"
+    t.string "linkable_type"
+    t.bigint "linkable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["linkable_type", "linkable_id"], name: "index_metalife_users_on_linkable"
+    t.index ["metalife_id"], name: "index_metalife_users_on_metalife_id", unique: true
   end
 
   create_table "regions", force: :cascade do |t|

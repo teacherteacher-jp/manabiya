@@ -73,5 +73,10 @@ Rails.application.routes.draw do
   post   "/discord/messages",                      to: "discord/messages#create",
                                                    as: "discord_messages"
 
+  get    "/metalife_users",                        to: "metalife_users#index",
+                                                   as: "metalife_users"
+  patch  "/metalife_users/:id",                    to: "metalife_users#update",
+                                                   as: "metalife_user"
+
   root   "root#index"
 end
