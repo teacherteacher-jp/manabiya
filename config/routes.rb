@@ -68,5 +68,10 @@ Rails.application.routes.draw do
   post   "/webhooks/metalife",                     to: "webhooks/metalife#create"
   post   "/webhooks/line",                         to: "webhooks/line#create"
 
+  get    "/discord/messages/new",                  to: "discord/messages#new",
+                                                   as: "new_discord_message"
+  post   "/discord/messages",                      to: "discord/messages#create",
+                                                   as: "discord_messages"
+
   root   "root#index"
 end
