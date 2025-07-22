@@ -189,4 +189,25 @@ class Notification
     embeds = events.map(&:to_embed)
     pp @bot.send_message(channel_or_thread_id: thread_id, content:, embeds:)
   end
+
+  def notify_metalife_user_created(metalife_user)
+    thread_id = thread_id_for(:school_report)
+    content = "新しいMetaLifeユーザーが検出されました\n" \
+              "ID: #{metalife_user.metalife_id}\n" \
+              "名前: #{metalife_user.name}\n" \
+              "#{app_base_url}/metalife_users"
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
+  def notify_metalife_user_school_entered(metalife_user, space_id)
+    student = metalife_user.linkable
+    return unless student.is_a?(Student)
+
+    thread_id = thread_id_for(:school_contact)
+    content = "生徒さんがコンコンのスペースに入室しました\n" \
+              "#{app_base_url}/students/#{student.id}"
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
 end

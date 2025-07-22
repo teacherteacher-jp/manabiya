@@ -28,6 +28,17 @@
           <% end %>
         </dd>
       </div>
+      <% if @student.metalife_user.present? %>
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-500">MetaLifeユーザー</dt>
+          <dd class="mt-1 text-lg font-medium text-gray-900">
+            <%= @student.metalife_user.name %>
+            <div class="text-sm text-gray-500">
+              (<%= @student.metalife_user.updated_at.strftime("%Y-%m-%d %H:%M") %>時点での表示名)
+            </div>
+          </dd>
+        </div>
+      <% end %>
     </dl>
   </div>
 

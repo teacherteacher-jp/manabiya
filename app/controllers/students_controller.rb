@@ -44,7 +44,7 @@ class StudentsController < ApplicationController
   private
 
   def set_student
-    @student = Student.find(params[:id])
+    @student = Student.includes(:metalife_user).find(params[:id])
   end
 
   def student_params
