@@ -26,6 +26,8 @@ Rails.application.routes.draw do
                                                    as: "edit_student"
   patch  "/students/:id",                          to: "students#update"
   post   "/students",                              to: "students#create"
+  get    "/students/:id/school_memos",             to: "students/school_memos#index",
+                                                   as: "student_school_memos"
   get    "/school_memos",                          to: "school_memos#index",
                                                    as: "school_memos"
   get    "/school_memos/new",                      to: "school_memos#new",
