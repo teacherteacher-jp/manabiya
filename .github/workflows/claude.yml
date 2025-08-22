@@ -19,10 +19,12 @@ jobs:
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: read
-      issues: read
+      contents: write
+      pull-requests: write
+      issues: write
       id-token: write
+    timeout-minutes: 30
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,4 +36,7 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-
+          allowed_tools: "Agent,Bash,Edit,MultiEdit,WebFetch,WebSearch,Write"
+          custom_instructions: |
+            - 日本語で会話すること
+            - コードレビューや質問に対して、具体的で建設的なフィードバックを提供すること
