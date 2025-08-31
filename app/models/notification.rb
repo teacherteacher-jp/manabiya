@@ -204,7 +204,7 @@ class Notification
     student = metalife_user.linkable
     return unless student.is_a?(Student)
 
-    thread_id = thread_id_for(:school_contact)
+    thread_id = thread_id_for(:school_report)
     content = "生徒さんがコンコンのスペースに入室しました\n" \
               "#{app_base_url}/students/#{student.id}"
 
