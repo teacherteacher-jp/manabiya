@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_21_140018) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_10_140456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_140018) do
     t.boolean "admin", default: false
     t.index ["discord_uid"], name: "index_members_on_discord_uid", unique: true
     t.index ["server_joined_at"], name: "index_members_on_server_joined_at"
+  end
+
+  create_table "metalife_events", force: :cascade do |t|
+    t.bigint "metalife_user_id"
+    t.string "event_type", null: false
+    t.string "space_id", null: false
+    t.string "floor_id"
+    t.text "message"
+    t.jsonb "payload"
+    t.datetime "occurred_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_type", "occurred_at"], name: "index_metalife_events_on_event_type_and_occurred_at"
+    t.index ["metalife_user_id", "occurred_at"], name: "index_metalife_events_on_metalife_user_id_and_occurred_at"
+    t.index ["metalife_user_id"], name: "index_metalife_events_on_metalife_user_id"
+    t.index ["occurred_at"], name: "index_metalife_events_on_occurred_at"
+    t.index ["space_id"], name: "index_metalife_events_on_space_id"
   end
 
   create_table "metalife_users", force: :cascade do |t|
@@ -251,6 +268,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_140018) do
   add_foreign_key "family_members", "members"
   add_foreign_key "member_regions", "members"
   add_foreign_key "member_regions", "regions"
+  add_foreign_key "metalife_events", "metalife_users"
   add_foreign_key "schedules", "members"
   add_foreign_key "school_memo_students", "school_memos"
   add_foreign_key "school_memo_students", "students"
