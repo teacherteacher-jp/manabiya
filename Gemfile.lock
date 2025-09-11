@@ -219,6 +219,7 @@ GEM
     omniauth-rails_csrf_protection (1.0.2)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
+    ostruct (0.6.3)
     pg (1.6.2)
     pg (1.6.2-aarch64-linux)
     pg (1.6.2-aarch64-linux-musl)
@@ -375,6 +376,7 @@ DEPENDENCIES
   mission_control-jobs
   omniauth-discord
   omniauth-rails_csrf_protection
+  ostruct
   pg
   puma
   rails
