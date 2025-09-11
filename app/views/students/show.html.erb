@@ -44,7 +44,7 @@
             <dd class="mt-1 space-y-1">
               <% @student.recent_entry_days.each do |entry| %>
                 <div class="text-sm text-gray-700">
-                  <%= entry[:date].strftime("%Y-%m-%d") %> (<%= entry[:time].strftime("%H:%M") %>から)
+                  <%= entry[:date].strftime("%Y-%m-%d") %> (<%= entry[:time].strftime("%-H:%M") %>から)
                 </div>
               <% end %>
             </dd>
