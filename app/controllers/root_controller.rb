@@ -4,6 +4,11 @@ class RootController < ApplicationController
       { text: "ボランティアのスケジュールを入力する", path: my_schedules_path },
       { text: "ボランティアのスケジュールを確認する", path: schedules_path },
     ]
+    if current_member.admin?
+      @school_menu_items << {
+        text: "MetaLifeユーザを管理する (現在#{MetalifeUser.count}件)", path: metalife_users_path
+      }
+    end
     if current_member.can_access_student_info?
       [
         { text: "生徒さんたちの情報を確認する", path: students_path },
