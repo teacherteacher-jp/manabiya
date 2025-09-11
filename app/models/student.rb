@@ -58,4 +58,13 @@ class Student < ApplicationRecord
       time: event.occurred_at.in_time_zone('Tokyo')
     }
   end
+
+  def recently_entered?(hours: 72)
+    return false unless metalife_user
+
+    metalife_user.metalife_events
+      .where(event_type: 'enter')
+      .where('occurred_at >= ?', hours.hours.ago)
+      .exists?
+  end
 end
