@@ -1,5 +1,6 @@
 class MetalifeUser < ApplicationRecord
   belongs_to :linkable, polymorphic: true, optional: true
+  has_many :metalife_events, dependent: :destroy
 
   validates :metalife_id, presence: true, uniqueness: true
   validates :name, presence: true

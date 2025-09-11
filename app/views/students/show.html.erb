@@ -38,6 +38,18 @@
             </div>
           </dd>
         </div>
+        <% if @student.recent_entry_days.any? %>
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">最近の入室日</dt>
+            <dd class="mt-1 space-y-1">
+              <% @student.recent_entry_days.each do |entry| %>
+                <div class="text-sm text-gray-700">
+                  <%= entry[:date].strftime("%Y-%m-%d") %> (<%= entry[:time].strftime("%-H:%M") %>から)
+                </div>
+              <% end %>
+            </dd>
+          </div>
+        <% end %>
       <% end %>
     </dl>
   </div>

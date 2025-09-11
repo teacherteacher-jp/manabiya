@@ -13,21 +13,69 @@
       <% end %>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <% @students.each do |student| %>
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <h4 class="text-lg font-medium text-gray-900 mb-2"><%= student.name %></h4>
-            <p class="text-sm text-gray-500 mb-2"><%= student.grade %></p>
-            <% if student.parent_member %>
-              <p class="text-sm text-gray-500 mb-2">保護者: <%= student.parent_member.name %></p>
-            <% end %>
-            <div class="flex justify-end">
-              <%= link_to '詳細', student_path(student), class: "text-indigo-600 hover:text-indigo-900" %>
-            </div>
-          </div>
-        </div>
-      <% end %>
+    <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+      <table class="min-w-full divide-y divide-gray-300">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              名前
+            </th>
+            <th scope="col" class="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              学年
+            </th>
+            <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              保護者
+            </th>
+            <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              最近の入室
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @students.each do |student| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-3 sm:px-6 py-4 text-sm font-medium">
+                <div class="flex flex-col">
+                  <%= link_to student.name, student_path(student), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <div class="sm:hidden text-xs text-gray-500 mt-1">
+                    <%= student.grade %>
+                    <% if student.parent_member %>
+                      <span class="mx-1">•</span>
+                      保護者: <%= link_to student.parent_member.name, member_path(student.parent_member), class: "text-indigo-600 hover:text-indigo-900" %>
+                    <% end %>
+                  </div>
+                  <div class="hidden sm:block md:hidden text-xs text-gray-500 mt-1">
+                    <% if student.parent_member %>
+                      保護者: <%= link_to student.parent_member.name, member_path(student.parent_member), class: "text-indigo-600 hover:text-indigo-900" %>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+              <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= student.grade %>
+              </td>
+              <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm">
+                <% if student.parent_member %>
+                  <%= link_to student.parent_member.name, member_path(student.parent_member), class: "text-indigo-600 hover:text-indigo-900" %>
+                <% else %>
+                  <span class="text-gray-400">未登録</span>
+                <% end %>
+              </td>
+              <td class="px-3 sm:px-6 py-4 text-sm text-gray-500">
+                <% if entry = student.latest_entry %>
+                  <div class="whitespace-nowrap">
+                    <%= entry[:date].strftime("%-m/%d") %>
+                    <span class="hidden sm:inline"><%= entry[:time].strftime("%-H:%M") %></span>
+                    <span class="sm:hidden text-xs block"><%= entry[:time].strftime("%-H:%M") %></span>
+                  </div>
+                <% else %>
+                  <span class="text-gray-400">-</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
