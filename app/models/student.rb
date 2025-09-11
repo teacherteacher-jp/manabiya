@@ -30,4 +30,16 @@ class Student < ApplicationRecord
   def notify_updated
     Notification.new.notify_student_updated(self)
   end
+
+  def recent_entry_days(limit: 3)
+    return [] unless metalife_user
+
+    metalife_user.metalife_events
+      .where(event_type: 'enter')
+      .where('occurred_at >= ?', Time.zone.now.beginning_of_day - 30.days)
+      .order(occurred_at: :desc)
+      .group_by { |event| event.occurred_at.in_time_zone('Tokyo').to_date }
+      .map { |date, events| { date: date, time: events.min_by(&:occurred_at).occurred_at.in_time_zone('Tokyo') } }
+      .first(limit)
+  end
 end
