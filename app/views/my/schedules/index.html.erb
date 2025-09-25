@@ -7,34 +7,42 @@
 <%= render "shared/vacation_notice", vacation_period: @vacation_period %>
 <%= form_with(url: schedules_path, method: :post, data: { turbo: false }, class: "mb-24") do |f| %>
   <% @dates.each do |date| %>
+    <% holiday_info = HolidayJp.between(date, date).first %>
+    <% holiday = date.saturday? || date.sunday? || holiday_info %>
     <div class="mb-6">
-      <h3 class="text-xl font-bold mb-2"><%= mdw(date) %></h3>
-      <!--<div class="flex justify-center items-center space-x-4 mb-2">-->
-      <div>
-        <% Schedule.slots.keys.each do |slot| %>
-          <% schedule = current_member.schedules.find_or_initialize_by(date: date, slot: slot) %>
-          <% status_selected = schedule.new_record? ? nil : schedule.status_before_type_cast %>
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-lg font-bold">
-              <%= Schedule.time_of(slot) %> : <%= Schedule.name_of(slot) %>
-            </span>
-            <span class="status-selection flex space-x-2">
-              <%= button_tag(type: 'button', data: { status: 0, date: date.to_s, slot: slot }, class: "inline-block cursor-pointer px-4 py-2 rounded-md text-white bg-sky-400 #{'selected' if status_selected == 0}") do %>
-                OK
-              <% end %>
-              <%= button_tag(type: 'button', data: { status: 2, date: date.to_s, slot: slot }, class: "inline-block cursor-pointer px-4 py-2 rounded-md text-white bg-sky-400 #{'selected' if status_selected == 2}") do %>
-                NG
-              <% end %>
-            </span>
-            <%= hidden_field_tag("schedules[][date]", date) %>
-            <%= hidden_field_tag("schedules[][slot]", slot) %>
-            <%= hidden_field_tag("schedules[][status]", status_selected, id: "#{date}-#{slot}-status") %>
-          </div>
-          <div class="mb-4">
-            <%= text_field_tag("schedules[][memo]", schedule.memo, placeholder: "メモ", class: "w-full border-none p-2 border-1 border-gray-500 rounded-md bg-white") %>
-          </div>
-        <% end %>
-      </div>
+      <h3 class="text-xl font-bold mb-2"><%= mdw(date) %><%= " #{holiday_info.name}" if holiday_info %></h3>
+      <% if date.wednesday? %>
+        <p class="text-lg font-semibold text-gray-600">デジタルデトックスデー</p>
+      <% elsif holiday %>
+        <p class="text-lg font-semibold text-gray-600">おやすみ</p>
+      <% else %>
+        <!--<div class="flex justify-center items-center space-x-4 mb-2">-->
+        <div>
+          <% Schedule.slots.keys.each do |slot| %>
+            <% schedule = current_member.schedules.find_or_initialize_by(date: date, slot: slot) %>
+            <% status_selected = schedule.new_record? ? nil : schedule.status_before_type_cast %>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-lg font-bold">
+                <%= Schedule.time_of(slot) %> : <%= Schedule.name_of(slot) %>
+              </span>
+              <span class="status-selection flex space-x-2">
+                <%= button_tag(type: 'button', data: { status: 0, date: date.to_s, slot: slot }, class: "inline-block cursor-pointer px-4 py-2 rounded-md text-white bg-sky-400 #{'selected' if status_selected == 0}") do %>
+                  OK
+                <% end %>
+                <%= button_tag(type: 'button', data: { status: 2, date: date.to_s, slot: slot }, class: "inline-block cursor-pointer px-4 py-2 rounded-md text-white bg-sky-400 #{'selected' if status_selected == 2}") do %>
+                  NG
+                <% end %>
+              </span>
+              <%= hidden_field_tag("schedules[][date]", date) %>
+              <%= hidden_field_tag("schedules[][slot]", slot) %>
+              <%= hidden_field_tag("schedules[][status]", status_selected, id: "#{date}-#{slot}-status") %>
+            </div>
+            <div class="mb-4">
+              <%= text_field_tag("schedules[][memo]", schedule.memo, placeholder: "メモ", class: "w-full border-none p-2 border-1 border-gray-500 rounded-md bg-white") %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   <% end %>
   <%= f.submit("入力を保存する", class: "fixed bottom-4 right-4 bg-rose-500 text-lg font-bold text-white px-6 py-4 rounded-md cursor-pointer") %>
