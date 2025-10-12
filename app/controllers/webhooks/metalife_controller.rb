@@ -22,11 +22,6 @@ class Webhooks::MetalifeController < WebhooksController
     metalife_user.update!(name: params[:name])
 
     save_metalife_event(metalife_user, params)
-
-    # コンコン入室時の通知
-    if params[:when] == "enter"
-      metalife_user.notify_school_entered(params[:spaceId])
-    end
   end
 
   def handle_community_center_event(params)
@@ -39,8 +34,6 @@ class Webhooks::MetalifeController < WebhooksController
   end
 
   def save_metalife_event(metalife_user, params)
-    return unless metalife_user
-
     MetalifeEvent.create!(
       metalife_user: metalife_user,
       event_type: params[:when],
