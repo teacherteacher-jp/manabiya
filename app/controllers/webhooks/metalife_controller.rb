@@ -1,14 +1,13 @@
 class Webhooks::MetalifeController < WebhooksController
   def create
     space_id = params[:spaceId]
-
-    metalife_user = MetalifeUser.find_or_initialize_by(metalife_id: params[:id])
-    metalife_user.update!(name: params[:name])
-
-    save_metalife_event(metalife_user, params)
+    school_space_id = Rails.application.credentials.dig(:metalife, :school_space_id)
+    community_center_space_id = Rails.application.credentials.dig(:metalife, :community_center_space_id)
 
     case space_id
-    when Rails.application.credentials.dig(:metalife, :community_center_space_id)
+    when school_space_id
+      handle_school_event(params)
+    when community_center_space_id
       handle_community_center_event(params)
     end
 
@@ -16,6 +15,14 @@ class Webhooks::MetalifeController < WebhooksController
   end
 
   private
+
+  def handle_school_event(params)
+    # コンコン(school_space_id)の場合のみMetalifeUserを管理
+    metalife_user = MetalifeUser.find_or_initialize_by(metalife_id: params[:id])
+    metalife_user.update!(name: params[:name])
+
+    save_metalife_event(metalife_user, params)
+  end
 
   def handle_community_center_event(params)
     content = params[:text]
