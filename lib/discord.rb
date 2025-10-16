@@ -123,5 +123,172 @@ module Discord
     def server_id
       Rails.application.credentials.dig("discord", "server_id")
     end
+
+    # 特定のチャンネル情報を取得
+    # @param channel_id [String] チャンネルID
+    # @return [Hash, nil] チャンネル情報
+    def get_channel(channel_id)
+      response = get("/channels/#{channel_id}")
+
+      return nil unless response.status == 200
+
+      JSON.parse(response.body)
+    rescue => e
+      Rails.logger.error "Failed to get channel #{channel_id}: #{e.message}"
+      nil
+    end
+
+    # サーバー内の全チャンネルを取得
+    # @return [Array<Hash>] チャンネル情報の配列
+    def get_all_channels
+      response = get("/guilds/#{server_id}/channels")
+
+      return [] unless response.status == 200
+
+      channels = JSON.parse(response.body)
+
+      # テキストチャンネル (type: 0) とフォーラムチャンネル (type: 15) をフィルタ
+      channels.select { |ch| [0, 15].include?(ch["type"]) }
+    rescue => e
+      Rails.logger.error "Failed to get channels: #{e.message}"
+      []
+    end
+
+    # 特定カテゴリに属するチャンネルを取得
+    # @param category_id [String] カテゴリID
+    # @return [Array<Hash>] チャンネル情報の配列
+    def get_channels_in_category(category_id)
+      all_channels = get_all_channels
+
+      all_channels.select { |ch| ch["parent_id"] == category_id }
+    end
+
+    # Forumチャンネルの全スレッド一覧を取得（アクティブ + アーカイブ）
+    # @param forum_channel_id [String] ForumチャンネルID
+    # @return [Array<Hash>] スレッド情報の配列
+    def get_all_threads_in_forum(forum_channel_id)
+      all_threads = []
+
+      # アクティブなスレッドを取得
+      active_response = get("/channels/#{forum_channel_id}/threads/active")
+      if active_response.status == 200
+        active_data = JSON.parse(active_response.body)
+        all_threads.concat(active_data["threads"] || [])
+      end
+
+      # アーカイブされたスレッドを取得
+      archived_response = get("/channels/#{forum_channel_id}/threads/archived/public")
+      if archived_response.status == 200
+        archived_data = JSON.parse(archived_response.body)
+        all_threads.concat(archived_data["threads"] || [])
+      end
+
+      all_threads
+    rescue => e
+      Rails.logger.error "Failed to get threads in forum #{forum_channel_id}: #{e.message}"
+      []
+    end
+
+    # チャンネルの属するカテゴリIDを取得
+    # @param channel_id [String] チャンネルID
+    # @return [String, nil] カテゴリID
+    def get_channel_category(channel_id)
+      channel = get_channel(channel_id)
+      return nil unless channel
+
+      # スレッドの場合 (type == 11 または 12)、parent_idは親チャンネルを指す
+      # 通常チャンネルの場合、parent_idはカテゴリを指す
+      if [11, 12].include?(channel["type"])
+        # スレッドの場合: 親チャンネルのカテゴリを取得
+        parent_channel_id = channel["parent_id"]
+        return nil unless parent_channel_id
+
+        parent_channel = get_channel(parent_channel_id)
+        parent_channel&.dig("parent_id")
+      else
+        # 通常チャンネルの場合: そのままparent_idがカテゴリ
+        channel["parent_id"]
+      end
+    end
+
+    # チャンネルから過去メッセージを取得して検索
+    # @param channel_id [String] チャンネルID
+    # @param query [String] 検索キーワード
+    # @param limit [Integer] 取得するメッセージ数の上限
+    # @return [Array<Hash>] メッセージの配列
+    def search_messages(channel_id:, query:, limit: 100)
+      response = get("/channels/#{channel_id}/messages?limit=#{limit}")
+
+      return [] unless response.status == 200
+
+      messages = JSON.parse(response.body)
+      query_lower = query.downcase
+
+      messages.select do |msg|
+        content_lower = msg["content"]&.downcase
+        content_lower&.include?(query_lower)
+      end
+    rescue => e
+      Rails.logger.error "Failed to search messages in channel #{channel_id}: #{e.message}"
+      []
+    end
+
+    # 複数チャンネルから検索
+    # @param channel_ids [Array<String>] チャンネルIDの配列
+    # @param query [String] 検索キーワード
+    # @param limit [Integer] 1チャンネルあたりの取得数
+    # @param max_results [Integer] 最終的に返す最大件数
+    # @return [Array<Hash>] メッセージの配列 (新しい順)
+    def search_messages_in_channels(channel_ids:, query:, limit: 50, max_results: 10)
+      all_results = []
+
+      channel_ids.each do |channel_id|
+        results = search_messages(channel_id: channel_id, query: query, limit: limit)
+        all_results.concat(results)
+      end
+
+      # 新しい順にソートして上限まで取得
+      all_results
+        .sort_by { |msg| -Time.parse(msg["timestamp"]).to_i }
+        .take(max_results)
+    end
+
+    # サーバー全体から検索
+    # @param query [String] 検索キーワード
+    # @param limit [Integer] 1チャンネルあたりの取得数
+    # @param max_results [Integer] 最終的に返す最大件数
+    # @param category_id [String, nil] カテゴリIDで絞り込み (nilの場合は全体検索)
+    # @return [Array<Hash>] メッセージの配列 (新しい順)
+    def search_messages_in_server(query:, limit: 30, max_results: 10, category_id: nil)
+      all_channels = get_all_channels
+
+      if category_id
+        all_channels = all_channels.select { |ch| ch["parent_id"] == category_id }
+        Rails.logger.info "Filtering channels by category: #{category_id}"
+      end
+
+      # Forumチャンネルと通常チャンネルを分離
+      forum_channels = all_channels.select { |ch| ch["type"] == 15 }
+      text_channels = all_channels.select { |ch| ch["type"] == 0 }
+
+      # 検索対象のチャンネルID一覧を作成
+      channel_ids = text_channels.map { |ch| ch["id"] }
+
+      # Forumチャンネルの全スレッド（アクティブ + アーカイブ）も追加
+      forum_channels.each do |forum|
+        threads = get_all_threads_in_forum(forum["id"])
+        thread_ids = threads.map { |t| t["id"] }
+        channel_ids.concat(thread_ids)
+      end
+
+      Rails.logger.info "Searching in #{channel_ids.size} channels/threads (#{text_channels.size} text channels, #{forum_channels.size} forums) for query: #{query}"
+
+      search_messages_in_channels(
+        channel_ids: channel_ids,
+        query: query,
+        limit: limit,
+        max_results: max_results
+      )
+    end
   end
 end
