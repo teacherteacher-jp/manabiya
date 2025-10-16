@@ -28,14 +28,10 @@ module Llm
 
       params[:system] = system_prompt if system_prompt.present?
 
-      Rails.logger.info "Calling Claude API with params: #{params.inspect}"
       response = @client.messages.create(**params)
-      Rails.logger.info "Claude API raw response: #{response.inspect}"
 
       # Anthropic APIのレスポンス構造からテキストを抽出
-      text = extract_text_from_response(response)
-      Rails.logger.info "Extracted text from response: #{text.inspect}"
-      text
+      extract_text_from_response(response)
     rescue Faraday::Error => e
       Rails.logger.error("Claude API error: #{e.message}")
       raise StandardError, "Claude API request failed: #{e.message}"

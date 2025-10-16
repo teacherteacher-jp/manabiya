@@ -7,11 +7,9 @@ class DiscordLlmResponseJob < ApplicationJob
   # @param user_name [String] ユーザー名
   def perform(channel_id:, thread_id:, user_message:, user_name:)
     Rails.logger.info "DiscordLlmResponseJob started for thread: #{thread_id}"
-    Rails.logger.info "User message: #{user_message}"
 
     # 会話履歴を構築
     messages = build_conversation_history(thread_id, user_message)
-    Rails.logger.info "Messages for LLM: #{messages.inspect}"
 
     # LLMで応答を生成
     llm = create_llm_provider
@@ -21,9 +19,6 @@ class DiscordLlmResponseJob < ApplicationJob
       temperature: 0.7,
       max_tokens: 2048
     )
-
-    Rails.logger.info "LLM response text: #{response_text.inspect}"
-    Rails.logger.info "LLM response length: #{response_text.to_s.length}"
 
     # Discordに返信
     send_to_discord(thread_id, response_text)
@@ -78,16 +73,11 @@ class DiscordLlmResponseJob < ApplicationJob
 
   # Discordにメッセージを送信
   def send_to_discord(thread_id, message)
-    Rails.logger.info "Sending message to Discord thread: #{thread_id}"
-    Rails.logger.info "Message content: #{message}"
-
     bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
-    response = bot.send_message(
+    bot.send_message(
       channel_or_thread_id: thread_id,
       content: message
     )
-
-    Rails.logger.info "Discord API response: #{response.inspect}"
   rescue => e
     Rails.logger.error "Failed to send message to Discord: #{e.class} - #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
