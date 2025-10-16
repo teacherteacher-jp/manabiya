@@ -13,32 +13,42 @@ module Discord
         # メンション部分を削除して実際のメッセージを取得
         content = event.message.content.gsub(/<@!?\d+>/, "").strip
 
-        # オウム返し
-        response = if content.empty?
-          "こんにちは!何か質問はありますか?"
+        # スレッドIDを取得または作成
+        thread_id = if event.channel.thread?
+          # すでにスレッド内でのメンション
+          Rails.logger.info "Responding in existing thread: #{event.channel.id}"
+          event.channel.id
         else
-          content
-        end
-
-        # スレッドかチャンネルかを判定
-        if event.channel.thread?
-          # スレッド内でのメンション: そのスレッド内で返信
-          Rails.logger.info "Responding in thread: #{event.channel.id}"
-          event.respond response
-        else
-          # チャンネルでのメンション: 新しいスレッドを作成して返信
-          Rails.logger.info "Creating thread in channel: #{event.channel.id}"
+          # チャンネルでのメンション: 新しいスレッドを作成
+          Rails.logger.info "Creating new thread in channel: #{event.channel.id}"
           thread = event.channel.start_thread(
             "#{event.user.name}さんとの会話",
             4320, # 3日後にInactiveになる
             message: event.message
           )
-          thread.send_message(response)
+          thread.id
         end
+
+        # 即座に「考え中」を示すリアクションを追加
+        event.message.react("👌")
+
+        # ジョブキューに投げて非同期処理
+        DiscordLlmResponseJob.perform_later(
+          channel_id: event.channel.id.to_s,
+          thread_id: thread_id.to_s,
+          user_message: content.presence || "こんにちは",
+          user_name: event.user.name
+        )
+
+        Rails.logger.info "Enqueued DiscordLlmResponseJob for thread: #{thread_id}"
       rescue => e
         Rails.logger.error "Error in mention handler: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
-        event.respond "エラーが発生しました。しばらく待ってから再度お試しください。"
+        begin
+          event.respond "エラーが発生しました。しばらく待ってから再度お試しください。"
+        rescue => response_error
+          Rails.logger.error "Failed to send error message: #{response_error.message}"
+        end
       end
 
       # 起動完了のログ
