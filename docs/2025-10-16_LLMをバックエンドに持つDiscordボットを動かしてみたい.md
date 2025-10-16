@@ -49,6 +49,45 @@ end
 
 ## 実装計画
 
+### Phase 0: オウム返しボット (1日) 🎯 **← まずはここから!**
+**目標**: メンションされたら、同じ内容をそのまま返すシンプルなボット
+
+**タスク:**
+1. ✅ discordrb をGemfileに追加
+2. ✅ bundle install
+3. ✅ Gateway Botスクリプト作成 (`lib/discord/gateway_bot.rb`, `bin/discord_gateway`)
+4. ✅ credentials設定 (discord_app.bot_token)
+5. ✅ Procfileにdiscord_gatewayプロセス追加
+6. ✅ ローカルでテスト実行
+
+**成果物**: メンションすると「あなたは『○○』と言いました」と返すボット
+
+**実装例:**
+```ruby
+# lib/discord/gateway_bot.rb
+module Discord
+  class GatewayBot
+    def initialize(token)
+      @bot = Discordrb::Bot.new(token: token)
+      setup_handlers
+    end
+
+    def setup_handlers
+      @bot.mention do |event|
+        content = event.message.content.gsub(/<@!?\d+>/, "").strip
+        event.respond "あなたは「#{content}」と言いました"
+      end
+    end
+
+    def run
+      @bot.run
+    end
+  end
+end
+```
+
+---
+
 ### Phase 1: MVP (2-3日)
 1. discordrb, anthropic gemを追加
 2. Knowledgeモデル作成

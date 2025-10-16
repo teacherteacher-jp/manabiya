@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+require_relative '../config/environment'
+
+# Bot Tokenを取得
+token = Rails.application.credentials.dig(:discord_app, :bot_token)
+
+unless token
+  puts "Error: discord_app.bot_token not found in credentials"
+  puts "Please run: rails credentials:edit"
+  puts "And add:"
+  puts "discord_app:"
+  puts "  bot_token: YOUR_BOT_TOKEN"
+  exit 1
+end
+
+# Gateway Botを起動
+bot = Discord::GatewayBot.new(token)
+
+# Graceful shutdown
+trap('INT') do
+  puts "\nShutting down Discord Gateway Bot..."
+  exit
+end
+
+trap('TERM') do
+  puts "\nShutting down Discord Gateway Bot..."
+  exit
+end
+
+bot.run

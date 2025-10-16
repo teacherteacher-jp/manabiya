@@ -5,6 +5,7 @@ ruby "3.4.4"
 gem "rails"
 
 gem "bootsnap", require: false
+gem "discordrb"
 gem "holiday_jp"
 gem "importmap-rails"
 gem "jbuilder"
