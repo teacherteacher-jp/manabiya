@@ -22,6 +22,10 @@ class Webhooks::MetalifeController < WebhooksController
     metalife_user.update!(name: params[:name])
 
     save_metalife_event(metalife_user, params)
+
+    if params[:when] == "enter"
+      metalife_user.notify_school_entered
+    end
   end
 
   def handle_community_center_event(params)

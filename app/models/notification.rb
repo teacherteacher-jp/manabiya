@@ -200,14 +200,13 @@ class Notification
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 
-  def notify_metalife_user_school_entered(metalife_user, space_id)
-    student = metalife_user.linkable
-    return unless student.is_a?(Student)
+  def notify_metalife_user_school_entered(metalife_user)
+    linkable = metalife_user.linkable
+    return unless linkable
+    return unless linkable.is_a?(Member)
 
     thread_id = thread_id_for(:school_contact)
-    content = "生徒さんがコンコンのスペースに入室しました\n" \
-              "#{app_base_url}/students/#{student.id}"
-
+    content = "<@!#{linkable.discord_uid}> さんがコンコンのスペースに入室しました"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
 end

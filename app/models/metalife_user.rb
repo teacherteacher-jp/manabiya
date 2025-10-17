@@ -11,7 +11,7 @@ class MetalifeUser < ApplicationRecord
     Notification.new.notify_metalife_user_created(self)
   end
 
-  def notify_school_entered(space_id)
-    Notification.new.notify_metalife_user_school_entered(self, space_id)
+  def notify_school_entered
+    Notification.new.notify_metalife_user_school_entered(self)
   end
 end
