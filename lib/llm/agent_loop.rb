@@ -9,11 +9,13 @@ module Llm
     # @param discord_bot [Discord::Bot] Discordボットインスタンス
     # @param logger [Logger] ロガー（デフォルト: 標準出力）
     # @param allowed_category_id [String, nil] 許可されたカテゴリID（認可制御用）
-    def initialize(claude_client, discord_bot:, logger: Logger.new($stdout), allowed_category_id: nil)
+    # @param on_progress [Proc, nil] 進捗通知用コールバック（オプション）
+    def initialize(claude_client, discord_bot:, logger: Logger.new($stdout), allowed_category_id: nil, on_progress: nil)
       @claude = claude_client
       @discord_bot = discord_bot
       @logger = logger
       @allowed_category_id = allowed_category_id
+      @on_progress = on_progress
       @tools = load_tools
       @iterations = 0
       @total_tokens = 0
@@ -101,6 +103,12 @@ module Llm
       results = tool_uses.map do |tool_use|
         @logger.info "🔧 Tool: #{tool_use.name}(#{tool_use.input.inspect})"
 
+        # 進捗通知
+        if @on_progress
+          message = progress_message(tool_use.name, tool_use.input)
+          @on_progress.call(message)
+        end
+
         tool = @tools.find { |t| t.definition[:name] == tool_use.name }
 
         unless tool
@@ -144,6 +152,30 @@ module Llm
         .select { |block| block.type == :text }
         .map(&:text)
         .join("\n")
+    end
+
+    # ツールの実行に応じた進捗メッセージを生成
+    # @param tool_name [String] ツール名
+    # @param input [Hash] ツールへの入力パラメータ
+    # @return [String] 進捗メッセージ
+    def progress_message(tool_name, input)
+      case tool_name
+      when "search_discord_messages"
+        query = input["query"] || input[:query]
+        "🔍 Discordを「#{query}」で検索しています..."
+      when "get_messages_around"
+        "📄 メッセージの前後を確認しています..."
+      when "get_channel_info"
+        "ℹ️ チャンネル情報を取得しています..."
+      when "get_thread_context"
+        "💬 スレッドの履歴を確認しています..."
+      when "calculate"
+        "🧮 計算しています..."
+      when "get_current_time"
+        "🕐 現在時刻を取得しています..."
+      else
+        "🔧 #{tool_name}を実行しています..."
+      end
     end
   end
 end

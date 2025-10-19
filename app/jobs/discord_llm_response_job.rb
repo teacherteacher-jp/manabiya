@@ -20,12 +20,18 @@ class DiscordLlmResponseJob < ApplicationJob
       Rails.logger.info "No category restriction (channel has no category)"
     end
 
+    # 進捗通知用のコールバック
+    on_progress = ->(message) {
+      send_to_discord(thread_id, message)
+    }
+
     # AgentLoopを作成
     agent = Llm::AgentLoop.new(
       claude,
       discord_bot: discord_bot,
       logger: Rails.logger,
-      allowed_category_id: category_id
+      allowed_category_id: category_id,
+      on_progress: on_progress
     )
 
     # AgentLoopで応答を生成
