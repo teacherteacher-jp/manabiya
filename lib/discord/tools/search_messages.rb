@@ -40,18 +40,25 @@ module Discord
         query = input["query"] || input[:query]
         limit = input["limit"] || input[:limit] || 5
 
-        # 既存のsearch_messages_in_serverメソッドを使用
-        results = @bot.search_messages_in_server(
+        # 新しいGuild Search APIを使用（search_messages_in_server2）
+        result = @bot.search_messages_in_server2(
           query: query,
-          limit: 30,  # 1チャンネルあたり30件
-          max_results: limit
+          limit: [limit, 25].min,  # 最大25件
+          sort_by: "timestamp",
+          sort_order: "desc"
         )
 
-        if results.empty?
+        if result[:error]
+          return "検索中にエラーが発生しました: #{result[:error]}"
+        end
+
+        messages = result[:messages]
+
+        if messages.empty?
           return "「#{query}」に関する過去のメッセージは見つかりませんでした。"
         end
 
-        format_results(results, query)
+        format_results(messages, query, result[:total_results])
       rescue => e
         Rails.logger.error "SearchMessages failed: #{e.class} - #{e.message}"
         "検索中にエラーが発生しました: #{e.message}"
@@ -62,17 +69,29 @@ module Discord
       # 検索結果を読みやすい形式にフォーマット
       # @param results [Array<Hash>] 検索結果
       # @param query [String] 検索キーワード
+      # @param total_results [Integer] サーバー内の総検索結果数
       # @return [String] フォーマットされた結果
-      def format_results(results, query)
+      def format_results(results, query, total_results = nil)
         formatted = results.map.with_index(1) do |msg, index|
-          author = msg.dig("author", "username") || "不明なユーザー"
+          author = msg.dig("author", "username") || msg.dig("author", "global_name") || "不明なユーザー"
           content = msg["content"] || ""
           timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
+          channel_id = msg["channel_id"]
 
-          "[#{index}] #{timestamp} | #{author}\n#{content.slice(0, 200)}"
+          # contentが空の場合、embedsをチェック
+          if content.empty? && msg["embeds"]&.any?
+            embed = msg["embeds"].first
+            content = "[Embed] #{embed["title"] || embed["description"]}"
+          end
+
+          "[#{index}] #{timestamp} | #{author} (ch: #{channel_id})\n#{content.slice(0, 200)}"
         end.join("\n\n")
 
-        "「#{query}」に関する検索結果（#{results.size}件）:\n\n#{formatted}"
+        result_text = "「#{query}」に関する検索結果（#{results.size}件"
+        result_text += " / 全#{total_results}件" if total_results
+        result_text += "）:\n\n#{formatted}"
+
+        result_text
       end
     end
   end
