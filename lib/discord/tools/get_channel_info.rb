@@ -51,9 +51,15 @@ module Discord
       # チャンネル情報をフォーマット
       # @param channel [Hash] チャンネル情報
       # @return [String] フォーマットされた情報
-      def self.format_channel_info(channel)
+      def format_channel_info(channel)
         info = []
         info << "【チャンネル情報】"
+
+        # チャンネルメンション
+        if channel['id']
+          info << "チャンネル: #{Discord::Formatter.mention_channel(channel['id'])}"
+        end
+
         info << "名前: #{channel['name']}"
         info << "タイプ: #{channel_type(channel['type'])}"
 

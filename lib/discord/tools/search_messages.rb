@@ -103,19 +103,42 @@ module Discord
       # @param total_results [Integer] サーバー内の総検索結果数
       # @return [String] フォーマットされた結果
       def format_results(results, query, total_results = nil)
-        formatted = results.map.with_index(1) do |msg, index|
-          author = msg.dig("author", "username") || msg.dig("author", "global_name") || "不明なユーザー"
-          content = msg["content"] || ""
-          timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
-          channel_id = msg["channel_id"]
+        server_id = @bot.server_id
 
-          # contentが空の場合、embedsをチェック
+        formatted = results.map.with_index(1) do |msg, index|
+          # ユーザーメンション
+          author_id = msg.dig("author", "id")
+          author_mention = author_id ? Discord::Formatter.mention_user(author_id) : Discord::Formatter.display_name(msg["author"])
+
+          # チャンネルメンション
+          channel_mention = msg["channel_id"] ? Discord::Formatter.mention_channel(msg["channel_id"]) : ""
+
+          # タイムスタンプ
+          timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
+
+          # メッセージリンク
+          message_link = ""
+          if msg["id"] && msg["channel_id"]
+            message_link = Discord::Formatter.message_link(
+              server_id: server_id,
+              channel_id: msg["channel_id"],
+              message_id: msg["id"]
+            )
+          end
+
+          # コンテンツ
+          content = msg["content"] || ""
           if content.empty? && msg["embeds"]&.any?
             embed = msg["embeds"].first
             content = "[Embed] #{embed["title"] || embed["description"]}"
           end
 
-          "[#{index}] #{timestamp} | #{author} (ch: #{channel_id})\n#{content.slice(0, 200)}"
+          # フォーマット
+          header = "[#{index}] #{timestamp} | #{author_mention} in #{channel_mention}"
+          header += "\n#{message_link}" if message_link.present?
+          header += "\n#{content.slice(0, 200)}"
+
+          header
         end.join("\n\n")
 
         result_text = "「#{query}」に関する検索結果（#{results.size}件"

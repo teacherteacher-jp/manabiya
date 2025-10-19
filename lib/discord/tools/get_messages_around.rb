@@ -81,23 +81,46 @@ module Discord
       # @param target_message_id [String] 基準となるメッセージID
       # @return [String] フォーマットされた結果
       def format_messages(messages, target_message_id)
+        server_id = @bot.server_id
+
         # タイムスタンプでソート（古い順）
         sorted_messages = messages.sort_by { |m| Time.parse(m["timestamp"]) }
 
         formatted = sorted_messages.map.with_index(1) do |msg, index|
-          author = msg.dig("author", "username") || msg.dig("author", "global_name") || "不明なユーザー"
-          content = msg["content"] || ""
-          timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
-          is_target = msg["id"] == target_message_id
+          # ユーザーメンション
+          author_id = msg.dig("author", "id")
+          author_mention = author_id ? Discord::Formatter.mention_user(author_id) : Discord::Formatter.display_name(msg["author"])
 
-          # contentが空の場合、embedsをチェック
+          # タイムスタンプ
+          timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
+
+          # 基準メッセージマーカー
+          is_target = msg["id"] == target_message_id
+          marker = is_target ? " ★ [基準メッセージ]" : ""
+
+          # メッセージリンク
+          message_link = ""
+          if msg["id"] && msg["channel_id"]
+            message_link = Discord::Formatter.message_link(
+              server_id: server_id,
+              channel_id: msg["channel_id"],
+              message_id: msg["id"]
+            )
+          end
+
+          # コンテンツ
+          content = msg["content"] || ""
           if content.empty? && msg["embeds"]&.any?
             embed = msg["embeds"].first
             content = "[Embed] #{embed["title"] || embed["description"]}"
           end
 
-          marker = is_target ? " ★ [基準メッセージ]" : ""
-          "[#{index}] #{timestamp} | #{author}#{marker}\n#{content.slice(0, 300)}"
+          # フォーマット
+          header = "[#{index}] #{timestamp} | #{author_mention}#{marker}"
+          header += "\n#{message_link}" if message_link.present?
+          header += "\n#{content.slice(0, 300)}"
+
+          header
         end.join("\n\n")
 
         "前後のメッセージ（#{sorted_messages.size}件）:\n\n#{formatted}"

@@ -65,16 +65,19 @@ module Discord
       # メッセージを読みやすい形式にフォーマット
       # @param messages [Array<Hash>] メッセージの配列（新しい順）
       # @return [String] フォーマットされた会話履歴
-      def self.format_thread_messages(messages)
+      def format_thread_messages(messages)
         # 古い順に並び替え（会話の流れが自然になる）
         sorted_messages = messages.reverse
 
         formatted = sorted_messages.map do |msg|
-          author = msg.dig("author", "username") || "不明なユーザー"
+          # ユーザーメンション
+          author_id = msg.dig("author", "id")
+          author_mention = author_id ? Discord::Formatter.mention_user(author_id) : Discord::Formatter.display_name(msg["author"])
+
           content = msg["content"] || "(コンテンツなし)"
           timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
 
-          "#{timestamp} | #{author}\n#{content}"
+          "#{timestamp} | #{author_mention}\n#{content}"
         end.join("\n\n---\n\n")
 
         "【スレッド会話履歴】（全#{sorted_messages.size}件）\n\n#{formatted}"
