@@ -1,8 +1,9 @@
 module Discord
   module Tools
     class GetMessagesAround
-      def initialize(bot)
+      def initialize(bot, allowed_category_id: nil)
         @bot = bot
+        @allowed_category_id = allowed_category_id
       end
 
       # Anthropic Tool Use API形式の定義
@@ -44,6 +45,15 @@ module Discord
         channel_id = input["channel_id"] || input[:channel_id]
         message_id = input["message_id"] || input[:message_id]
         limit = input["limit"] || input[:limit] || 10
+
+        # カテゴリ認可チェック
+        if @allowed_category_id
+          channel_category = @bot.get_channel_category(channel_id)
+          if channel_category != @allowed_category_id
+            Rails.logger.warn "Authorization failed: channel #{channel_id} (category: #{channel_category}) not in allowed category #{@allowed_category_id}"
+            return "このチャンネルの情報にはアクセスできません。同じカテゴリ内の情報のみ取得できます。"
+          end
+        end
 
         # limitを1-100の範囲に制限
         limit = [[limit, 1].max, 100].min

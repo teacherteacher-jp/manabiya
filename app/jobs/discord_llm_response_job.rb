@@ -12,11 +12,20 @@ class DiscordLlmResponseJob < ApplicationJob
     claude = create_llm_provider
     discord_bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
 
+    # チャンネルのカテゴリIDを取得（認可制御用）
+    category_id = discord_bot.get_channel_category(channel_id)
+    if category_id
+      Rails.logger.info "Restricting agent to category: #{category_id}"
+    else
+      Rails.logger.info "No category restriction (channel has no category)"
+    end
+
     # AgentLoopを作成
     agent = Llm::AgentLoop.new(
       claude,
       discord_bot: discord_bot,
-      logger: Rails.logger
+      logger: Rails.logger,
+      allowed_category_id: category_id
     )
 
     # AgentLoopで応答を生成

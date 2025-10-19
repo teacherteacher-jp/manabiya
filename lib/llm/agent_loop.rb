@@ -8,10 +8,12 @@ module Llm
     # @param claude_client [Llm::Claude] Claudeクライアント
     # @param discord_bot [Discord::Bot] Discordボットインスタンス
     # @param logger [Logger] ロガー（デフォルト: 標準出力）
-    def initialize(claude_client, discord_bot:, logger: Logger.new($stdout))
+    # @param allowed_category_id [String, nil] 許可されたカテゴリID（認可制御用）
+    def initialize(claude_client, discord_bot:, logger: Logger.new($stdout), allowed_category_id: nil)
       @claude = claude_client
       @discord_bot = discord_bot
       @logger = logger
+      @allowed_category_id = allowed_category_id
       @tools = load_tools
       @iterations = 0
       @total_tokens = 0
@@ -78,11 +80,11 @@ module Llm
     # @return [Array<Object>] ツールインスタンスの配列
     def load_tools
       [
-        # Discord専用ツール（Botインスタンスを注入）
-        Discord::Tools::SearchMessages.new(@discord_bot),
+        # Discord専用ツール（Botインスタンスとカテゴリ制限を注入）
+        Discord::Tools::SearchMessages.new(@discord_bot, allowed_category_id: @allowed_category_id),
         Discord::Tools::GetChannelInfo.new(@discord_bot),
         Discord::Tools::GetThreadContext.new(@discord_bot),
-        Discord::Tools::GetMessagesAround.new(@discord_bot),
+        Discord::Tools::GetMessagesAround.new(@discord_bot, allowed_category_id: @allowed_category_id),
         # 汎用ツール（状態を持たないが、統一性のためインスタンス化）
         Tools::Calculator.new,
         Tools::GetCurrentTime.new

@@ -1,8 +1,9 @@
 module Discord
   module Tools
     class SearchMessages
-      def initialize(bot)
+      def initialize(bot, allowed_category_id: nil)
         @bot = bot
+        @allowed_category_id = allowed_category_id
       end
 
       # Anthropic Tool Use API形式の定義
@@ -40,12 +41,20 @@ module Discord
         query = input["query"] || input[:query]
         limit = input["limit"] || input[:limit] || 5
 
+        # カテゴリ制限がある場合、そのカテゴリ内のチャンネルIDを取得
+        channel_ids = nil
+        if @allowed_category_id
+          channel_ids = get_category_channel_ids(@allowed_category_id)
+          Rails.logger.info "Restricting search to category #{@allowed_category_id}: #{channel_ids.size} channels"
+        end
+
         # 新しいGuild Search APIを使用（search_messages_in_server2）
         result = @bot.search_messages_in_server2(
           query: query,
           limit: [limit, 25].min,  # 最大25件
           sort_by: "timestamp",
-          sort_order: "desc"
+          sort_order: "desc",
+          channel_ids: channel_ids
         )
 
         if result[:error]
@@ -65,6 +74,28 @@ module Discord
       end
 
       private
+
+      # カテゴリ内の全チャンネルIDを取得
+      # @param category_id [String] カテゴリID
+      # @return [Array<String>] チャンネルIDの配列
+      def get_category_channel_ids(category_id)
+        all_channels = @bot.get_all_channels
+        category_channels = all_channels.select { |ch| ch["parent_id"] == category_id }
+
+        channel_ids = []
+
+        # 通常チャンネル（type: 0）
+        text_channels = category_channels.select { |ch| ch["type"] == 0 }
+        channel_ids.concat(text_channels.map { |ch| ch["id"] })
+
+        # Forumチャンネル（type: 15）
+        # Guild Search APIはフォーラムチャンネルIDを指定すると、
+        # その中の全スレッドを自動的に検索してくれる
+        forum_channels = category_channels.select { |ch| ch["type"] == 15 }
+        channel_ids.concat(forum_channels.map { |ch| ch["id"] })
+
+        channel_ids
+      end
 
       # 検索結果を読みやすい形式にフォーマット
       # @param results [Array<Hash>] 検索結果
