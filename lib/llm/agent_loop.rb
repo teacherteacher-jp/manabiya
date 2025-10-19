@@ -82,6 +82,7 @@ module Llm
         Discord::Tools::SearchMessages.new(@discord_bot),
         Discord::Tools::GetChannelInfo.new(@discord_bot),
         Discord::Tools::GetThreadContext.new(@discord_bot),
+        Discord::Tools::GetMessagesAround.new(@discord_bot),
         # 汎用ツール（状態を持たないが、統一性のためインスタンス化）
         Tools::Calculator.new,
         Tools::GetCurrentTime.new

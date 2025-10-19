@@ -371,5 +371,29 @@ module Discord
       Rails.logger.error e.backtrace.join("\n")
       { messages: [], total_results: 0, error: e.message }
     end
+
+    # 特定メッセージの前後のメッセージを取得
+    # @param channel_id [String] チャンネルID
+    # @param message_id [String] 基準となるメッセージID
+    # @param limit [Integer] 取得件数（1-100）
+    # @return [Array<Hash>] メッセージの配列
+    def get_messages_around(channel_id:, message_id:, limit: 10)
+      # limitを1-100の範囲に制限
+      limit = [[limit, 1].max, 100].min
+
+      path = "/channels/#{channel_id}/messages?around=#{message_id}&limit=#{limit}"
+      response = get(path)
+
+      if response.status == 200
+        JSON.parse(response.body)
+      else
+        Rails.logger.error "Get messages around failed: #{response.status} - #{response.body}"
+        []
+      end
+    rescue => e
+      Rails.logger.error "Failed to get messages around: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      []
+    end
   end
 end
