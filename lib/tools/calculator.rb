@@ -18,10 +18,15 @@ module Tools
       }
     end
 
-    # ツールを実行
+    # AgentLoopから呼び出されるインスタンスメソッド
+    def definition
+      self.class.definition
+    end
+
+    # ツールを実行（インスタンスメソッド）
     # @param input [Hash] ツールへの入力
     # @return [String] 計算結果
-    def self.execute(input)
+    def execute(input)
       expression = input["expression"] || input[:expression]
 
       # 安全のため、eval は使わずに簡易的な計算のみ対応

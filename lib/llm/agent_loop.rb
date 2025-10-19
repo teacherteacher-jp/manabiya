@@ -5,8 +5,11 @@ module Llm
 
     attr_reader :iterations, :total_tokens
 
-    def initialize(claude_client)
+    # @param claude_client [Llm::Claude] Claudeクライアント
+    # @param discord_bot [Discord::Bot, nil] Discordボット（nilの場合はデフォルトを使用）
+    def initialize(claude_client, discord_bot: nil)
       @claude = claude_client
+      @discord_bot = discord_bot || create_default_discord_bot
       @tools = load_tools
       @iterations = 0
       @total_tokens = 0
@@ -70,12 +73,25 @@ module Llm
     private
 
     # 利用可能なツールをロード
-    # @return [Array<Class>] ツールクラスの配列
+    # @return [Array<Object>] ツールインスタンスの配列
     def load_tools
       [
-        Tools::Calculator,
-        Tools::GetCurrentTime
+        # Discord専用ツール（Botインスタンスを注入）
+        Discord::Tools::SearchMessages.new(@discord_bot),
+        Discord::Tools::GetChannelInfo.new(@discord_bot),
+        Discord::Tools::GetThreadContext.new(@discord_bot),
+        # 汎用ツール（状態を持たないが、統一性のためインスタンス化）
+        Tools::Calculator.new,
+        Tools::GetCurrentTime.new
       ]
+    end
+
+    # デフォルトのDiscord Botを作成
+    # @return [Discord::Bot] Discordボットインスタンス
+    def create_default_discord_bot
+      Discord::Bot.new(
+        Rails.application.credentials.dig(:discord_app, :bot_token)
+      )
     end
 
     # ツールを実行
@@ -88,9 +104,9 @@ module Llm
       results = tool_uses.map do |tool_use|
         Rails.logger.info "🔧 Tool: #{tool_use.name}(#{tool_use.input.inspect})"
 
-        tool_class = @tools.find { |t| t.definition[:name] == tool_use.name }
+        tool = @tools.find { |t| t.definition[:name] == tool_use.name }
 
-        unless tool_class
+        unless tool
           Rails.logger.error "Tool not found: #{tool_use.name}"
           next {
             type: "tool_result",
@@ -100,7 +116,8 @@ module Llm
           }
         end
 
-        result = tool_class.execute(tool_use.input)
+        # ツールを実行（すべてインスタンスメソッド）
+        result = tool.execute(tool_use.input)
         Rails.logger.info "✅ Tool result: #{result.to_s.slice(0, 100)}..."
 
         {

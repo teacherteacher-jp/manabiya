@@ -25,10 +25,15 @@ module Tools
       }
     end
 
-    # ツールを実行
+    # AgentLoopから呼び出されるインスタンスメソッド
+    def definition
+      self.class.definition
+    end
+
+    # ツールを実行（インスタンスメソッド）
     # @param input [Hash] ツールへの入力
     # @return [String] 現在時刻
-    def self.execute(input)
+    def execute(input)
       timezone = input["timezone"] || input[:timezone] || "Asia/Tokyo"
       format_type = input["format"] || input[:format] || "full"
 
