@@ -25,6 +25,9 @@ module Discord
         channel_id = event.channel.thread? ? event.channel.parent_id : event.channel.id
         next unless auto_response_channel_ids.include?(channel_id.to_s)
 
+        # 自動応答対象チャンネルでもスレッドであればスキップ
+        next if event.channel.thread?
+
         # メンションは別ハンドラで処理するのでスキップ
         next if event.message.mentions.any? { |mention| mention.id == @bot.profile.id }
 
