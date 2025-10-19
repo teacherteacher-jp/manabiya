@@ -395,5 +395,30 @@ module Discord
       Rails.logger.error e.backtrace.join("\n")
       []
     end
+
+    # スレッド内のメッセージを取得
+    # @param thread_id [String] スレッドID（チャンネルID）
+    # @param limit [Integer] 取得件数（1-100、デフォルト: 10）
+    # @return [Array<Hash>] メッセージの配列（古い順にソート済み）
+    def get_thread_messages(thread_id, limit: 10)
+      # limitを1-100の範囲に制限
+      limit = [[limit, 1].max, 100].min
+
+      path = "/channels/#{thread_id}/messages?limit=#{limit}"
+      response = get(path)
+
+      if response.status == 200
+        messages = JSON.parse(response.body)
+        # Discord APIは新しい順で返すので、古い順に並び替え
+        messages.reverse
+      else
+        Rails.logger.error "Get thread messages failed: #{response.status} - #{response.body}"
+        []
+      end
+    rescue => e
+      Rails.logger.error "Failed to get thread messages: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      []
+    end
   end
 end

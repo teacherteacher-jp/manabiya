@@ -20,6 +20,24 @@ class DiscordLlmResponseJob < ApplicationJob
       Rails.logger.info "No category restriction (channel has no category)"
     end
 
+    # スレッド内の会話履歴を取得
+    thread_context = build_thread_context(discord_bot, thread_id, user_message)
+
+    # スレッドコンテキストを含めたメッセージを構築
+    full_message = if thread_context.present?
+      <<~MESSAGE.strip
+        【このスレッドでのこれまでの会話】
+        #{thread_context}
+
+        【最新の質問】
+        #{user_message}
+      MESSAGE
+    else
+      user_message
+    end
+
+    Rails.logger.info "Thread context included: #{thread_context.present?}"
+
     # 進捗通知用のコールバック
     on_progress = ->(message) {
       send_to_discord(thread_id, message)
@@ -36,7 +54,7 @@ class DiscordLlmResponseJob < ApplicationJob
 
     # AgentLoopで応答を生成
     response_text = agent.run(
-      user_message: user_message,
+      user_message: full_message,
       system_prompt: system_prompt
     )
 
@@ -73,19 +91,26 @@ class DiscordLlmResponseJob < ApplicationJob
   def system_prompt
     <<~PROMPT
       あなたはTeacher Teacherのオンラインコミュニティ「TT村」のDiscordサーバーのヘルプボットです。
-      ユーザーからの質問に対して、Discordサーバー内の過去の会話を検索して適切な情報を提供してください。
 
-      【重要】検索と調査の方針:
-      1. まず、ユーザーの質問から適切なキーワードで検索する
-      2. 検索結果で関連する質問や情報を見つけた場合:
-         - そのメッセージのchannel_idとidを確認する
-         - `get_messages_around`ツールで前後のメッセージを取得する
-         - 前後のメッセージに回答があれば、それを提供する
+      【重要】Discord検索が必要かどうかの判断:
+      - TT村固有の情報（イベント、メンバー、過去の会話、コミュニティのルールなど）が必要な質問
+        → Discordを検索してください
+      - プログラミングや一般常識など、あなたの知識だけで答えられる質問
+        → 検索せずに直接答えてください
+      - 判断に迷う場合
+        → Discordを検索してください（念のため確認する方が安全です）
+
+      【Discord検索が必要な場合の方針】:
+      1. ユーザーの質問から適切なキーワードで search_discord_messages を使用
+      2. 検索結果で関連する情報を見つけた場合:
+         - そのメッセージのchannel_idとidを確認
+         - get_messages_around ツールで前後のメッセージを取得
+         - 前後のメッセージに回答があれば、それを提供
       3. 検索結果が見つからない場合:
          - 別のキーワードで1-2回まで再検索を試みる
          - それでも見つからなければ「見つかりませんでした」と伝える
 
-      回答する際の注意点:
+      【回答する際の注意点】:
       - 簡潔で分かりやすい日本語で答えてください
       - 不確かなことは推測せず、分からないと正直に答えてください
       - 検索は必要最小限に抑え、効率的に情報を提供することを心がけてください
@@ -97,6 +122,49 @@ class DiscordLlmResponseJob < ApplicationJob
       - 例: 「<@123456789>さんが[こちらのメッセージ](https://discord.com/channels/...)で...」のように
       - これによりユーザーは発言者や元の会話に簡単にアクセスできます
     PROMPT
+  end
+
+  # スレッド内の会話履歴からコンテキストを構築
+  # @param discord_bot [Discord::Bot] Discordボットインスタンス
+  # @param thread_id [String] スレッドID
+  # @param current_message [String] 現在のユーザーメッセージ
+  # @return [String, nil] フォーマットされた会話履歴（履歴がない場合はnil）
+  def build_thread_context(discord_bot, thread_id, current_message)
+    # スレッドの直近20件のメッセージを取得
+    messages = discord_bot.get_thread_messages(thread_id, limit: 20)
+
+    # ボット自身のIDを取得（ボットのメッセージを識別するため）
+    bot_user_id = Rails.application.credentials.dig(:discord_app, :bot_user_id)
+
+    # 会話履歴を構築
+    # - 最新のユーザーメッセージ（現在の質問）は除外
+    # - 直近10件程度に絞る
+    recent_messages = messages
+      .reject { |m| m["content"] == current_message } # 現在のメッセージを除外
+      .last(10) # 直近10件
+
+    # メッセージが1件以下（現在のメッセージしかない）場合はコンテキストなし
+    return nil if recent_messages.empty?
+
+    # フォーマット
+    recent_messages.map do |msg|
+      author_id = msg.dig("author", "id")
+      author_name = msg.dig("author", "username") || msg.dig("author", "global_name") || "不明"
+      content = msg["content"] || ""
+
+      # ボットのメッセージか判定
+      is_bot = author_id == bot_user_id || msg.dig("author", "bot") == true
+
+      if is_bot
+        "ボット: #{content.slice(0, 200)}" # ボットの応答は200文字まで
+      else
+        "#{author_name}: #{content.slice(0, 200)}" # ユーザーのメッセージも200文字まで
+      end
+    end.join("\n")
+  rescue => e
+    Rails.logger.error "Failed to build thread context: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    nil # エラー時はコンテキストなしで続行
   end
 
   # Discordにメッセージを送信

@@ -64,7 +64,7 @@ module Discord
       end
 
       # 即座に「考え中」を示すリアクションを追加
-      event.message.react("👌")
+      event.message.react("🐝")
 
       # ジョブキューに投げて非同期処理
       DiscordLlmResponseJob.perform_later(
