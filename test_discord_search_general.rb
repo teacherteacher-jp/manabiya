@@ -5,7 +5,8 @@ puts "=== Discord Search Test (General Keywords) ==="
 puts ""
 
 claude = Llm::Claude.new
-agent = Llm::AgentLoop.new(claude)
+discord_bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
+agent = Llm::AgentLoop.new(claude, discord_bot: discord_bot, logger: Rails.logger)
 
 # より一般的なキーワードで検索
 result = agent.run(

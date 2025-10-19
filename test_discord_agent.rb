@@ -7,7 +7,8 @@ puts "このテストでは、Claudeが自律的にDiscordのメッセージを�
 puts ""
 
 claude = Llm::Claude.new
-agent = Llm::AgentLoop.new(claude)
+discord_bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
+agent = Llm::AgentLoop.new(claude, discord_bot: discord_bot, logger: Rails.logger)
 
 # Discord検索のテスト
 result = agent.run(

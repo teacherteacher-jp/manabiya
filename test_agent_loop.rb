@@ -5,7 +5,8 @@ puts "=== AgentLoop Test ==="
 puts ""
 
 claude = Llm::Claude.new
-agent = Llm::AgentLoop.new(claude)
+discord_bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
+agent = Llm::AgentLoop.new(claude, discord_bot: discord_bot, logger: Rails.logger)
 
 result = agent.run(
   user_message: "今の時刻を教えて",
