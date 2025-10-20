@@ -5,8 +5,10 @@ class DiscordLlmResponseJob < ApplicationJob
   # @param thread_id [String] Discord スレッドID
   # @param user_message [String] ユーザーのメッセージ
   # @param user_name [String] ユーザー名
-  def perform(channel_id:, thread_id:, user_message:, user_name:)
+  # @param attachments [Array<Hash>] 添付ファイル情報の配列（オプション）
+  def perform(channel_id:, thread_id:, user_message:, user_name:, attachments: [])
     Rails.logger.info "DiscordLlmResponseJob started for thread: #{thread_id}"
+    Rails.logger.info "Attachments: #{attachments.size} files" if attachments.any?
 
     # LLMクライアントとDiscord Botを作成
     claude = create_llm_provider
@@ -23,6 +25,9 @@ class DiscordLlmResponseJob < ApplicationJob
     # スレッド内の会話履歴を取得
     thread_context = build_thread_context(discord_bot, thread_id, user_message)
 
+    # 添付ファイルの内容を取得
+    attachments_context = build_attachments_context(attachments)
+
     # スレッドコンテキストを含めたメッセージを構築
     full_message = if thread_context.present?
       <<~MESSAGE.strip
@@ -31,12 +36,15 @@ class DiscordLlmResponseJob < ApplicationJob
 
         【最新の質問】
         #{user_message}
+        #{attachments_context}
       MESSAGE
     else
-      user_message
+      user_message_with_attachments = [user_message, attachments_context].reject(&:blank?).join("\n\n")
+      user_message_with_attachments.presence || user_message
     end
 
     Rails.logger.info "Thread context included: #{thread_context.present?}"
+    Rails.logger.info "Attachments context included: #{attachments_context.present?}"
 
     # 進捗通知用のコールバック
     on_progress = ->(message) {
@@ -123,6 +131,34 @@ class DiscordLlmResponseJob < ApplicationJob
       - 例: 「<@123456789>さんが[こちらのメッセージ](https://discord.com/channels/...)で...」のように
       - これによりユーザーは発言者や元の会話に簡単にアクセスできます
     PROMPT
+  end
+
+  # 添付ファイルからコンテキストを構築
+  # @param attachments [Array<Hash>] 添付ファイル情報の配列
+  # @return [String, nil] フォーマットされた添付ファイル情報（添付ファイルがない場合はnil）
+  def build_attachments_context(attachments)
+    return nil if attachments.blank?
+
+    formatted_attachments = attachments.map do |attachment|
+      filename = attachment[:filename] || attachment["filename"]
+      url = attachment[:url] || attachment["url"]
+      size = attachment[:size] || attachment["size"]
+
+      # AttachmentDownloaderを使ってテキストファイルの内容をダウンロード
+      content = Discord::AttachmentDownloader.download_text_content(url, filename: filename)
+
+      if content
+        "【添付ファイル: #{filename}】\n```\n#{content}\n```"
+      else
+        "【添付ファイル: #{filename} (#{size} bytes)】\nURL: #{url}"
+      end
+    end.join("\n\n")
+
+    "\n\n#{formatted_attachments}"
+  rescue => e
+    Rails.logger.error "Failed to build attachments context: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    nil # エラー時はコンテキストなしで続行
   end
 
   # スレッド内の会話履歴からコンテキストを構築

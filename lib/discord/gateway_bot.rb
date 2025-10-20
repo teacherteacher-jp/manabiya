@@ -47,6 +47,17 @@ module Discord
       # メンション部分を削除して実際のメッセージを取得
       content = event.message.content.gsub(/<@!?\d+>/, "").strip
 
+      # 添付ファイル情報を取得
+      attachments_info = event.message.attachments.map do |attachment|
+        {
+          id: attachment.id.to_s,
+          filename: attachment.filename,
+          size: attachment.size,
+          url: attachment.url,
+          proxy_url: attachment.proxy_url
+        }
+      end
+
       # スレッドIDを取得または作成
       thread_id = if event.channel.thread?
         # すでにスレッド内でのメッセージ
@@ -71,10 +82,11 @@ module Discord
         channel_id: event.channel.id.to_s,
         thread_id: thread_id.to_s,
         user_message: content.presence || "こんにちは",
-        user_name: event.user.name
+        user_name: event.user.name,
+        attachments: attachments_info
       )
 
-      Rails.logger.info "Enqueued DiscordLlmResponseJob for thread: #{thread_id}"
+      Rails.logger.info "Enqueued DiscordLlmResponseJob for thread: #{thread_id} (#{attachments_info.size} attachments)"
     rescue => e
       Rails.logger.error "Error in message handler: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
