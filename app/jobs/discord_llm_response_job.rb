@@ -49,6 +49,7 @@ class DiscordLlmResponseJob < ApplicationJob
       discord_bot: discord_bot,
       logger: Rails.logger,
       allowed_category_id: category_id,
+      current_thread_id: thread_id,
       on_progress: on_progress
     )
 
