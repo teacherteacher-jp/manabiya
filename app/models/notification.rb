@@ -209,4 +209,32 @@ class Notification
     content = "<@!#{linkable.discord_uid}> さんがコンコンのスペースに入室しました"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
   end
+
+  def notify_unlinked_metalife_users(unlinked_users, target_date)
+    thread_id = thread_id_for(:school_report)
+
+    # ユーザーごとの最終入室時刻を取得
+    user_entries = unlinked_users.map do |user|
+      last_entry = user.metalife_events
+        .where(event_type: 'enter')
+        .where(occurred_at: target_date.all_day)
+        .order(occurred_at: :desc)
+        .first
+
+      last_entry_time = last_entry&.occurred_at&.in_time_zone('Tokyo')&.strftime('%H:%M') || '不明'
+
+      "- #{user.name} (ID: #{user.metalife_id}) - 最終入室: #{last_entry_time}"
+    end
+
+    content = [
+      "#{mdw(target_date)}に入室が確認されましたが、Member/Studentと紐付いていないユーザーが#{unlinked_users.count}件見つかりました :mag:",
+      "",
+      user_entries.join("\n"),
+      "",
+      "誰が誰なのかわかる場合は、管理画面で紐付け作業を行ってください :pray:",
+      "#{app_base_url}/metalife_users"
+    ].join("\n")
+
+    pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
 end
