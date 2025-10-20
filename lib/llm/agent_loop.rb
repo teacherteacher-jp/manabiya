@@ -9,12 +9,14 @@ module Llm
     # @param discord_bot [Discord::Bot] Discordボットインスタンス
     # @param logger [Logger] ロガー（デフォルト: 標準出力）
     # @param allowed_category_id [String, nil] 許可されたカテゴリID（認可制御用）
+    # @param current_thread_id [String, nil] 現在のスレッドID（get_thread_contextツール用）
     # @param on_progress [Proc, nil] 進捗通知用コールバック（オプション）
-    def initialize(claude_client, discord_bot:, logger: Logger.new($stdout), allowed_category_id: nil, on_progress: nil)
+    def initialize(claude_client, discord_bot:, logger: Logger.new($stdout), allowed_category_id: nil, current_thread_id: nil, on_progress: nil)
       @claude = claude_client
       @discord_bot = discord_bot
       @logger = logger
       @allowed_category_id = allowed_category_id
+      @current_thread_id = current_thread_id
       @on_progress = on_progress
       @tools = load_tools
       @iterations = 0
@@ -85,7 +87,7 @@ module Llm
         # Discord専用ツール（Botインスタンスとカテゴリ制限を注入）
         Discord::Tools::SearchMessages.new(@discord_bot, allowed_category_id: @allowed_category_id),
         Discord::Tools::GetChannelInfo.new(@discord_bot),
-        Discord::Tools::GetThreadContext.new(@discord_bot),
+        Discord::Tools::GetThreadContext.new(@discord_bot, current_thread_id: @current_thread_id),
         Discord::Tools::GetMessagesAround.new(@discord_bot, allowed_category_id: @allowed_category_id),
         # 汎用ツール（状態を持たないが、統一性のためインスタンス化）
         Tools::Calculator.new,
