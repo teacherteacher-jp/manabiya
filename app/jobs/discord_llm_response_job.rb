@@ -8,25 +8,61 @@ class DiscordLlmResponseJob < ApplicationJob
   def perform(channel_id:, thread_id:, user_message:, user_name:)
     Rails.logger.info "DiscordLlmResponseJob started for thread: #{thread_id}"
 
-    # Discord過去メッセージを検索してコンテキスト構築
-    context = search_and_build_context(user_message, channel_id)
+    # LLMクライアントとDiscord Botを作成
+    claude = create_llm_provider
+    discord_bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
 
-    # 会話履歴を構築
-    messages = build_conversation_history(thread_id, user_message)
+    # チャンネルのカテゴリIDを取得（認可制御用）
+    category_id = discord_bot.get_channel_category(channel_id)
+    if category_id
+      Rails.logger.info "Restricting agent to category: #{category_id}"
+    else
+      Rails.logger.info "No category restriction (channel has no category)"
+    end
 
-    # LLMで応答を生成
-    llm = create_llm_provider
-    response_text = llm.generate(
-      messages: messages,
-      system_prompt: system_prompt_with_context(context),
-      temperature: 0.7,
-      max_tokens: 2048
+    # スレッド内の会話履歴を取得
+    thread_context = build_thread_context(discord_bot, thread_id, user_message)
+
+    # スレッドコンテキストを含めたメッセージを構築
+    full_message = if thread_context.present?
+      <<~MESSAGE.strip
+        【このスレッドでのこれまでの会話】
+        #{thread_context}
+
+        【最新の質問】
+        #{user_message}
+      MESSAGE
+    else
+      user_message
+    end
+
+    Rails.logger.info "Thread context included: #{thread_context.present?}"
+
+    # 進捗通知用のコールバック
+    on_progress = ->(message) {
+      send_to_discord(thread_id, message)
+    }
+
+    # AgentLoopを作成
+    agent = Llm::AgentLoop.new(
+      claude,
+      discord_bot: discord_bot,
+      logger: Rails.logger,
+      allowed_category_id: category_id,
+      on_progress: on_progress
+    )
+
+    # AgentLoopで応答を生成
+    response_text = agent.run(
+      user_message: full_message,
+      system_prompt: system_prompt
     )
 
     # Discordに返信
     send_to_discord(thread_id, response_text)
 
     Rails.logger.info "DiscordLlmResponseJob completed for thread: #{thread_id}"
+    Rails.logger.info "Agent stats - Iterations: #{agent.iterations}, Tokens: #{agent.total_tokens}"
   rescue StandardError => e
     Rails.logger.error "DiscordLlmResponseJob failed: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
@@ -51,156 +87,84 @@ class DiscordLlmResponseJob < ApplicationJob
     end
   end
 
-  # 会話履歴を構築
-  # 本実装では簡略化して最新のメッセージのみ
-  # 将来的にはDiscordスレッドから過去の会話を取得して履歴を構築
-  def build_conversation_history(thread_id, user_message)
-    # TODO: Discordスレッドから過去のメッセージを取得して履歴を構築
-    [
-      { role: "user", content: user_message }
-    ]
-  end
-
-  # Discord過去メッセージを検索してコンテキスト構築
-  def search_and_build_context(user_message, channel_id)
-    return nil if user_message.blank?
-
-    # Claudeに検索キーワードを抽出してもらう
-    search_query = extract_search_keywords(user_message)
-
-    return nil if search_query.blank?
-
-    Rails.logger.info "Original message: #{user_message}"
-    Rails.logger.info "Extracted search keywords: #{search_query}"
-
-    bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
-
-    # メンションされたチャンネルのカテゴリを取得
-    category_id = bot.get_channel_category(channel_id)
-
-    if category_id
-      Rails.logger.info "Current channel category: #{category_id}"
-      Rails.logger.info "Searching within same category only"
-    else
-      Rails.logger.info "Channel has no category, searching across entire server"
-    end
-
-    # 同じカテゴリ内で検索 (カテゴリがない場合はサーバー全体)
-    results = bot.search_messages_in_server(
-      query: search_query,
-      limit: 30,
-      max_results: 5,
-      category_id: category_id
-    )
-
-    return nil if results.empty?
-
-    Rails.logger.info "Found #{results.size} relevant messages across server"
-
-    # 検索結果の内容をログ出力
-    results.each_with_index do |msg, index|
-      author = msg.dig("author", "username") || "Unknown"
-      content_preview = msg["content"]&.slice(0, 100) || ""
-      timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M")
-
-      Rails.logger.info "  [#{index + 1}] #{timestamp} #{author}: #{content_preview}"
-    end
-
-    # 結果をフォーマット
-    format_search_results(results)
-  rescue => e
-    Rails.logger.error "Failed to search Discord messages: #{e.message}"
-    Rails.logger.error e.backtrace.join("\n")
-    nil
-  end
-
-  # Claudeに検索キーワードを抽出してもらう
-  def extract_search_keywords(user_message)
-    llm = create_llm_provider
-
-    prompt = <<~PROMPT
-      以下のユーザーメッセージから、Discord過去発言を検索するための
-      最も重要なキーワードを1つだけ抽出してください。
-
-      ルール:
-      - 最も重要で特徴的な名詞や固有名詞を1つ選ぶ
-      - 一般的すぎる単語(例: Google, 情報)は避ける
-      - 助詞や助動詞は除外
-      - キーワード1つのみを出力
-      - 余計な説明は不要
-
-      例:
-      入力: "マイクチェックについて教えて"
-      出力: マイクチェック
-
-      入力: "Railsのエラーで困っています"
-      出力: Rails
-
-      入力: "Googleの「Gemini」について話している人はいますか？"
-      出力: Gemini
-
-      ユーザーメッセージ: #{user_message}
-    PROMPT
-
-    keywords = llm.generate(
-      messages: [{ role: "user", content: prompt }],
-      system_prompt: "あなたは検索クエリ抽出の専門家です。指示に従って最も重要なキーワード1つのみを出力してください。",
-      temperature: 0.3,
-      max_tokens: 50
-    )
-
-    # 余計な改行や空白を削除
-    keywords.strip
-  rescue => e
-    Rails.logger.error "Failed to extract search keywords: #{e.message}"
-    # エラー時は元のメッセージをそのまま使用
-    user_message
-  end
-
-  # 検索結果をClaudeに渡す形式にフォーマット
-  def format_search_results(results)
-    formatted = results.map do |msg|
-      timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M")
-      author = msg.dig("author", "username") || "Unknown"
-      content = msg["content"]
-
-      "#{timestamp} #{author}: #{content}"
-    end.join("\n\n")
-
-    <<~CONTEXT
-      参考情報として、Discordサーバー内の関連する過去発言を以下に示します:
-
-      #{formatted}
-    CONTEXT
-  end
-
   # システムプロンプト
   def system_prompt
     <<~PROMPT
-      あなたはTeacher Teacherのオンラインコミュニティ「TT村」のヘルプボットです。
-      ユーザーからの質問に丁寧に答えてください。
+      あなたはTeacher Teacherのオンラインコミュニティ「TT村」のDiscordサーバーのヘルプボットです。
 
-      回答する際の注意点:
+      【重要】Discord検索が必要かどうかの判断:
+      - TT村固有の情報（イベント、メンバー、過去の会話、コミュニティのルールなど）が必要な質問
+        → Discordを検索してください
+      - プログラミングや一般常識など、あなたの知識だけで答えられる質問
+        → 検索せずに直接答えてください
+      - 判断に迷う場合
+        → Discordを検索してください（念のため確認する方が安全です）
+
+      【Discord検索が必要な場合の方針】:
+      1. ユーザーの質問から適切なキーワードで search_discord_messages を使用
+      2. 検索結果で関連する情報を見つけた場合:
+         - そのメッセージのchannel_idとidを確認
+         - get_messages_around ツールで前後のメッセージを取得
+         - 前後のメッセージに回答があれば、それを提供
+      3. 検索結果が見つからない場合:
+         - 別のキーワードで1-2回まで再検索を試みる
+         - それでも見つからなければ「見つかりませんでした」と伝える
+
+      【回答する際の注意点】:
       - 簡潔で分かりやすい日本語で答えてください
       - 不確かなことは推測せず、分からないと正直に答えてください
-      - 必要に応じて、追加の情報を求めてください
+      - 検索は必要最小限に抑え、効率的に情報を提供することを心がけてください
+      - 親しみやすい口調で回答してください
+
+      【重要】検索結果の引用について:
+      - 検索結果にはユーザーメンション（<@USER_ID>）とメッセージリンク（https://discord.com/channels/...）が含まれています
+      - 回答でユーザーの発言を引用する際は、必ずこれらのメンションとリンクをそのまま使用してください
+      - 例: 「<@123456789>さんが[こちらのメッセージ](https://discord.com/channels/...)で...」のように
+      - これによりユーザーは発言者や元の会話に簡単にアクセスできます
     PROMPT
   end
 
-  # コンテキスト付きシステムプロンプト
-  def system_prompt_with_context(context)
-    base = system_prompt
-    return base unless context
+  # スレッド内の会話履歴からコンテキストを構築
+  # @param discord_bot [Discord::Bot] Discordボットインスタンス
+  # @param thread_id [String] スレッドID
+  # @param current_message [String] 現在のユーザーメッセージ
+  # @return [String, nil] フォーマットされた会話履歴（履歴がない場合はnil）
+  def build_thread_context(discord_bot, thread_id, current_message)
+    # スレッドの直近20件のメッセージを取得
+    messages = discord_bot.get_thread_messages(thread_id, limit: 20)
 
-    <<~PROMPT
-      #{base}
+    # ボット自身のIDを取得（ボットのメッセージを識別するため）
+    bot_user_id = Rails.application.credentials.dig(:discord_app, :bot_user_id)
 
-      #{context}
+    # 会話履歴を構築
+    # - 最新のユーザーメッセージ（現在の質問）は除外
+    # - 直近10件程度に絞る
+    recent_messages = messages
+      .reject { |m| m["content"] == current_message } # 現在のメッセージを除外
+      .last(10) # 直近10件
 
-      上記の参考情報を考慮して、ユーザーの質問に答えてください。
-      ただし、参考情報が質問と関連性が低い場合は無視してください。
-      参考情報を使う場合は、自然な形で引用しながら答えてください。
-    PROMPT
+    # メッセージが1件以下（現在のメッセージしかない）場合はコンテキストなし
+    return nil if recent_messages.empty?
+
+    # フォーマット
+    recent_messages.map do |msg|
+      author_id = msg.dig("author", "id")
+      author_name = msg.dig("author", "username") || msg.dig("author", "global_name") || "不明"
+      content = msg["content"] || ""
+
+      # ボットのメッセージか判定
+      is_bot = author_id == bot_user_id || msg.dig("author", "bot") == true
+
+      if is_bot
+        "ボット: #{content.slice(0, 200)}" # ボットの応答は200文字まで
+      else
+        "#{author_name}: #{content.slice(0, 200)}" # ユーザーのメッセージも200文字まで
+      end
+    end.join("\n")
+  rescue => e
+    Rails.logger.error "Failed to build thread context: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    nil # エラー時はコンテキストなしで続行
   end
 
   # Discordにメッセージを送信

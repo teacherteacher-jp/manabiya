@@ -1,6 +1,7 @@
 require 'securerandom'
 require 'net/http'
 require 'json'
+require 'uri'
 
 module Discord
   BASE_URL = "https://discord.com"
@@ -289,6 +290,135 @@ module Discord
         limit: limit,
         max_results: max_results
       )
+    end
+
+    # サーバー全体から検索 (新しいGuild Search APIを使用)
+    # @param query [String] 検索キーワード
+    # @param limit [Integer] 最大取得件数 (1-25)
+    # @param channel_ids [Array<String>, nil] 検索対象チャンネルIDの配列 (最大500件)
+    # @param author_ids [Array<String>, nil] 投稿者IDの配列でフィルタ
+    # @param sort_by [String] ソート方法 ("timestamp" or "relevancy")
+    # @param sort_order [String] ソート順 ("asc" or "desc")
+    # @param offset [Integer] オフセット (0-9975)
+    # @return [Hash] { messages: Array<Hash>, total_results: Integer }
+    def search_messages_in_server2(
+      query:,
+      limit: 25,
+      channel_ids: nil,
+      author_ids: nil,
+      sort_by: "timestamp",
+      sort_order: "desc",
+      offset: 0
+    )
+      # パラメータ構築
+      params = {
+        content: query,
+        limit: [limit, 25].min,  # 最大25
+        sort_by: sort_by,
+        sort_order: sort_order,
+        offset: offset
+      }
+
+      # channel_idsが指定されている場合
+      if channel_ids.present?
+        # 最大500件まで
+        params[:channel_id] = channel_ids.take(500)
+      end
+
+      # author_idsが指定されている場合
+      if author_ids.present?
+        params[:author_id] = author_ids
+      end
+
+      # クエリ文字列を構築
+      query_string = params.map do |key, value|
+        if value.is_a?(Array)
+          value.map { |v| "#{key}=#{URI.encode_www_form_component(v.to_s)}" }.join("&")
+        else
+          "#{key}=#{URI.encode_www_form_component(value.to_s)}"
+        end
+      end.join("&")
+
+      # APIリクエスト
+      path = "/guilds/#{server_id}/messages/search?#{query_string}"
+      response = get(path)
+
+      if response.status == 200
+        result = JSON.parse(response.body)
+
+        # messagesは配列の配列（各要素は会話のコンテキストを含む）
+        # フラット化して、実際のメッセージのみを返す
+        messages = result["messages"] || []
+        flattened_messages = messages.flatten(1)
+
+        {
+          messages: flattened_messages,
+          total_results: result["total_results"] || 0,
+          analytics_id: result["analytics_id"],
+          threads: result["threads"],
+          members: result["members"]
+        }
+      elsif response.status == 202
+        # 検索インデックスが準備中
+        Rails.logger.warn "Search index not ready (202 response)"
+        { messages: [], total_results: 0, error: "Search index not ready" }
+      else
+        Rails.logger.error "Guild search failed: #{response.status} - #{response.body}"
+        { messages: [], total_results: 0, error: "API error: #{response.status}" }
+      end
+    rescue => e
+      Rails.logger.error "Failed to search messages in guild: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      { messages: [], total_results: 0, error: e.message }
+    end
+
+    # 特定メッセージの前後のメッセージを取得
+    # @param channel_id [String] チャンネルID
+    # @param message_id [String] 基準となるメッセージID
+    # @param limit [Integer] 取得件数（1-100）
+    # @return [Array<Hash>] メッセージの配列
+    def get_messages_around(channel_id:, message_id:, limit: 10)
+      # limitを1-100の範囲に制限
+      limit = [[limit, 1].max, 100].min
+
+      path = "/channels/#{channel_id}/messages?around=#{message_id}&limit=#{limit}"
+      response = get(path)
+
+      if response.status == 200
+        JSON.parse(response.body)
+      else
+        Rails.logger.error "Get messages around failed: #{response.status} - #{response.body}"
+        []
+      end
+    rescue => e
+      Rails.logger.error "Failed to get messages around: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      []
+    end
+
+    # スレッド内のメッセージを取得
+    # @param thread_id [String] スレッドID（チャンネルID）
+    # @param limit [Integer] 取得件数（1-100、デフォルト: 10）
+    # @return [Array<Hash>] メッセージの配列（古い順にソート済み）
+    def get_thread_messages(thread_id, limit: 10)
+      # limitを1-100の範囲に制限
+      limit = [[limit, 1].max, 100].min
+
+      path = "/channels/#{thread_id}/messages?limit=#{limit}"
+      response = get(path)
+
+      if response.status == 200
+        messages = JSON.parse(response.body)
+        # Discord APIは新しい順で返すので、古い順に並び替え
+        messages.reverse
+      else
+        Rails.logger.error "Get thread messages failed: #{response.status} - #{response.body}"
+        []
+      end
+    rescue => e
+      Rails.logger.error "Failed to get thread messages: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      []
     end
   end
 end

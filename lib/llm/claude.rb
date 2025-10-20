@@ -37,11 +37,51 @@ module Llm
       raise StandardError, "Claude API request failed: #{e.message}"
     end
 
+    # Tool Use対応版のメッセージ生成
+    # @param messages [Array<Hash>] 会話履歴の配列
+    # @param system [String] システムプロンプト
+    # @param tools [Array<Hash>] ツール定義の配列
+    # @param max_tokens [Integer] 生成する最大トークン数
+    # @param temperature [Float] 生成のランダム性 (0.0 ~ 1.0)
+    # @return [Anthropic::Models::Message] Anthropic APIのレスポンスオブジェクト
+    def messages_with_tools(messages:, system:, tools: [], max_tokens: 4096, temperature: 0.7)
+      params = {
+        model: MODEL,
+        messages: normalize_messages(messages),
+        max_tokens: max_tokens,
+        temperature: temperature
+      }
+
+      params[:system] = system if system.present?
+      params[:tools] = tools if tools.present?
+
+      response = @client.messages.create(**params)
+
+      Rails.logger.info "Claude API response: stop_reason=#{response.stop_reason}, usage=#{response.usage.inspect}"
+
+      response
+    rescue Faraday::Error => e
+      Rails.logger.error("Claude API error: #{e.message}")
+      raise StandardError, "Claude API request failed: #{e.message}"
+    end
+
     def provider_name
       :claude
     end
 
     private
+
+    # メッセージを正規化（Anthropic API形式に変換）
+    # @param messages [Array<Hash>] 会話履歴
+    # @return [Array<Hash>] 正規化されたメッセージ
+    def normalize_messages(messages)
+      messages.map do |msg|
+        {
+          role: msg[:role].to_s,
+          content: msg[:content]
+        }
+      end
+    end
 
     # APIレスポンスからテキストコンテンツを抽出
     # @param response [Anthropic::Models::Message] Anthropic APIのレスポンス
