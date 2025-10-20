@@ -172,7 +172,8 @@ class DiscordLlmResponseJob < ApplicationJob
     bot = Discord::Bot.new(Rails.application.credentials.dig(:discord_app, :bot_token))
     bot.send_message(
       channel_or_thread_id: thread_id,
-      content: message
+      content: message,
+      allowed_mentions: { parse: [] } # メンションを表示するが通知は送らない
     )
   rescue => e
     Rails.logger.error "Failed to send message to Discord: #{e.class} - #{e.message}"

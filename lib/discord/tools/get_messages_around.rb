@@ -87,9 +87,8 @@ module Discord
         sorted_messages = messages.sort_by { |m| Time.parse(m["timestamp"]) }
 
         formatted = sorted_messages.map.with_index(1) do |msg, index|
-          # ユーザーメンション
-          author_id = msg.dig("author", "id")
-          author_mention = author_id ? Discord::Formatter.mention_user(author_id) : Discord::Formatter.display_name(msg["author"])
+          # ユーザー表示名
+          author_name = Discord::Formatter.bold_display_name(msg["author"])
 
           # タイムスタンプ
           timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
@@ -116,7 +115,7 @@ module Discord
           end
 
           # フォーマット
-          header = "[#{index}] #{timestamp} | #{author_mention}#{marker}"
+          header = "[#{index}] #{timestamp} | #{author_name}#{marker}"
           header += "\n#{message_link}" if message_link.present?
           header += "\n#{content.slice(0, 300)}"
 

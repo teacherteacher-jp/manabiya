@@ -33,7 +33,15 @@ module Discord
       author["global_name"] || author["username"] || "不明なユーザー"
     end
 
-    # メッセージ情報を整形（ユーザーメンション + チャンネルリンク付き）
+    # ユーザー情報から太字の表示名を取得
+    # @param author [Hash] author情報（username, global_name含む）
+    # @return [String] 太字の表示名
+    def self.bold_display_name(author)
+      name = display_name(author)
+      "**#{name}**"
+    end
+
+    # メッセージ情報を整形（ユーザー表示名 + チャンネルリンク付き）
     # @param message [Hash] メッセージ情報
     # @param server_id [String] サーバーID
     # @param options [Hash] オプション
@@ -44,13 +52,7 @@ module Discord
       parts = []
 
       # ユーザー情報
-      author_id = message.dig("author", "id")
-      if author_id
-        parts << mention_user(author_id)
-      else
-        display = display_name(message["author"])
-        parts << display
-      end
+      parts << bold_display_name(message["author"])
 
       # チャンネル情報
       if include_channel && message["channel_id"]
