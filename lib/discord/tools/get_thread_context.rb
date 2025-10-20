@@ -76,10 +76,70 @@ module Discord
           content = msg["content"] || "(コンテンツなし)"
           timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
 
-          "#{timestamp} | #{author_name}\n#{content}"
+          # 添付ファイルがある場合は内容も取得
+          attachments_text = format_attachments(msg["attachments"])
+
+          message_text = "#{timestamp} | #{author_name}\n#{content}"
+          message_text += "\n\n#{attachments_text}" if attachments_text.present?
+          message_text
         end.join("\n\n---\n\n")
 
         "【スレッド会話履歴】（全#{sorted_messages.size}件）\n\n#{formatted}"
+      end
+
+      # 添付ファイルをフォーマット
+      # @param attachments [Array<Hash>, nil] 添付ファイルの配列
+      # @return [String, nil] フォーマットされた添付ファイル情報
+      def format_attachments(attachments)
+        return nil if attachments.blank?
+
+        attachments.map do |attachment|
+          filename = attachment["filename"]
+          url = attachment["url"]
+          content_type = attachment["content_type"]
+          size = attachment["size"]
+
+          # テキストファイルの場合は内容をダウンロード
+          if content_type&.start_with?("text/")
+            content = download_text_file(url)
+            if content
+              "【添付ファイル: #{filename}】\n```\n#{content}\n```"
+            else
+              "【添付ファイル: #{filename} (#{size} bytes)】\nURL: #{url}"
+            end
+          else
+            "【添付ファイル: #{filename} (#{content_type}, #{size} bytes)】\nURL: #{url}"
+          end
+        end.join("\n\n")
+      end
+
+      # テキストファイルの内容をダウンロード
+      # @param url [String] ファイルのURL
+      # @return [String, nil] ファイルの内容（失敗時はnil）
+      def download_text_file(url)
+        require 'net/http'
+        require 'uri'
+
+        uri = URI.parse(url)
+        response = Net::HTTP.get_response(uri)
+
+        if response.is_a?(Net::HTTPSuccess)
+          # バイナリデータを強制的にUTF-8として解釈
+          content = response.body.force_encoding('UTF-8')
+
+          # サイズが大きすぎる場合は先頭部分のみ返す
+          if content.bytesize > 10000
+            "#{content[0..10000]}\n\n... (#{content.bytesize} bytes中10000 bytesまで表示)"
+          else
+            content
+          end
+        else
+          Rails.logger.error "Failed to download attachment: #{response.code} #{response.message}"
+          nil
+        end
+      rescue => e
+        Rails.logger.error "Error downloading attachment: #{e.class} - #{e.message}"
+        nil
       end
     end
   end
