@@ -7,6 +7,10 @@ default: &default
     class: SchoolStatsNotifierJob
     queue: default
     schedule: every day at 16:15
+  unlinked_metalife_users_notifier:
+    class: UnlinkedMetalifeUsersNotifierJob
+    queue: default
+    schedule: every day at 0:05
 
 production:
   <<: *default
