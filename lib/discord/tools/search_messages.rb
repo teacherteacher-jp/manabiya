@@ -106,9 +106,8 @@ module Discord
         server_id = @bot.server_id
 
         formatted = results.map.with_index(1) do |msg, index|
-          # ユーザーメンション
-          author_id = msg.dig("author", "id")
-          author_mention = author_id ? Discord::Formatter.mention_user(author_id) : Discord::Formatter.display_name(msg["author"])
+          # ユーザー表示名
+          author_name = Discord::Formatter.bold_display_name(msg["author"])
 
           # チャンネルメンション
           channel_mention = msg["channel_id"] ? Discord::Formatter.mention_channel(msg["channel_id"]) : ""
@@ -134,7 +133,7 @@ module Discord
           end
 
           # フォーマット
-          header = "[#{index}] #{timestamp} | #{author_mention} in #{channel_mention}"
+          header = "[#{index}] #{timestamp} | #{author_name} in #{channel_mention}"
           header += "\n#{message_link}" if message_link.present?
           header += "\n#{content.slice(0, 200)}"
 

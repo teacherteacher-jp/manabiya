@@ -70,14 +70,13 @@ module Discord
         sorted_messages = messages.reverse
 
         formatted = sorted_messages.map do |msg|
-          # ユーザーメンション
-          author_id = msg.dig("author", "id")
-          author_mention = author_id ? Discord::Formatter.mention_user(author_id) : Discord::Formatter.display_name(msg["author"])
+          # ユーザー表示名
+          author_name = Discord::Formatter.bold_display_name(msg["author"])
 
           content = msg["content"] || "(コンテンツなし)"
           timestamp = Time.parse(msg["timestamp"]).strftime("%Y-%m-%d %H:%M") rescue "不明な日時"
 
-          "#{timestamp} | #{author_mention}\n#{content}"
+          "#{timestamp} | #{author_name}\n#{content}"
         end.join("\n\n---\n\n")
 
         "【スレッド会話履歴】（全#{sorted_messages.size}件）\n\n#{formatted}"
