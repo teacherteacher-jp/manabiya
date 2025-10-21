@@ -94,7 +94,8 @@ module Llm
         Discord::Tools::GetMessagesAround.new(@discord_bot, allowed_category_id: @allowed_category_id),
         # 汎用ツール（状態を持たないが、統一性のためインスタンス化）
         Tools::Calculator.new,
-        Tools::GetCurrentTime.new
+        Tools::GetCurrentTime.new,
+        Tools::WebSearch.new
       ]
     end
 
@@ -178,6 +179,9 @@ module Llm
         "🧮 計算しています..."
       when "get_current_time"
         "🕐 現在時刻を取得しています..."
+      when "web_search"
+        query = input["query"] || input[:query]
+        "🌐 「#{query}」をWeb検索しています..."
       else
         "🔧 #{tool_name}を実行しています..."
       end
