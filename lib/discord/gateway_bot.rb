@@ -13,6 +13,12 @@ module Discord
 
       # メンション検知
       @bot.mention do |event|
+        # リプライの場合、本文に明示的なメンションが含まれているかチェック
+        if reply_without_explicit_mention?(event)
+          Rails.logger.info "Skipping reply without explicit mention from #{event.user.name}"
+          next
+        end
+
         handle_message(event, mentioned: true)
       end
 
@@ -100,6 +106,27 @@ module Discord
     def run
       Rails.logger.info "Starting Discord Gateway Bot..."
       @bot.run
+    end
+
+    private
+
+    # リプライで、かつ本文に明示的なメンションが含まれていない場合にtrueを返す
+    def reply_without_explicit_mention?(event)
+      message = event.message
+      return false unless message
+
+      # リプライかどうかをチェック(referenced_messageが存在すればリプライ)
+      return false unless message.referenced_message.present?
+
+      # 本文にボットへのメンションが含まれているかチェック
+      bot_id = @bot.profile&.id
+      return false unless bot_id
+
+      content = message.content.to_s
+      has_explicit_mention = content.include?("<@#{bot_id}>") || content.include?("<@!#{bot_id}>")
+
+      # リプライで、かつ明示的なメンションがない場合にtrue
+      !has_explicit_mention
     end
   end
 end
