@@ -15,6 +15,12 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def require_admin
+    return if current_member&.admin?
+
+    raise ActionController::RoutingError, "Not Found"
+  end
+
   def redirect_if_no_student_info_access
     unless current_member.can_access_student_info?
       redirect_to root_path, alert: 'アクセス権限がありません'

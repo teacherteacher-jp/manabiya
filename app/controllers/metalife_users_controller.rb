@@ -17,10 +17,4 @@ class MetalifeUsersController < ApplicationController
 
     redirect_to metalife_users_path, notice: "紐付けを更新しました"
   end
-
-  private
-
-  def require_admin
-    redirect_to root_path unless current_member&.admin?
-  end
 end

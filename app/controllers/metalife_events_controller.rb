@@ -24,9 +24,4 @@ class MetalifeEventsController < ApplicationController
     end
   end
 
-  private
-
-  def require_admin
-    redirect_to root_path unless current_member&.admin?
-  end
 end
