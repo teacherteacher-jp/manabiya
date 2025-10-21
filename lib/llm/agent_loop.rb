@@ -1,6 +1,6 @@
 module Llm
   class AgentLoop
-    MAX_ITERATIONS = 10
+    MAX_ITERATIONS = 15
     MAX_TOKENS_BUDGET = 50_000
 
     attr_reader :iterations, :total_tokens
@@ -37,10 +37,13 @@ module Llm
         break if @iterations > MAX_ITERATIONS
         break if @total_tokens > MAX_TOKENS_BUDGET
 
+        # System promptに進捗情報を追加
+        enhanced_prompt = build_enhanced_system_prompt(system_prompt)
+
         # Claude APIをツール定義付きで呼び出し
         response = @claude.messages_with_tools(
           messages: messages,
-          system: system_prompt,
+          system: enhanced_prompt,
           tools: @tools.map(&:definition),
           max_tokens: 4096
         )
@@ -178,6 +181,22 @@ module Llm
       else
         "🔧 #{tool_name}を実行しています..."
       end
+    end
+
+    # System promptに進捗情報を追加
+    # @param base_prompt [String] ベースとなるシステムプロンプト
+    # @return [String] 進捗情報を追加したシステムプロンプト
+    def build_enhanced_system_prompt(base_prompt)
+      progress_info = "現在 #{@iterations}/#{MAX_ITERATIONS} 回目の実行です。"
+
+      remaining = MAX_ITERATIONS - @iterations
+      if remaining <= 2
+        progress_info += " 残り #{remaining} 回です。結論をまとめる準備をしてください。"
+      elsif remaining <= 5
+        progress_info += " 残り #{remaining} 回です。効率的に進めてください。"
+      end
+
+      "#{base_prompt}\n\n#{progress_info}"
     end
   end
 end
