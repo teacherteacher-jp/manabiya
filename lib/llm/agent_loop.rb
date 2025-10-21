@@ -92,9 +92,11 @@ module Llm
         Discord::Tools::GetChannelInfo.new(@discord_bot),
         Discord::Tools::GetThreadContext.new(@discord_bot, current_thread_id: @current_thread_id),
         Discord::Tools::GetMessagesAround.new(@discord_bot, allowed_category_id: @allowed_category_id),
+        Discord::Tools::RecentMessages.new(@discord_bot, allowed_category_id: @allowed_category_id),
         # 汎用ツール（状態を持たないが、統一性のためインスタンス化）
         Tools::Calculator.new,
-        Tools::GetCurrentTime.new
+        Tools::GetCurrentTime.new,
+        Tools::WebSearch.new
       ]
     end
 
@@ -174,10 +176,16 @@ module Llm
         "ℹ️ チャンネル情報を取得しています..."
       when "get_thread_context"
         "💬 スレッドの履歴を確認しています..."
+      when "get_recent_messages"
+        limit = input["limit"] || input[:limit] || 25
+        "📋 最近の投稿#{limit}件を取得しています..."
       when "calculate"
         "🧮 計算しています..."
       when "get_current_time"
         "🕐 現在時刻を取得しています..."
+      when "web_search"
+        query = input["query"] || input[:query]
+        "🌐 「#{query}」をWeb検索しています..."
       else
         "🔧 #{tool_name}を実行しています..."
       end

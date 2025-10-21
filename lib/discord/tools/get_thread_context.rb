@@ -47,8 +47,11 @@ module Discord
           return "エラー: スレッドIDが指定されていません。thread_idパラメータを指定するか、現在のスレッド内でこのツールを使用してください。"
         end
 
+        # スレッド情報を取得して親チャンネルIDを確認
+        thread_info_response = @bot.get("/channels/#{thread_id}")
+        thread_info = JSON.parse(thread_info_response.body) if thread_info_response.status == 200
+
         # Discord APIでメッセージを取得
-        # get メソッドは既存の Discord::Bot クラスにある
         response = @bot.get("/channels/#{thread_id}/messages?limit=#{limit}")
 
         unless response.status == 200
@@ -58,11 +61,20 @@ module Discord
 
         messages = JSON.parse(response.body)
 
-        if messages.empty?
+        # 親チャンネルから起点メッセージを取得（type: 11 公開スレッドの場合）
+        starter_message = nil
+        if thread_info && thread_info["parent_id"] && [11, 12].include?(thread_info["type"])
+          starter_response = @bot.get("/channels/#{thread_info['parent_id']}/messages/#{thread_id}")
+          if starter_response.status == 200
+            starter_message = JSON.parse(starter_response.body)
+          end
+        end
+
+        if messages.empty? && starter_message.nil?
           return "スレッド内にメッセージが見つかりませんでした。"
         end
 
-        format_thread_messages(messages)
+        format_thread_messages(messages, starter_message)
       rescue => e
         Rails.logger.error "GetThreadContext failed: #{e.class} - #{e.message}"
         "スレッド履歴の取得中にエラーが発生しました: #{e.message}"
@@ -97,12 +109,20 @@ module Discord
 
       # メッセージを読みやすい形式にフォーマット
       # @param messages [Array<Hash>] メッセージの配列（新しい順）
+      # @param starter_message [Hash, nil] 親チャンネルから取得した起点メッセージ
       # @return [String] フォーマットされた会話履歴
-      def format_thread_messages(messages)
-        # 古い順に並び替え（会話の流れが自然になる）
-        sorted_messages = messages.reverse
+      def format_thread_messages(messages, starter_message = nil)
+        all_messages = []
 
-        formatted = sorted_messages.map do |msg|
+        # 起点メッセージを最初に追加
+        if starter_message
+          all_messages << starter_message
+        end
+
+        # スレッド内のメッセージを追加（古い順）
+        all_messages.concat(messages.reverse)
+
+        formatted = all_messages.map.with_index do |msg, index|
           # ユーザー表示名
           author_name = Discord::Formatter.bold_display_name(msg["author"])
 
@@ -112,12 +132,18 @@ module Discord
           # 添付ファイルがある場合は内容も取得
           attachments_text = format_attachments(msg["attachments"])
 
-          message_text = "#{timestamp} | #{author_name}\n#{content}"
+          # 最初のメッセージ(起点メッセージ)を強調
+          if index == 0
+            message_text = "📌 【起点メッセージ】\n#{timestamp} | #{author_name}\n#{content}"
+          else
+            message_text = "#{timestamp} | #{author_name}\n#{content}"
+          end
+
           message_text += "\n\n#{attachments_text}" if attachments_text.present?
           message_text
         end.join("\n\n---\n\n")
 
-        "【スレッド会話履歴】（全#{sorted_messages.size}件）\n\n#{formatted}"
+        "【スレッド会話履歴】（全#{all_messages.size}件）\n\n#{formatted}"
       end
 
       # 添付ファイルをフォーマット

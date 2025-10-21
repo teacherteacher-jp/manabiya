@@ -6,14 +6,12 @@ module Discord
     # @param filename [String, nil] ファイル名（ログ出力用）
     # @return [String, nil] ファイルの内容（バイナリの場合やエラー時はnil）
     def self.download_text_content(url, filename: nil)
-      require 'net/http'
-      require 'uri'
+      require 'faraday'
 
-      uri = URI.parse(url)
-      response = Net::HTTP.get_response(uri)
+      response = Faraday.get(url)
 
-      unless response.is_a?(Net::HTTPSuccess)
-        Rails.logger.error "Failed to download attachment: #{response.code} #{response.message}"
+      unless response.success?
+        Rails.logger.error "Failed to download attachment: #{response.status} #{response.reason_phrase}"
         return nil
       end
 
