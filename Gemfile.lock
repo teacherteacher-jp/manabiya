@@ -414,6 +414,7 @@ DEPENDENCIES
   debug
   discordrb
   dotenv
+  faraday
   holiday_jp
   importmap-rails
   jbuilder

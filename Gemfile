@@ -7,6 +7,7 @@ gem "rails"
 gem "anthropic"
 gem "bootsnap", require: false
 gem "discordrb"
+gem "faraday"
 gem "holiday_jp"
 gem "importmap-rails"
 gem "jbuilder"
