@@ -169,7 +169,8 @@ module Llm
       case tool_name
       when "search_discord_messages"
         query = input["query"] || input[:query]
-        "🔍 Discordを「#{query}」で検索しています..."
+        category_info = get_category_name_for_progress
+        "🔍 #{category_info}内を「#{query}」で検索しています..."
       when "get_messages_around"
         "📄 メッセージの前後を確認しています..."
       when "get_channel_info"
@@ -205,6 +206,30 @@ module Llm
       end
 
       "#{base_prompt}\n\n#{progress_info}"
+    end
+
+    # カテゴリ名を取得して進捗メッセージ用の文字列を返す
+    # @return [String] カテゴリ情報の文字列（例: "「質問・相談」カテゴリ"）
+    def get_category_name_for_progress
+      return "Discordサーバー" unless @allowed_category_id
+
+      begin
+        # get_channelメソッドで直接カテゴリ情報を取得
+        category = @discord_bot.get_channel(@allowed_category_id)
+
+        @logger.debug "Category lookup for #{@allowed_category_id}: #{category.inspect}"
+
+        if category && category["name"]
+          "「#{category["name"]}」カテゴリ"
+        else
+          @logger.warn "Category name not found for ID: #{@allowed_category_id}"
+          "指定カテゴリ"
+        end
+      rescue => e
+        @logger.error "Failed to get category name for #{@allowed_category_id}: #{e.message}"
+        @logger.error e.backtrace.first(5).join("\n")
+        "指定カテゴリ"
+      end
     end
   end
 end
