@@ -80,5 +80,8 @@ Rails.application.routes.draw do
   patch  "/metalife_users/:id",                    to: "metalife_users#update",
                                                    as: "metalife_user"
 
+  get    "/metalife_events",                       to: "metalife_events#index",
+                                                   as: "metalife_events"
+
   root   "root#index"
 end

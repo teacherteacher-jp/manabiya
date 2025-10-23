@@ -1,0 +1,104 @@
+<div class="p-6">
+  <div class="mb-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">MetaLifeイベント履歴</h1>
+
+    <%= form_with url: metalife_events_path, method: :get, class: "flex gap-2 items-center" do |f| %>
+      <div class="flex gap-2">
+        <%= f.label :start_date, "開始日:", class: "text-sm font-medium text-gray-700 self-center" %>
+        <%= f.date_field :start_date, value: @start_date, class: "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= f.label :end_date, "終了日:", class: "text-sm font-medium text-gray-700 self-center" %>
+        <%= f.date_field :end_date, value: @end_date, class: "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <%= f.submit "絞り込み", class: "inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+    <% end %>
+  </div>
+
+  <% if @events_by_date.empty? %>
+    <div class="bg-gray-50 rounded-lg p-8 text-center">
+      <p class="text-gray-500">指定期間内にイベントがありません</p>
+    </div>
+  <% else %>
+    <div class="space-y-8">
+      <% @events_by_date.each do |date, events_by_user| %>
+        <div class="bg-white rounded-lg shadow">
+          <!-- 日付セクションヘッダー -->
+          <div class="bg-indigo-600 text-white px-6 py-3 rounded-t-lg">
+            <h2 class="text-lg font-semibold">
+              <%= date.strftime("%Y年%m月%d日 (%a)") %>
+            </h2>
+          </div>
+
+          <!-- ユーザーごとのイベント -->
+          <div class="divide-y divide-gray-200">
+            <% events_by_user.each do |user, events| %>
+              <div class="p-6">
+                <!-- ユーザー名 -->
+                <div class="mb-4 flex items-center gap-2">
+                  <% if user.linkable.present? %>
+                    <h3 class="text-md font-semibold text-gray-900">
+                      <% if user.linkable.is_a?(Member) %>
+                        <%= link_to user.linkable.name, member_path(user.linkable), class: "text-indigo-600 hover:text-indigo-900 hover:underline" %>
+                      <% elsif user.linkable.is_a?(Student) %>
+                        <%= link_to user.linkable.name, student_path(user.linkable), class: "text-indigo-600 hover:text-indigo-900 hover:underline" %>
+                      <% end %>
+                    </h3>
+                    <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      <%= user.linkable.class.model_name.human %>
+                    </span>
+                    <span class="text-sm text-gray-500">
+                      (MetaLife: <%= user.name %>)
+                    </span>
+                  <% else %>
+                    <h3 class="text-md font-semibold text-gray-900">
+                      <%= user.name %>
+                    </h3>
+                    <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                      未紐付け
+                    </span>
+                  <% end %>
+                  <span class="text-xs text-gray-400">
+                    (ID: <%= user.metalife_id %>)
+                  </span>
+                </div>
+
+                <!-- イベントのタイムライン -->
+                <div class="ml-4 space-y-2">
+                  <% events.each do |event| %>
+                    <div class="flex items-start gap-3">
+                      <!-- 時刻 -->
+                      <div class="text-sm text-gray-500 w-16 flex-shrink-0">
+                        <%= event.occurred_at.strftime("%H:%M") %>
+                      </div>
+
+                      <!-- イベントアイコンとタイプ -->
+                      <div class="flex-shrink-0">
+                        <%= event_icon(event.event_type) %>
+                      </div>
+
+                      <!-- イベントバッジ -->
+                      <span class="<%= event_badge_class(event.event_type) %> inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
+                        <%= event_type_label(event.event_type) %>
+                      </span>
+
+                      <!-- メッセージ -->
+                      <div class="flex-1 text-sm text-gray-700">
+                        <%= event.message %>
+                        <% if event.floor_id.present? %>
+                          <span class="text-gray-500">(フロア: <%= event.floor_id %>)</span>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
