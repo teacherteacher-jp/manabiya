@@ -74,4 +74,5 @@ Rails.application.configure do
   Rails.application.routes.default_url_options = url_options
 
   config.hosts << /.*\.ngrok-free\.app/
+  config.hosts << "manabiya.lvh.me"
 end
