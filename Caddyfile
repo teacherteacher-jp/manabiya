@@ -1,0 +1,4 @@
+manabiya.lvh.me {
+    tls internal
+    reverse_proxy localhost:3100
+}

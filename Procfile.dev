@@ -1,0 +1,4 @@
+web: bin/rails server -p 3100
+caddy: caddy run --config Caddyfile
+worker: bin/jobs
+discord_gateway: DISCORDRB_SSL_VERIFY_NONE=1 bin/discord_gateway
