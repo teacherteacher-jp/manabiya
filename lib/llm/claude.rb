@@ -43,8 +43,9 @@ module Llm
     # @param tools [Array<Hash>] ツール定義の配列
     # @param max_tokens [Integer] 生成する最大トークン数
     # @param temperature [Float] 生成のランダム性 (0.0 ~ 1.0)
+    # @param enable_caching [Boolean] Prompt Cachingを有効にするか（デフォルト: true）
     # @return [Anthropic::Models::Message] Anthropic APIのレスポンスオブジェクト
-    def messages_with_tools(messages:, system:, tools: [], max_tokens: 4096, temperature: 0.7)
+    def messages_with_tools(messages:, system:, tools: [], max_tokens: 4096, temperature: 0.7, enable_caching: true)
       params = {
         model: MODEL,
         messages: normalize_messages(messages),
@@ -52,12 +53,44 @@ module Llm
         temperature: temperature
       }
 
-      params[:system] = system if system.present?
-      params[:tools] = tools if tools.present?
+      # システムプロンプトをキャッシュ対応形式に変換
+      if system.present?
+        params[:system] = if enable_caching
+          [
+            {
+              type: "text",
+              text: system,
+              cache_control: { type: "ephemeral" }
+            }
+          ]
+        else
+          system
+        end
+      end
+
+      # ツール定義をキャッシュ対応形式に変換（最後のツールにcache_controlを追加）
+      if tools.present?
+        params[:tools] = if enable_caching && tools.size > 0
+          tools_with_cache = tools.map(&:dup)
+          tools_with_cache.last[:cache_control] = { type: "ephemeral" }
+          tools_with_cache
+        else
+          tools
+        end
+      end
 
       response = @client.messages.create(**params)
 
-      Rails.logger.info "Claude API response: stop_reason=#{response.stop_reason}, usage=#{response.usage.inspect}"
+      # キャッシュ統計をログに出力
+      usage = response.usage
+      cache_info = ""
+      if usage.respond_to?(:cache_creation_input_tokens) && usage.cache_creation_input_tokens
+        cache_info += " cache_write=#{usage.cache_creation_input_tokens}"
+      end
+      if usage.respond_to?(:cache_read_input_tokens) && usage.cache_read_input_tokens
+        cache_info += " cache_read=#{usage.cache_read_input_tokens}"
+      end
+      Rails.logger.info "Claude API response: stop_reason=#{response.stop_reason}, usage=#{usage.inspect}#{cache_info}"
 
       response
     rescue Faraday::Error => e
