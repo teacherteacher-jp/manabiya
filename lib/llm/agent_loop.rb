@@ -1,7 +1,7 @@
 module Llm
   class AgentLoop
     MAX_ITERATIONS = 15
-    MAX_TOKENS_BUDGET = 50_000
+    MAX_TOKENS_BUDGET = 100_000
 
     attr_reader :iterations, :total_tokens
 
@@ -89,6 +89,7 @@ module Llm
       [
         # Discord専用ツール（Botインスタンスとカテゴリ制限を注入）
         Discord::Tools::SearchMessages.new(@discord_bot, allowed_category_id: @allowed_category_id),
+        Discord::Tools::SearchMessagesMulti.new(@discord_bot, allowed_category_id: @allowed_category_id),
         Discord::Tools::GetChannelInfo.new(@discord_bot),
         Discord::Tools::GetThreadContext.new(@discord_bot, current_thread_id: @current_thread_id),
         Discord::Tools::GetMessagesAround.new(@discord_bot, allowed_category_id: @allowed_category_id),
@@ -171,6 +172,10 @@ module Llm
         query = input["query"] || input[:query]
         category_info = get_category_name_for_progress
         "🔍 #{category_info}内を「#{query}」で検索しています..."
+      when "search_discord_messages_multi"
+        queries = input["queries"] || input[:queries] || []
+        category_info = get_category_name_for_progress
+        "🔍 #{category_info}内を#{queries.size}個のキーワードで一括検索しています..."
       when "get_messages_around"
         "📄 メッセージの前後を確認しています..."
       when "get_channel_info"
