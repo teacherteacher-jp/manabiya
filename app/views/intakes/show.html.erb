@@ -7,8 +7,12 @@
 <h2 class="text-2xl font-bold mb-2"><%= @intake.title %></h2>
 
 <% if @intake.description.present? %>
-  <p class="text-gray-600 mb-6"><%= @intake.description %></p>
+  <p class="text-gray-600 mb-4"><%= @intake.description %></p>
 <% end %>
+
+<div class="mb-6">
+  <%= link_to "この問診を始める", new_intake_intake_session_path(@intake), class: "bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg inline-block" %>
+</div>
 
 <div class="flex gap-2 mb-6">
   <%= link_to "編集", edit_intake_path(@intake), class: "bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-sm" %>

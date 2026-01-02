@@ -143,9 +143,16 @@ module Intakes
     end
 
     def build_messages
-      @session.intake_messages.order(:created_at).map do |msg|
+      messages = @session.intake_messages.order(:created_at).map do |msg|
         { role: msg.role, content: msg.content }
       end
+
+      # Anthropic APIは最低1つのメッセージが必要
+      if messages.empty?
+        messages << { role: "user", content: "問診を始めてください。" }
+      end
+
+      messages
     end
 
     def system_prompt

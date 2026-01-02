@@ -107,6 +107,14 @@ Rails.application.routes.draw do
   patch  "/intakes/:intake_id/items/:id",         to: "intake_items#update",
                                                    as: "intake_intake_item"
   delete "/intakes/:intake_id/items/:id",         to: "intake_items#destroy"
+  get    "/intakes/:intake_id/sessions/new",      to: "intake_sessions#new",
+                                                   as: "new_intake_intake_session"
+  post   "/intakes/:intake_id/sessions",          to: "intake_sessions#create",
+                                                   as: "intake_intake_sessions"
+  get    "/intake_sessions/:id",                  to: "intake_sessions#show",
+                                                   as: "intake_session"
+  get    "/intake_sessions/:id/stream",           to: "intake_sessions#stream",
+                                                   as: "intake_session_stream"
 
   root   "root#index"
 end
