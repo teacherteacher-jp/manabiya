@@ -1,0 +1,22 @@
+<%= form_with(model: intake, local: true) do |f| %>
+  <div class="mb-6">
+    <%= f.label :title, "タイトル", class: "block text-gray-700 font-bold mb-2" %>
+    <%= f.text_field :title, placeholder: "問診のタイトル", class: "shadow-sm appearance-none border bg-white #{'border-red-500' if intake.errors[:title].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline" %>
+    <% if intake.errors[:title].any? %>
+      <p class="text-red-500 text-xs italic mt-1"><%= intake.errors[:title].join(", ") %></p>
+    <% end %>
+  </div>
+
+  <div class="mb-6">
+    <%= f.label :description, "説明", class: "block text-gray-700 font-bold mb-2" %>
+    <%= f.text_area :description, placeholder: "問診の説明（任意）", rows: 3, class: "shadow-sm appearance-none border bg-white #{'border-red-500' if intake.errors[:description].any?} rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline" %>
+    <% if intake.errors[:description].any? %>
+      <p class="text-red-500 text-xs italic mt-1"><%= intake.errors[:description].join(", ") %></p>
+    <% end %>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <%= link_to "戻る", intakes_path, class: "text-gray-600 hover:text-gray-800" %>
+    <%= f.submit submit_text, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline cursor-pointer" %>
+  </div>
+<% end %>
