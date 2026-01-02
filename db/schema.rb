@@ -73,6 +73,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_131949) do
     t.index ["intake_session_id"], name: "index_intake_messages_on_intake_session_id"
   end
 
+  create_table "intake_reports", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.bigint "intake_session_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["intake_session_id"], name: "index_intake_reports_on_intake_session_id"
+  end
+
   create_table "intake_responses", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
@@ -326,6 +334,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_131949) do
   add_foreign_key "guardianships", "students"
   add_foreign_key "intake_items", "intakes"
   add_foreign_key "intake_messages", "intake_sessions"
+  add_foreign_key "intake_reports", "intake_sessions"
   add_foreign_key "intake_responses", "intake_items"
   add_foreign_key "intake_responses", "intake_sessions"
   add_foreign_key "intake_sessions", "intakes"

@@ -1,0 +1,38 @@
+<% content_for(:title) { "問診レポート一覧" } %>
+
+<h2 class="text-2xl font-bold mb-6">問診レポート一覧</h2>
+
+<% if @intake_reports.any? %>
+  <div class="bg-white shadow-md rounded-sm overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">問診</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">相談者</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">生成日時</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @intake_reports.each do |report| %>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <%= link_to report.intake_session.intake.title, intake_path(report.intake_session.intake), class: "text-rose-600 hover:text-rose-800" %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+              <%= report.intake_session.member.name %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+              <%= l(report.created_at, format: :long) %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right">
+              <%= link_to "レポートを見る", intake_report_path(report), class: "text-rose-600 hover:text-rose-800" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="text-gray-500">まだレポートがありません。</p>
+<% end %>

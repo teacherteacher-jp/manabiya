@@ -115,6 +115,10 @@ Rails.application.routes.draw do
                                                    as: "intake_session"
   get    "/intake_sessions/:id/stream",           to: "intake_sessions#stream",
                                                    as: "intake_session_stream"
+  get    "/intake_reports",                       to: "intake_reports#index",
+                                                   as: "intake_reports"
+  get    "/intake_reports/:id",                   to: "intake_reports#show",
+                                                   as: "intake_report"
 
   root   "root#index"
 end

@@ -40,7 +40,10 @@
     </form>
   <% else %>
     <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-      <p class="text-green-700 font-bold">問診が完了しました</p>
+      <p class="text-green-700 font-bold mb-2">問診が完了しました</p>
+      <% if @intake_session.intake_report %>
+        <%= link_to "レポートを見る", intake_report_path(@intake_session.intake_report), class: "text-green-600 hover:text-green-800 underline" %>
+      <% end %>
     </div>
   <% end %>
 
