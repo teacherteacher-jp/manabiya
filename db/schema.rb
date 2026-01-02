@@ -64,6 +64,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_131949) do
     t.index ["intake_id"], name: "index_intake_items_on_intake_id"
   end
 
+  create_table "intake_messages", force: :cascade do |t|
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.bigint "intake_session_id", null: false
+    t.integer "role", null: false
+    t.datetime "updated_at", null: false
+    t.index ["intake_session_id"], name: "index_intake_messages_on_intake_session_id"
+  end
+
+  create_table "intake_responses", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.bigint "intake_item_id", null: false
+    t.bigint "intake_session_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["intake_item_id"], name: "index_intake_responses_on_intake_item_id"
+    t.index ["intake_session_id"], name: "index_intake_responses_on_intake_session_id"
+  end
+
+  create_table "intake_sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "intake_id", null: false
+    t.bigint "member_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["intake_id"], name: "index_intake_sessions_on_intake_id"
+    t.index ["member_id"], name: "index_intake_sessions_on_member_id"
+  end
+
   create_table "intakes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
@@ -296,6 +325,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_131949) do
   add_foreign_key "guardianships", "members"
   add_foreign_key "guardianships", "students"
   add_foreign_key "intake_items", "intakes"
+  add_foreign_key "intake_messages", "intake_sessions"
+  add_foreign_key "intake_responses", "intake_items"
+  add_foreign_key "intake_responses", "intake_sessions"
+  add_foreign_key "intake_sessions", "intakes"
+  add_foreign_key "intake_sessions", "members"
   add_foreign_key "member_regions", "members"
   add_foreign_key "member_regions", "regions"
   add_foreign_key "metalife_events", "metalife_users"
