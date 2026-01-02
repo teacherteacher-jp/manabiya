@@ -54,6 +54,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_131949) do
     t.index ["student_id"], name: "index_guardianships_on_student_id"
   end
 
+  create_table "intake_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.bigint "intake_id", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["intake_id"], name: "index_intake_items_on_intake_id"
+  end
+
+  create_table "intakes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "member_regions", force: :cascade do |t|
     t.integer "category", default: 0, null: false
     t.datetime "created_at", null: false
@@ -278,6 +295,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_131949) do
   add_foreign_key "family_members", "members"
   add_foreign_key "guardianships", "members"
   add_foreign_key "guardianships", "students"
+  add_foreign_key "intake_items", "intakes"
   add_foreign_key "member_regions", "members"
   add_foreign_key "member_regions", "regions"
   add_foreign_key "metalife_events", "metalife_users"

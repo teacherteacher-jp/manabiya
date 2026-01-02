@@ -87,5 +87,26 @@ Rails.application.routes.draw do
   get    "/metalife_events",                       to: "metalife_events#index",
                                                    as: "metalife_events"
 
+  get    "/intakes",                              to: "intakes#index",
+                                                   as: "intakes"
+  get    "/intakes/new",                          to: "intakes#new",
+                                                   as: "new_intake"
+  post   "/intakes",                              to: "intakes#create"
+  get    "/intakes/:id",                          to: "intakes#show",
+                                                   as: "intake"
+  get    "/intakes/:id/edit",                     to: "intakes#edit",
+                                                   as: "edit_intake"
+  patch  "/intakes/:id",                          to: "intakes#update"
+  delete "/intakes/:id",                          to: "intakes#destroy"
+  get    "/intakes/:intake_id/items/new",         to: "intake_items#new",
+                                                   as: "new_intake_intake_item"
+  post   "/intakes/:intake_id/items",             to: "intake_items#create",
+                                                   as: "intake_intake_items"
+  get    "/intakes/:intake_id/items/:id/edit",    to: "intake_items#edit",
+                                                   as: "edit_intake_intake_item"
+  patch  "/intakes/:intake_id/items/:id",         to: "intake_items#update",
+                                                   as: "intake_intake_item"
+  delete "/intakes/:intake_id/items/:id",         to: "intake_items#destroy"
+
   root   "root#index"
 end
