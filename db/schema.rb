@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_02_120929) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_02_133618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,6 +61,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_120929) do
     t.integer "role", null: false
     t.datetime "updated_at", null: false
     t.index ["intake_session_id"], name: "index_intake_messages_on_intake_session_id"
+  end
+
+  create_table "intake_reports", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.bigint "intake_session_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["intake_session_id"], name: "index_intake_reports_on_intake_session_id"
   end
 
   create_table "intake_responses", force: :cascade do |t|
@@ -314,6 +322,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_120929) do
   add_foreign_key "family_members", "members"
   add_foreign_key "intake_items", "intakes"
   add_foreign_key "intake_messages", "intake_sessions"
+  add_foreign_key "intake_reports", "intake_sessions"
   add_foreign_key "intake_responses", "intake_items"
   add_foreign_key "intake_responses", "intake_sessions"
   add_foreign_key "intake_sessions", "intakes"
