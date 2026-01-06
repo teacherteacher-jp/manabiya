@@ -8,12 +8,11 @@
 <%= form_with(url: schedules_path, method: :post, data: { turbo: false }, class: "mb-24") do |f| %>
   <% @dates.each do |date| %>
     <% holiday_info = HolidayJp.between(date, date).first %>
-    <% holiday = date.saturday? || date.sunday? || holiday_info %>
     <div class="mb-6">
       <h3 class="text-xl font-bold mb-2"><%= mdw(date) %><%= " #{holiday_info.name}" if holiday_info %></h3>
       <% if date.wednesday? %>
         <p class="text-lg font-semibold text-gray-600">デジタルデトックスデー</p>
-      <% elsif holiday %>
+      <% elsif Oyasumi.oyasumi?(date) %>
         <p class="text-lg font-semibold text-gray-600">おやすみ</p>
       <% else %>
         <!--<div class="flex justify-center items-center space-x-4 mb-2">-->
