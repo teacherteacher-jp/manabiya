@@ -14,7 +14,7 @@ module Intakes
     def generate
       response = @client.messages.create(
         model: MODEL,
-        max_tokens: 4096,
+        max_tokens: 16_000,
         system: system_prompt,
         messages: [{ role: "user", content: build_user_message }]
       )
