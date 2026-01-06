@@ -49,13 +49,14 @@ module Intakes
       end.join("\n\n")
 
       description_section = intake.description.present? ? "\n## 問診の説明\n#{intake.description}\n" : ""
+      report_format_section = intake.report_format.present? ? "\n## 報告書の形式指定\n#{intake.report_format}\n" : ""
 
       <<~MESSAGE
         以下の問診結果をもとに報告書を作成してください。
 
         ## 問診タイトル
         #{intake.title}
-        #{description_section}
+        #{description_section}#{report_format_section}
         ## 回答内容
         #{items_text}
       MESSAGE

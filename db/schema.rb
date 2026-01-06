@@ -104,6 +104,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_131949) do
   create_table "intakes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
+    t.text "report_format"
     t.string "title", null: false
     t.datetime "updated_at", null: false
   end

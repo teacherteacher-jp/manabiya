@@ -41,7 +41,7 @@ class IntakesController < ApplicationController
   private
 
   def intake_params
-    params.require(:intake).permit(:title, :description)
+    params.require(:intake).permit(:title, :description, :report_format)
   end
 
   def set_intake
