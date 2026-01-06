@@ -14,6 +14,7 @@
   <%= link_to "この問診を始める", new_intake_intake_session_path(@intake), class: "bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg inline-block" %>
 </div>
 
+<% if current_member.admin? %>
 <div class="flex gap-2 mb-6">
   <%= link_to "編集", edit_intake_path(@intake), class: "bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-sm" %>
   <%= link_to "削除", @intake, method: :delete, data: { confirm: "本当に削除しますか？" }, class: "bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-4 rounded-sm" %>
@@ -24,6 +25,9 @@
 <div class="mb-4">
   <%= link_to "項目を追加", new_intake_intake_item_path(@intake), class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-sm" %>
 </div>
+<% else %>
+<h3 class="text-xl font-bold mb-4">項目</h3>
+<% end %>
 
 <% if @intake.intake_items.any? %>
   <div class="space-y-4">
@@ -34,12 +38,14 @@
             <span class="text-gray-400 text-sm mr-2"><%= index %>.</span>
             <span class="font-bold"><%= item.name %></span>
           </div>
+          <% if current_member.admin? %>
           <div class="flex gap-2">
             <%= link_to "編集", edit_intake_intake_item_path(@intake, item), class: "text-gray-600 hover:text-gray-800 text-sm" %>
             <%= link_to "削除", intake_intake_item_path(@intake, item), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "text-red-600 hover:text-red-800 text-sm" %>
           </div>
+          <% end %>
         </div>
-        <% if item.description.present? %>
+        <% if current_member.admin? && item.description.present? %>
           <p class="text-gray-600 text-sm mt-2"><%= item.description %></p>
         <% end %>
       </div>

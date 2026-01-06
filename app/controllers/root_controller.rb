@@ -20,10 +20,11 @@ class RootController < ApplicationController
     end
 
     @intake_menu_items = [
-      { text: "問診の一覧を見る", path: intakes_path }
+      { text: "問診の一覧を見る", path: intakes_path },
+      { text: "自分の問診レポートを見る", path: "/my/intake_reports" }
     ]
     if current_member.admin?
-      @intake_menu_items << { text: "問診レポートを確認する", path: intake_reports_path }
+      @intake_menu_items << { text: "すべての問診レポートを確認する", path: intake_reports_path }
     end
 
     @community_menu_items = [
