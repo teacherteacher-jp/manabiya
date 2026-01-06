@@ -19,6 +19,13 @@ class RootController < ApplicationController
       @school_menu_items << { text: "家庭からのメモを書く", path: new_school_memo_path(student_ids: current_member.guarded_students.pluck(:id).map(&:to_s).join(",")) }
     end
 
+    @intake_menu_items = [
+      { text: "問診の一覧を見る", path: intakes_path }
+    ]
+    if current_member.admin?
+      @intake_menu_items << { text: "問診レポートを確認する", path: intake_reports_path }
+    end
+
     @community_menu_items = [
       { text: "自分のプロフィールを見る", path: member_path(current_member) },
       { text: "みんなのゆかりの地を見る", path: regions_path },
