@@ -6,6 +6,7 @@ class Member < ApplicationRecord
   has_many :family_members, dependent: :destroy
   has_many :children_as_students, foreign_key: :parent_member_id, class_name: "Student"
   has_many :school_memos, dependent: :destroy
+  has_many :intake_sessions, dependent: :destroy
   has_one :metalife_user, as: :linkable, dependent: :nullify
 
   validates :discord_uid, presence: true, uniqueness: true
