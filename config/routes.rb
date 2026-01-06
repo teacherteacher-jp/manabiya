@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   get    "/my/schedules",                          to: "my/schedules#index"
   get    "/my/regions",                            to: "my/regions#index"
   get    "/my/family_members",                     to: "my/family_members#index"
+  get    "/my/intake_reports",                     to: "my/intake_reports#index"
   get    "/events",                                to: "events#index"
   get    "/events/new",                            to: "events#new",
                                                    as: "new_event"
