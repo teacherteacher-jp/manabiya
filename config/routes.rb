@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   get "up", to: "rails/health#show", as: :rails_health_check
   mount MissionControl::Jobs::Engine, at: "/jobs"
 
+  if Rails.env.development?
+    get "/dev/login", to: "dev#login"
+  end
+
   get    "/gate",                                  to: "gate#index"
   get    "/auth/discord/callback",                 to: "sessions#create"
   delete "/session",                               to: "sessions#destroy",
