@@ -21,8 +21,8 @@
                 <% if entry = student.latest_entry %>
                   <div class="text-xs text-green-600">最終入室: <%= entry[:date].strftime("%-m/%d") %> <%= entry[:time].strftime("%-H:%M") %></div>
                 <% end %>
-                <% if student.parent_member.present? %>
-                  <div class="text-xs text-gray-500">保護者: <%= student.parent_member.name %></div>
+                <% if student.guardians.count > 0 %>
+                  <div class="text-xs text-gray-500">保護者: <%= student.guardians.map(&:name).join("、") %></div>
                 <% end %>
               <% end %>
             </div>
@@ -43,8 +43,8 @@
                 <% if student.metalife_user %>
                   <div class="text-xs text-gray-500">MetaLife: <%= student.metalife_user.name %></div>
                 <% end %>
-                <% if student.parent_member.present? %>
-                  <div class="text-xs text-gray-500">保護者: <%= student.parent_member.name %></div>
+                <% if student.guardians.count > 0 %>
+                  <div class="text-xs text-gray-500">保護者: <%= student.guardians.map(&:name).join("、") %></div>
                 <% end %>
               <% end %>
             </div>
@@ -58,7 +58,7 @@
     <%= f.label(:category, "カテゴリー", class: "block text-sm font-medium text-gray-700") %>
     <% default_category = if current_member.admin?
                            "コンコンから"
-                         elsif current_member.children_as_students.any? { |student| school_memo.students.include?(student) }
+                         elsif current_member.guarded_students.any? { |student| school_memo.students.include?(student) }
                            "家庭から"
                          else
                            "ボランティアから"

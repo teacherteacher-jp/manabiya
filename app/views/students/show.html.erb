@@ -16,13 +16,17 @@
       <div class="sm:col-span-1">
         <dt class="text-sm font-medium text-gray-500">保護者</dt>
         <dd class="mt-1 text-lg font-medium text-gray-900">
-          <% if @student.parent_member.present? %>
-            <%= link_to member_path(@student.parent_member), class: "inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800" do %>
-              <div class="flex-shrink-0 h-8 w-8">
-                <%= image_tag @student.parent_member.icon_url, class: "h-8 w-8 rounded-full" %>
-              </div>
-              <span><%= @student.parent_member.name %></span>
-            <% end %>
+          <% if @student.guardians.any? %>
+            <div class="flex flex-wrap gap-2">
+              <% @student.guardians.each do |guardian| %>
+                <%= link_to member_path(guardian), class: "inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800" do %>
+                  <div class="flex-shrink-0 h-8 w-8">
+                    <%= image_tag guardian.icon_url, class: "h-8 w-8 rounded-full" %>
+                  </div>
+                  <span><%= guardian.name %></span>
+                <% end %>
+              <% end %>
+            </div>
           <% else %>
             <span class="text-gray-400">未登録</span>
           <% end %>

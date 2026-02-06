@@ -25,14 +25,15 @@
   </div>
 
   <div>
-    <%= f.label :parent_member_id, "保護者", class: "block text-sm font-medium text-gray-700" %>
-    <%= f.collection_select :parent_member_id,
-      Member.all,
+    <%= f.label :guardian_ids, "保護者", class: "block text-sm font-medium text-gray-700" %>
+    <%= f.collection_select :guardian_ids,
+      Member.order(:name),
       :id,
       :name,
-      { include_blank: "ご家庭の方がManabiyaに登録されている場合は選択してください" },
-      class: "mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      {},
+      { multiple: true, class: "mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" }
     %>
+    <p class="mt-1 text-sm text-gray-500">ご家庭の方がManabiyaに登録されている場合は選択してください（Ctrl/Cmdで複数選択可）</p>
   </div>
 
   <div class="pt-4">

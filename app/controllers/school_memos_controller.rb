@@ -13,7 +13,7 @@ class SchoolMemosController < ApplicationController
     @school_memo.date = Date.today
     @school_memo.student_ids = params[:student_ids].split(",").map(&:to_i) if params[:student_ids].present?
 
-    all_students = Student.includes(:parent_member, metalife_user: :metalife_events)
+    all_students = Student.includes(:guardians, metalife_user: :metalife_events)
     @recent_students, @other_students = all_students.partition(&:recently_entered?)
   end
 
@@ -23,14 +23,14 @@ class SchoolMemosController < ApplicationController
     if @school_memo.save
       redirect_to school_memos_path, notice: 'メモを追加しました'
     else
-      all_students = Student.includes(:parent_member, metalife_user: :metalife_events)
+      all_students = Student.includes(:guardians, metalife_user: :metalife_events)
       @recent_students, @other_students = all_students.partition(&:recently_entered?)
       render :new
     end
   end
 
   def edit
-    all_students = Student.includes(:parent_member, metalife_user: :metalife_events)
+    all_students = Student.includes(:guardians, metalife_user: :metalife_events)
     @recent_students, @other_students = all_students.partition(&:recently_entered?)
   end
 
@@ -38,7 +38,7 @@ class SchoolMemosController < ApplicationController
     if @school_memo.update(school_memo_params)
       redirect_to school_memos_path, notice: 'メモを更新しました'
     else
-      all_students = Student.includes(:parent_member, metalife_user: :metalife_events)
+      all_students = Student.includes(:guardians, metalife_user: :metalife_events)
       @recent_students, @other_students = all_students.partition(&:recently_entered?)
       render :edit
     end
