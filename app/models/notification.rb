@@ -40,7 +40,7 @@ class Notification
     if school_memo.students.count > 0
       students = school_memo.students.map { |student|
         student_string = student.grade
-        if student.guardians.count > 0 && school_memo.category != "家庭から"
+        if student.guardians.any? && school_memo.category != "家庭から"
           guardian_mentions = student.guardians.map { |g| "<@!#{g.discord_uid}>" }.join(" ")
           student_string += "(保護者 #{guardian_mentions})"
         end

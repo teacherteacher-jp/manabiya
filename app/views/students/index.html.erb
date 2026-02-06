@@ -39,13 +39,13 @@
                   <%= link_to student.name, student_path(student), class: "text-indigo-600 hover:text-indigo-900" %>
                   <div class="sm:hidden text-xs text-gray-500 mt-1">
                     <%= student.grade %>
-                    <% if student.guardians.count > 0 %>
+                    <% if student.guardians.any? %>
                       <span class="mx-1">•</span>
                       保護者: <%= student.guardians.map { |g| link_to g.name, member_path(g), class: "text-indigo-600 hover:text-indigo-900" }.join("、").html_safe %>
                     <% end %>
                   </div>
                   <div class="hidden sm:block md:hidden text-xs text-gray-500 mt-1">
-                    <% if student.guardians.count > 0 %>
+                    <% if student.guardians.any? %>
                       保護者: <%= student.guardians.map { |g| link_to g.name, member_path(g), class: "text-indigo-600 hover:text-indigo-900" }.join("、").html_safe %>
                     <% end %>
                   </div>
@@ -55,7 +55,7 @@
                 <%= student.grade %>
               </td>
               <td class="hidden md:table-cell px-6 py-4 text-sm">
-                <% if student.guardians.count > 0 %>
+                <% if student.guardians.any? %>
                   <%= student.guardians.map { |g| link_to g.name, member_path(g), class: "text-indigo-600 hover:text-indigo-900" }.join("、").html_safe %>
                 <% else %>
                   <span class="text-gray-400">未登録</span>

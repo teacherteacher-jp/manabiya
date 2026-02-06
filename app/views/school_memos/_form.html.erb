@@ -21,7 +21,7 @@
                 <% if entry = student.latest_entry %>
                   <div class="text-xs text-green-600">最終入室: <%= entry[:date].strftime("%-m/%d") %> <%= entry[:time].strftime("%-H:%M") %></div>
                 <% end %>
-                <% if student.guardians.count > 0 %>
+                <% if student.guardians.any? %>
                   <div class="text-xs text-gray-500">保護者: <%= student.guardians.map(&:name).join("、") %></div>
                 <% end %>
               <% end %>
@@ -43,7 +43,7 @@
                 <% if student.metalife_user %>
                   <div class="text-xs text-gray-500">MetaLife: <%= student.metalife_user.name %></div>
                 <% end %>
-                <% if student.guardians.count > 0 %>
+                <% if student.guardians.any? %>
                   <div class="text-xs text-gray-500">保護者: <%= student.guardians.map(&:name).join("、") %></div>
                 <% end %>
               <% end %>
