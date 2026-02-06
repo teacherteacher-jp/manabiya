@@ -188,8 +188,7 @@ GEM
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2025.0924)
     mini_mime (1.1.5)
-    minitest (6.0.1)
-      prism (~> 1.5)
+    minitest (5.27.0)
     mission_control-jobs (1.1.0)
       actioncable (>= 7.1)
       actionpack (>= 7.1)
@@ -267,7 +266,6 @@ GEM
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.7.0)
     psych (5.3.1)
       date
       stringio
@@ -429,6 +427,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kaminari
+  minitest (< 6)
   mission_control-jobs
   omniauth-discord
   omniauth-rails_csrf_protection
