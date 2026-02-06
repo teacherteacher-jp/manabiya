@@ -3,7 +3,7 @@ class StudentsController < ApplicationController
   before_action :redirect_if_no_student_info_access
 
   def index
-    @students = Student.order(id: :desc)
+    @students = Student.includes(:guardians).order(id: :desc)
   end
 
   def show
@@ -44,10 +44,10 @@ class StudentsController < ApplicationController
   private
 
   def set_student
-    @student = Student.includes(:metalife_user).find(params[:id])
+    @student = Student.includes(:metalife_user, :guardians).find(params[:id])
   end
 
   def student_params
-    params.require(:student).permit(:name, :grade, :parent_member_id)
+    params.require(:student).permit(:name, :grade, guardian_ids: [])
   end
 end

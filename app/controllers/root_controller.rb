@@ -15,8 +15,8 @@ class RootController < ApplicationController
         { text: "スクールに関するメモを書く", path: school_memos_path },
       ].each { |item| @school_menu_items << item }
     end
-    if current_member.children_as_students.count > 0
-      @school_menu_items << { text: "家庭からのメモを書く", path: new_school_memo_path(student_ids: current_member.children_as_students.pluck(:id).map(&:to_s).join(",")) }
+    if current_member.guarded_students.count > 0
+      @school_menu_items << { text: "家庭からのメモを書く", path: new_school_memo_path(student_ids: current_member.guarded_students.pluck(:id).map(&:to_s).join(",")) }
     end
 
     @community_menu_items = [

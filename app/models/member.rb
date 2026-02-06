@@ -4,7 +4,8 @@ class Member < ApplicationRecord
   has_many :member_regions, dependent: :destroy
   has_many :regions, through: :member_regions
   has_many :family_members, dependent: :destroy
-  has_many :children_as_students, foreign_key: :parent_member_id, class_name: "Student"
+  has_many :guardianships, dependent: :destroy
+  has_many :guarded_students, through: :guardianships, source: :student
   has_many :school_memos, dependent: :destroy
   has_one :metalife_user, as: :linkable, dependent: :nullify
 
@@ -38,7 +39,7 @@ class Member < ApplicationRecord
 
   def can_access_student_info?
     return true if admin?
-    return true if children_as_students.exists?
+    return true if guardianships.exists?
 
     recent_assignments_exist =
       Schedule.joins(:assignment).

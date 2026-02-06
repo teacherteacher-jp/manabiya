@@ -5,8 +5,8 @@
     </h1>
     <p class="mt-2 text-sm text-gray-600">
       <%= @student.grade %> |
-      <% if @student.parent_member %>
-        保護者: <%= @student.parent_member.name %>
+      <% if @student.guardians.any? %>
+        保護者: <%= @student.guardians.map(&:name).join("、") %>
       <% end %>
     </p>
   </div>

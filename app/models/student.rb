@@ -1,5 +1,6 @@
 class Student < ApplicationRecord
-  belongs_to :parent_member, class_name: 'Member', optional: true
+  has_many :guardianships, dependent: :destroy
+  has_many :guardians, through: :guardianships, source: :member
   has_many :school_memo_students, dependent: :destroy
   has_many :school_memos, through: :school_memo_students
   has_one :metalife_user, as: :linkable, dependent: :nullify
