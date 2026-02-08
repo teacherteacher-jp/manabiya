@@ -1,4 +1,6 @@
-class DevController < ApplicationController
+class DevController < ActionController::Base
+  include SessionHelper
+
   def login
     member = Member.find(params[:member_id])
     log_in(member)

@@ -7,6 +7,7 @@ class Notification
     school_contact: "school_contact_thread_id",
     school_general: "school_general_thread_id",
     school_report: "admin_school_thread_id",
+    admin: "admin_thread_id",
   }.freeze
 
   def initialize
@@ -209,6 +210,41 @@ class Notification
     thread_id = thread_id_for(:school_contact)
     content = "<@!#{linkable.discord_uid}> さんがコンコンのスペースに入室しました"
     pp @bot.send_message(channel_or_thread_id: thread_id, content:)
+  end
+
+  def notify_intake_response_recorded(intake_response)
+    thread_id = thread_id_for(:admin)
+    session = intake_response.intake_session
+    member = session.member
+    intake = session.intake
+
+    total = intake.intake_items.count
+    recorded = session.intake_responses.count
+
+    embeds = [{
+      color: 0xF59E0B,
+      author: { name: member.name, icon_url: member.icon_url },
+      title: intake.title,
+      description: "項目「#{intake_response.intake_item.name}」の回答が記録されました",
+      footer: { text: "#{recorded} / #{total} 項目完了" }
+    }]
+    pp @bot.send_message(channel_or_thread_id: thread_id, embeds:)
+  end
+
+  def notify_intake_report_created(intake_report)
+    thread_id = thread_id_for(:admin)
+    session = intake_report.intake_session
+    member = session.member
+    intake = session.intake
+
+    embeds = [{
+      color: 0x10B981,
+      author: { name: member.name, icon_url: member.icon_url },
+      title: "#{intake.title} のレポートが作成されました",
+      description: intake_report.content.truncate(200),
+      url: "#{app_base_url}/intake_reports/#{intake_report.id}"
+    }]
+    pp @bot.send_message(channel_or_thread_id: thread_id, embeds:)
   end
 
   def notify_unlinked_metalife_users(unlinked_users, target_date)
