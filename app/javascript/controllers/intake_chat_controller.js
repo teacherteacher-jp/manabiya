@@ -60,6 +60,9 @@ export default class extends Controller {
 
     this.eventSource.addEventListener("tool", (e) => {
       console.log("Tool used:", e.data)
+      if (e.data === "complete_intake") {
+        this.showGeneratingReport()
+      }
     })
 
     this.eventSource.addEventListener("done", (e) => {
@@ -69,7 +72,7 @@ export default class extends Controller {
       }
 
       if (e.data === "completed") {
-        this.showCompletedMessage()
+        window.location.reload()
       }
     })
 
@@ -124,12 +127,12 @@ export default class extends Controller {
     return div
   }
 
-  showCompletedMessage() {
+  showGeneratingReport() {
     const form = this.element.querySelector("form")
     if (form) {
       form.outerHTML = `
-        <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-          <p class="text-green-700 font-bold">問診が完了しました</p>
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
+          <p class="text-amber-700 font-bold animate-pulse">レポートを作成しています...</p>
         </div>
       `
     }
