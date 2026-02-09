@@ -8,6 +8,7 @@ class Notification
     school_general: "school_general_thread_id",
     school_report: "admin_school_thread_id",
     admin: "admin_thread_id",
+    intake: "intake_thread_id",
   }.freeze
 
   def initialize
@@ -213,7 +214,7 @@ class Notification
   end
 
   def notify_intake_response_recorded(intake_response)
-    thread_id = thread_id_for(:admin)
+    thread_id = thread_id_for(:intake)
     session = intake_response.intake_session
     member = session.member
     intake = session.intake
@@ -232,7 +233,7 @@ class Notification
   end
 
   def notify_intake_report_created(intake_report)
-    thread_id = thread_id_for(:admin)
+    thread_id = thread_id_for(:intake)
     session = intake_report.intake_session
     member = session.member
     intake = session.intake
