@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   get    "/my/schedules",                          to: "my/schedules#index"
   get    "/my/regions",                            to: "my/regions#index"
   get    "/my/family_members",                     to: "my/family_members#index"
+  get    "/my/intake_reports",                     to: "my/intake_reports#index"
   get    "/events",                                to: "events#index"
   get    "/events/new",                            to: "events#new",
                                                    as: "new_event"
@@ -86,6 +87,39 @@ Rails.application.routes.draw do
 
   get    "/metalife_events",                       to: "metalife_events#index",
                                                    as: "metalife_events"
+
+  get    "/intakes",                              to: "intakes#index",
+                                                   as: "intakes"
+  get    "/intakes/new",                          to: "intakes#new",
+                                                   as: "new_intake"
+  post   "/intakes",                              to: "intakes#create"
+  get    "/intakes/:id",                          to: "intakes#show",
+                                                   as: "intake"
+  get    "/intakes/:id/edit",                     to: "intakes#edit",
+                                                   as: "edit_intake"
+  patch  "/intakes/:id",                          to: "intakes#update"
+  delete "/intakes/:id",                          to: "intakes#destroy"
+  get    "/intakes/:intake_id/items/new",         to: "intake_items#new",
+                                                   as: "new_intake_intake_item"
+  post   "/intakes/:intake_id/items",             to: "intake_items#create",
+                                                   as: "intake_intake_items"
+  get    "/intakes/:intake_id/items/:id/edit",    to: "intake_items#edit",
+                                                   as: "edit_intake_intake_item"
+  patch  "/intakes/:intake_id/items/:id",         to: "intake_items#update",
+                                                   as: "intake_intake_item"
+  delete "/intakes/:intake_id/items/:id",         to: "intake_items#destroy"
+  get    "/intakes/:intake_id/sessions/new",      to: "intake_sessions#new",
+                                                   as: "new_intake_intake_session"
+  post   "/intakes/:intake_id/sessions",          to: "intake_sessions#create",
+                                                   as: "intake_intake_sessions"
+  get    "/intake_sessions/:id",                  to: "intake_sessions#show",
+                                                   as: "intake_session"
+  get    "/intake_sessions/:id/stream",           to: "intake_sessions#stream",
+                                                   as: "intake_session_stream"
+  get    "/intake_reports",                       to: "intake_reports#index",
+                                                   as: "intake_reports"
+  get    "/intake_reports/:id",                   to: "intake_reports#show",
+                                                   as: "intake_report"
 
   root   "root#index"
 end

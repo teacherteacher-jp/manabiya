@@ -1,0 +1,27 @@
+<% content_for(:title) { "問診レポート" } %>
+
+<div class="max-w-3xl mx-auto">
+  <div class="mb-4 print:hidden">
+    <%= link_to "← 戻る", :back, class: "text-gray-600 hover:text-gray-800" %>
+  </div>
+
+  <div class="bg-white shadow-md rounded-sm p-8 print:shadow-none">
+    <div class="mb-6 pb-4 border-b border-gray-200">
+      <h1 class="text-2xl font-bold"><%= @intake_report.intake_session.intake.title %></h1>
+      <div class="mt-2 text-sm text-gray-600">
+        <p>相談者: <%= @intake_report.intake_session.member.name %></p>
+        <p>生成日時: <%= l(@intake_report.created_at, format: :long) %></p>
+      </div>
+    </div>
+
+    <div class="prose prose-gray max-w-none">
+      <%= markdown(@intake_report.content) %>
+    </div>
+  </div>
+
+  <div class="mt-4 print:hidden">
+    <button onclick="window.print()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-sm">
+      印刷
+    </button>
+  </div>
+</div>

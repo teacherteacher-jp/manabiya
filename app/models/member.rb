@@ -7,6 +7,7 @@ class Member < ApplicationRecord
   has_many :guardianships, dependent: :destroy
   has_many :guarded_students, through: :guardianships, source: :student
   has_many :school_memos, dependent: :destroy
+  has_many :intake_sessions, dependent: :destroy
   has_one :metalife_user, as: :linkable, dependent: :nullify
 
   validates :discord_uid, presence: true, uniqueness: true
