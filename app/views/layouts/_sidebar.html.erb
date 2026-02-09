@@ -1,0 +1,35 @@
+<aside class="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 bg-white border-r border-neutral-200 print:hidden">
+  <%# ロゴ %>
+  <div class="px-6 py-5">
+    <%= link_to root_path, class: "text-2xl font-bold text-rose-500 hover:text-rose-600" do %>
+      Manabiya
+    <% end %>
+  </div>
+
+  <%# ナビゲーション %>
+  <nav class="flex-1 px-3 overflow-y-auto">
+    <ul class="space-y-1">
+      <% sidebar_nav_items.each do |item| %>
+        <li>
+          <% active = current_nav_item?(item[:path]) %>
+          <%= link_to item[:path], class: "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium #{active ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'}" do %>
+            <%= icon(item[:icon], css_class: "size-5 shrink-0") %>
+            <span><%= item[:label] %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+
+  <%# メンバー情報 %>
+  <div class="border-t border-neutral-200 px-3 py-4">
+    <%= link_to member_path(current_member), class: "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-neutral-50" do %>
+      <%= image_tag(current_member.icon_url, class: "w-8 h-8 rounded-full shrink-0", size: "32x32") %>
+      <span class="text-sm font-medium text-neutral-700 truncate"><%= current_member.name %></span>
+    <% end %>
+    <%= link_to session_path, data: { turbo_method: :delete }, class: "flex items-center gap-3 px-3 py-2 rounded-md text-sm text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700" do %>
+      <%= icon("arrow-right-start-on-rectangle", css_class: "size-5 shrink-0") %>
+      <span>ログアウト</span>
+    <% end %>
+  </div>
+</aside>
