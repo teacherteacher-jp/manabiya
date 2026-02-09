@@ -60,9 +60,9 @@
 
   <div class="flex justify-start space-x-4 mb-6">
     <% if current_member.admin? %>
-      <%= link_to '編集', edit_student_path(@student), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      <%= link_to '編集', edit_student_path(@student), class: "inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 text-sm rounded-md" %>
     <% end %>
-    <%= link_to '生徒一覧に戻る', students_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    <%= link_to '生徒一覧に戻る', students_path, class: "inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 text-sm rounded-md" %>
   </div>
 
   <div class="mb-8 sm:mb-12">
@@ -70,14 +70,14 @@
       <h3 class="text-xl font-bold text-gray-900">メモ一覧 (全<%= @school_memos.total_count %>件 / P.<%= @page %>)</h3>
       <div class="flex space-x-2">
         <% if current_member.admin? %>
-          <%= link_to student_school_memos_path(@student, start_date: Date.current.beginning_of_month, end_date: Date.current.end_of_month), class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+          <%= link_to student_school_memos_path(@student, start_date: Date.current.beginning_of_month, end_date: Date.current.end_of_month), class: "inline-flex items-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 text-sm rounded-md" do %>
             <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             メモをエクスポート
           <% end %>
         <% end %>
-        <%= link_to new_school_memo_path(student_ids: @student.id), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+        <%= link_to new_school_memo_path(student_ids: @student.id), class: "inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 text-sm rounded-md" do %>
           <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
