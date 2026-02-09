@@ -13,31 +13,39 @@
 
   <body class="bg-neutral-100">
     <% if logged_in? %>
-      <%# === PC: サイドバー === %>
-      <%= render "layouts/sidebar" %>
+      <div data-controller="drawer">
+        <%# === PC: サイドバー === %>
+        <%= render "layouts/sidebar" %>
 
-      <%# === モバイル: トップバー === %>
-      <header class="sticky top-0 z-30 md:hidden bg-white border-b border-neutral-200 px-4 py-3 flex justify-between items-center">
-        <h1 class="text-xl font-bold">
-          <%= link_to "Manabiya", root_path, class: "text-rose-500 hover:text-rose-600" %>
-        </h1>
-        <%= link_to member_path(current_member) do %>
-          <%= image_tag(current_member.icon_url, class: "w-8 h-8 rounded-full", size: "32x32") %>
-        <% end %>
-      </header>
+        <%# === モバイル: ドロワー === %>
+        <%= render "layouts/drawer" %>
 
-      <%# === メインコンテンツ === %>
-      <main class="md:ml-64 pb-20 md:pb-0">
-        <% if notice || alert %>
-          <p class="m-4 mb-0 p-4 bg-rose-500 text-white shadow-md rounded-md"><%= notice || alert %></p>
-        <% end %>
-        <div class="p-4">
-          <%= yield %>
-        </div>
-      </main>
+        <%# === モバイル: トップバー === %>
+        <header class="sticky top-0 z-30 md:hidden bg-white border-b border-neutral-200 px-4 py-3 flex justify-between items-center">
+          <h1 class="text-xl font-bold">
+            <%= link_to "Manabiya", root_path, class: "text-rose-500 hover:text-rose-600" %>
+          </h1>
+          <%= link_to member_path(current_member) do %>
+            <%= image_tag(current_member.icon_url, class: "w-8 h-8 rounded-full", size: "32x32") %>
+          <% end %>
+        </header>
 
-      <%# === モバイル: 下部ナビ === %>
-      <%= render "layouts/bottom_nav" %>
+        <%# === モバイル: 左下メニューボタン === %>
+        <button data-action="drawer#open" type="button"
+                class="fixed bottom-4 left-4 z-40 md:hidden w-12 h-12 bg-white text-neutral-600 rounded-full shadow-lg flex items-center justify-center hover:bg-neutral-50 active:bg-neutral-100 print:hidden">
+          <%= icon("bars-3", css_class: "size-6") %>
+        </button>
+
+        <%# === メインコンテンツ === %>
+        <main class="md:ml-64">
+          <% if notice || alert %>
+            <p class="m-4 mb-0 p-4 bg-rose-500 text-white shadow-md rounded-md"><%= notice || alert %></p>
+          <% end %>
+          <div class="p-4">
+            <%= yield %>
+          </div>
+        </main>
+      </div>
     <% else %>
       <%# === 未ログイン: ゲートレイアウト === %>
       <div class="min-h-screen flex items-center justify-center px-4">

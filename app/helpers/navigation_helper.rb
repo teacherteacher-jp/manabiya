@@ -48,15 +48,6 @@ module NavigationHelper
     ]
   end
 
-  def bottom_nav_items
-    [
-      { label: "ホーム", path: member_path(current_member), icon: "home" },
-      { label: "スケジュール", path: my_schedules_path, icon: "calendar" },
-      { label: "イベント", path: events_path, icon: "calendar-days" },
-      { label: "問診", path: intakes_path, icon: "clipboard-document-list" },
-    ]
-  end
-
   def current_nav_item?(path)
     if path == root_path
       request.path == root_path
