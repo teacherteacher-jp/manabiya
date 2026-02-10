@@ -1,7 +1,7 @@
 <%= render "shared/vacation_notice", vacation_period: @vacation_period %>
 
 <section class="mb-6">
-  <h2 class="text-2xl font-bold mb-4">
+  <h2 class="text-xl md:text-2xl font-bold mb-4">
     スクールのメニュー
   </h2>
   <ul>
@@ -15,7 +15,7 @@
 
 <% if @intake_menu_items.any? %>
 <section class="mb-6">
-  <h2 class="text-2xl font-bold mb-4">
+  <h2 class="text-xl md:text-2xl font-bold mb-4">
     カスタム問診のメニュー
   </h2>
   <ul>
@@ -29,7 +29,7 @@
 <% end %>
 
 <section class="mb-6">
-  <h2 class="text-2xl font-bold mb-4">
+  <h2 class="text-xl md:text-2xl font-bold mb-4">
     コミュニティのメニュー
   </h2>
   <ul>
@@ -42,7 +42,7 @@
 </section>
 
 <section class="mb-6">
-  <h2 class="text-2xl font-bold mb-4">
+  <h2 class="text-xl md:text-2xl font-bold mb-4">
     イベント情報
   </h2>
   <%= render(partial: "events/cards", locals: { events: @recent_events }) %>
@@ -50,7 +50,7 @@
 </section>
 
 <section class="mb-6">
-  <h2 class="text-2xl font-bold mb-4">
+  <h2 class="text-xl md:text-2xl font-bold mb-4">
     メンバーズ
   </h2>
   <ul class="flex flex-wrap gap-4">

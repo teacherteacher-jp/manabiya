@@ -1,11 +1,11 @@
 <% content_for(:title) { "みんなのスケジュール" } %>
 
-<h2 class="text-2xl font-bold mb-4">
+<h2 class="text-xl md:text-2xl font-bold mb-4">
   みんなのスケジュール
 </h2>
 <% @dates.each.with_index do |date, index| %>
 <div class="mb-6">
-  <h3 class="text-2xl font-bold mb-2">
+  <h3 class="text-xl md:text-2xl font-bold mb-2">
     <%= mdw(date) %>
   </h3>
   <table class="w-full">

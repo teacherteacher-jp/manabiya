@@ -1,7 +1,7 @@
 <% content_for(:title) { @intake_session.intake.title } %>
 
 <div class="max-w-3xl mx-auto" data-controller="intake-chat" data-intake-chat-session-id-value="<%= @intake_session.id %>" data-intake-chat-status-value="<%= @intake_session.status %>">
-  <h2 class="text-2xl font-bold mb-4"><%= @intake_session.intake.title %></h2>
+  <h2 class="text-xl md:text-2xl font-bold mb-4"><%= @intake_session.intake.title %></h2>
 
   <div id="messages"
        data-intake-chat-target="messages"

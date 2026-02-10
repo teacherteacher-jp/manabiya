@@ -1,7 +1,7 @@
 <% content_for(:title) { @intake.title } %>
 
 <div class="max-w-2xl mx-auto">
-  <h2 class="text-2xl font-bold mb-4"><%= @intake.title %></h2>
+  <h2 class="text-xl md:text-2xl font-bold mb-4"><%= @intake.title %></h2>
 
   <% if @intake.description.present? %>
     <p class="text-gray-600 mb-6"><%= @intake.description %></p>
