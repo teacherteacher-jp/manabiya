@@ -1,16 +1,8 @@
 <div class="max-w-7xl mx-auto pb-4">
   <%= render "shared/access_restriction_notice" %>
   <div class="mb-8 sm:mb-12">
-    <div class="flex justify-between items-center mb-4">
+    <div class="mb-4">
       <h3 class="text-xl font-bold text-gray-900">生徒一覧</h3>
-      <% if current_member.admin? %>
-        <%= link_to new_student_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
-          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          生徒を追加
-        <% end %>
-      <% end %>
     </div>
 
     <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
@@ -79,3 +71,7 @@
     </div>
   </div>
 </div>
+
+<% if current_member.admin? %>
+  <%= link_to "生徒を追加", new_student_path, class: "fixed bottom-4 right-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-md shadow-lg print:hidden" %>
+<% end %>

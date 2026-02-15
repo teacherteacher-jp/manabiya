@@ -4,26 +4,24 @@
   <%= link_to "← 一覧に戻る", intakes_path, class: "text-gray-600 hover:text-gray-800" %>
 </div>
 
-<h2 class="text-2xl font-bold mb-2"><%= @intake.title %></h2>
+<h2 class="text-xl md:text-2xl font-bold mb-2"><%= @intake.title %></h2>
 
 <% if @intake.description.present? %>
   <p class="text-gray-600 mb-4"><%= @intake.description %></p>
 <% end %>
 
-<div class="mb-6">
-  <%= link_to "この問診を始める", new_intake_intake_session_path(@intake), class: "bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-lg inline-block" %>
-</div>
+<%= link_to "この問診を始める", new_intake_intake_session_path(@intake), class: "fixed bottom-4 right-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-md shadow-lg print:hidden" %>
 
 <% if current_member.admin? %>
 <div class="flex gap-2 mb-6">
-  <%= link_to "編集", edit_intake_path(@intake), class: "bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-sm" %>
-  <%= link_to "削除", @intake, method: :delete, data: { confirm: "本当に削除しますか？" }, class: "bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-4 rounded-sm" %>
+  <%= link_to "編集", edit_intake_path(@intake), class: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 text-sm rounded-md" %>
+  <%= link_to "削除", @intake, method: :delete, data: { confirm: "本当に削除しますか？" }, class: "bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 text-sm rounded-md" %>
 </div>
 
 <h3 class="text-xl font-bold mb-4">項目</h3>
 
 <div class="mb-4">
-  <%= link_to "項目を追加", new_intake_intake_item_path(@intake), class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-sm" %>
+  <%= link_to "項目を追加", new_intake_intake_item_path(@intake), class: "bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 text-sm rounded-md" %>
 </div>
 <% else %>
 <h3 class="text-xl font-bold mb-4">項目</h3>

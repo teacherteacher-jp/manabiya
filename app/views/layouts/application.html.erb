@@ -12,19 +12,52 @@
   </head>
 
   <body class="bg-neutral-100">
-    <div class="mx-auto">
-      <header class="bg-white shadow-md p-4 mb-6 flex justify-between items-center">
-        <h1 class="text-3xl font-bold">
-          <%= link_to("Manabiya", root_path, class: "text-rose-500 hover:text-rose-600") %>
-        </h1>
-        <%= render(partial: "layouts/login") %>
-      </header>
-      <% if notice || alert %>
-        <p class="m-4 mb-6 p-4 bg-rose-500 text-white shadow-md rounded-md"><%= notice || alert %></p>
-      <% end %>
-      <div class="px-4">
-        <%= yield %>
+    <% if logged_in? %>
+      <div data-controller="drawer">
+        <%# === PC: サイドバー === %>
+        <%= render "layouts/sidebar" %>
+
+        <%# === モバイル: ドロワー === %>
+        <%= render "layouts/drawer" %>
+
+        <%# === モバイル: トップバー === %>
+        <header class="sticky top-0 z-30 md:hidden bg-white border-b border-neutral-200 px-4 py-3 flex justify-between items-center">
+          <h1 class="text-xl font-bold">
+            <%= link_to "Manabiya", root_path, class: "text-indigo-600 hover:text-indigo-700" %>
+          </h1>
+          <%= link_to member_path(current_member) do %>
+            <%= image_tag(current_member.icon_url, class: "w-8 h-8 rounded-full", size: "32x32") %>
+          <% end %>
+        </header>
+
+        <%# === モバイル: ボトムシート呼び出しタブ === %>
+        <button data-action="drawer#open" type="button"
+                class="fixed bottom-0 left-4 z-40 md:hidden bg-indigo-700 text-white rounded-t-lg px-4 py-1.5 shadow-lg flex items-center gap-1 hover:bg-indigo-600 active:bg-indigo-800 print:hidden">
+          <%= icon("chevron-up", css_class: "size-4") %>
+          <span class="text-xs font-medium">メニュー</span>
+        </button>
+
+        <%# === メインコンテンツ === %>
+        <main class="md:ml-64">
+          <% if notice || alert %>
+            <p class="m-4 mb-0 p-4 bg-indigo-600 text-white shadow-md rounded-md"><%= notice || alert %></p>
+          <% end %>
+          <div class="p-4">
+            <%= yield %>
+          </div>
+        </main>
       </div>
-    </div>
+    <% else %>
+      <%# === 未ログイン: ゲートレイアウト === %>
+      <div class="min-h-screen flex items-center justify-center px-4">
+        <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+          <h1 class="text-3xl font-bold text-indigo-600 mb-6 text-center">Manabiya</h1>
+          <% if notice || alert %>
+            <p class="mb-4 p-4 bg-indigo-600 text-white shadow-md rounded-md"><%= notice || alert %></p>
+          <% end %>
+          <%= yield %>
+        </div>
+      </div>
+    <% end %>
   </body>
 </html>

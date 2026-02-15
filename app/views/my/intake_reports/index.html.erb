@@ -1,6 +1,6 @@
 <% content_for(:title) { "自分の問診レポート" } %>
 
-<h2 class="text-2xl font-bold mb-6">自分の問診レポート</h2>
+<h2 class="text-xl md:text-2xl font-bold mb-6">自分の問診レポート</h2>
 
 <% if @intake_reports.any? %>
   <div class="bg-white shadow-md rounded-sm overflow-hidden">
@@ -16,13 +16,13 @@
         <% @intake_reports.each do |report| %>
           <tr>
             <td class="px-6 py-4 whitespace-nowrap">
-              <%= link_to report.intake_session.intake.title, intake_path(report.intake_session.intake), class: "text-rose-600 hover:text-rose-800" %>
+              <%= link_to report.intake_session.intake.title, intake_path(report.intake_session.intake), class: "text-indigo-600 hover:text-indigo-800" %>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-600">
               <%= report.created_at.strftime("%Y-%m-%d %H:%M") %>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
-              <%= link_to "レポートを見る", intake_report_path(report), class: "text-rose-600 hover:text-rose-800" %>
+              <%= link_to "レポートを見る", intake_report_path(report), class: "text-indigo-600 hover:text-indigo-800" %>
             </td>
           </tr>
         <% end %>

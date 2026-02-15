@@ -2,7 +2,7 @@
 <% content_for(:title, title) %>
 
 <section>
-  <h2 class="text-2xl font-bold mb-4">
+  <h2 class="text-xl md:text-2xl font-bold mb-4">
     <%= title %>
   </h2>
   <%= render("family_members/form", html_id: nil, family_member: @family_member, form_url: family_member_path(@family_member), form_method: :patch) %>

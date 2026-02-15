@@ -95,9 +95,9 @@
   </div>
 
   <div class="pt-2 flex justify-end space-x-4">
-    <%= link_to "キャンセル", :back, class: "inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+    <%= link_to "キャンセル", :back, class: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 text-sm rounded-md" %>
     <%= f.submit(submit_text,
-        class: "inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+        class: "bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed",
         data: { character_counter_target: "submit" }
     ) %>
   </div>
