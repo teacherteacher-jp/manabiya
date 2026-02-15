@@ -30,10 +30,11 @@
           <% end %>
         </header>
 
-        <%# === モバイル: 左下メニューボタン === %>
+        <%# === モバイル: ボトムシート呼び出しタブ === %>
         <button data-action="drawer#open" type="button"
-                class="fixed bottom-4 left-4 z-40 md:hidden w-12 h-12 bg-white text-neutral-600 rounded-full shadow-lg flex items-center justify-center hover:bg-neutral-50 active:bg-neutral-100 print:hidden">
-          <%= icon("bars-3", css_class: "size-6") %>
+                class="fixed bottom-0 left-4 z-40 md:hidden bg-indigo-700 text-white rounded-t-lg px-4 py-1.5 shadow-lg flex items-center gap-1 hover:bg-indigo-600 active:bg-indigo-800 print:hidden">
+          <%= icon("chevron-up", css_class: "size-4") %>
+          <span class="text-xs font-medium">メニュー</span>
         </button>
 
         <%# === メインコンテンツ === %>

@@ -7,13 +7,13 @@ export default class extends Controller {
     document.body.style.overflow = "hidden"
     this.containerTarget.classList.remove("hidden")
     requestAnimationFrame(() => {
-      this.panelTarget.classList.remove("-translate-x-full")
+      this.panelTarget.classList.remove("translate-y-full")
       this.overlayTarget.classList.remove("opacity-0")
     })
   }
 
   close() {
-    this.panelTarget.classList.add("-translate-x-full")
+    this.panelTarget.classList.add("translate-y-full")
     this.overlayTarget.classList.add("opacity-0")
     this.panelTarget.addEventListener("transitionend", () => {
       this.containerTarget.classList.add("hidden")
