@@ -11,7 +11,7 @@ module NavigationHelper
       school_items << { label: "生徒", path: students_path }
       school_items << { label: "スクールメモ", path: school_memos_path }
     end
-    if current_member.guarded_students.count > 0
+    if current_member.guarded_students.any?
       school_items << {
         label: "家庭からのメモ",
         path: new_school_memo_path(student_ids: current_member.guarded_students.pluck(:id).join(",")),
