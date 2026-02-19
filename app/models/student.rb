@@ -24,6 +24,27 @@ class Student < ApplicationRecord
     それ以外:    9
   }
 
+  enum :status, { active: 0, paused: 1, graduated: 2, withdrawn: 3 }
+
+  class << self
+    def status_in_japanese
+      {
+        active: "利用中",
+        paused: "休止中",
+        graduated: "卒業済み",
+        withdrawn: "利用終了"
+      }
+    end
+
+    def status_options
+      statuses.map { [Student.status_in_japanese[_1[0].to_sym], _1[0]] }
+    end
+  end
+
+  def status_in_japanese
+    Student.status_in_japanese[status.to_sym]
+  end
+
   def notify_created
     Notification.new.notify_student_created(self)
   end

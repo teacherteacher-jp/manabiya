@@ -25,6 +25,15 @@
   </div>
 
   <div>
+    <%= f.label :status, "状況", class: "block text-sm font-medium text-gray-700" %>
+    <%= f.select :status,
+      Student.status_options,
+      {},
+      class: "mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+    %>
+  </div>
+
+  <div>
     <%= f.label :guardian_ids, "保護者", class: "block text-sm font-medium text-gray-700" %>
     <%= f.collection_select :guardian_ids,
       Member.order(:name),
