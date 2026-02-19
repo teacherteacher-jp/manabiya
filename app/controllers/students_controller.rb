@@ -3,7 +3,7 @@ class StudentsController < ApplicationController
   before_action :redirect_if_no_student_info_access
 
   def index
-    @students = Student.includes(:guardians).order(:name)
+    @students = Student.includes(:guardians).order(Arel.sql('name COLLATE "C"'))
   end
 
   def show
