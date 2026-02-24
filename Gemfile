@@ -4,6 +4,7 @@ ruby "4.0.1"
 
 gem "rails"
 
+gem "ahoy_matey"
 gem "anthropic"
 gem "bootsnap", require: false
 gem "discordrb"

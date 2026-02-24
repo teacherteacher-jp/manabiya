@@ -43,6 +43,7 @@ module NavigationHelper
     return [] unless current_member.admin?
 
     [
+      { label: "利用ログ", path: ahoy_events_path },
       { label: "MetaLifeユーザ", path: metalife_users_path },
       { label: "全問診レポート", path: intake_reports_path },
     ]

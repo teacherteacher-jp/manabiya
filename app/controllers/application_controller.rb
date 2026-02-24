@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include SessionHelper
   before_action :force_expected_host
   before_action :redirect_to_gate_unless_logged_in
+  after_action :track_action
 
   def force_expected_host
     return unless Rails.env.production?
@@ -25,5 +26,11 @@ class ApplicationController < ActionController::Base
     unless current_member.can_access_student_info?
       redirect_to root_path, alert: 'アクセス権限がありません'
     end
+  end
+
+  def track_action
+    filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+    filtered = filter.filter(params.except(:controller, :action).to_unsafe_h)
+    ahoy.track "#{controller_path}##{action_name}", filtered
   end
 end
