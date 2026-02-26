@@ -7,10 +7,10 @@
 
     <div class="mb-4 border-b border-gray-200">
       <nav class="flex -mb-px space-x-8" aria-label="Tabs">
-        <%= link_to "利用中",
+        <%= link_to "利用中 (#{@active_count})",
               students_path,
               class: "whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium #{@scope == :active ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}" %>
-        <%= link_to "それ以外",
+        <%= link_to "それ以外 (#{@inactive_count})",
               students_path(scope: :inactive),
               class: "whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium #{@scope == :inactive ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}" %>
       </nav>
