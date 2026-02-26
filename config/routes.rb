@@ -80,6 +80,9 @@ Rails.application.routes.draw do
   post   "/discord/messages",                      to: "discord/messages#create",
                                                    as: "discord_messages"
 
+  get    "/ahoy_events",                           to: "ahoy_events#index",
+                                                   as: "ahoy_events"
+
   get    "/metalife_users",                        to: "metalife_users#index",
                                                    as: "metalife_users"
   patch  "/metalife_users/:id",                    to: "metalife_users#update",
