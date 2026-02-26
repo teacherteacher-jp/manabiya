@@ -58,10 +58,12 @@
                       class: "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
                       onchange: "updateLinkableOptions(this)" %>
 
-                  <%= f.select :linkable_id,
-                      options_for_select(linkable_options_for(user), user.linkable_id),
-                      {},
-                      class: "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                  <% options = linkable_options_for(user) %>
+                  <% if options.is_a?(Hash) %>
+                    <%= f.select :linkable_id, grouped_options_for_select(options, user.linkable_id), {}, class: "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                  <% else %>
+                    <%= f.select :linkable_id, options_for_select(options, user.linkable_id), {}, class: "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                  <% end %>
                 </div>
 
                 <%= f.submit "更新", class: "bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 text-sm rounded-md" %>
@@ -87,8 +89,17 @@
         idSelect.innerHTML += '<option value="<%= member.id %>"><%= member.name %></option>';
       <% end %>
     } else if (type === 'Student') {
-      <% Student.order(:name).each do |student| %>
+      idSelect.innerHTML += '<optgroup label="利用中">';
+      <% Student.active.order(:name).each do |student| %>
         idSelect.innerHTML += '<option value="<%= student.id %>"><%= student.name %> (<%= student.grade %>)</option>';
+      <% end %>
+      idSelect.innerHTML += '</optgroup>';
+      <% if Student.inactive.exists? %>
+        idSelect.innerHTML += '<optgroup label="それ以外">';
+        <% Student.inactive.order(:name).each do |student| %>
+          idSelect.innerHTML += '<option value="<%= student.id %>"><%= student.name %> (<%= student.grade %>)</option>';
+        <% end %>
+        idSelect.innerHTML += '</optgroup>';
       <% end %>
     }
   }

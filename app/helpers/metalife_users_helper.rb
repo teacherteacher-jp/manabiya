@@ -6,7 +6,9 @@ module MetalifeUsersHelper
     when "Member"
       Member.order(:name).map { |m| [m.name, m.id] }
     when "Student"
-      Student.order(:name).map { |s| ["#{s.name} (#{s.grade})", s.id] }
+      active = Student.active.order(:name).map { |s| ["#{s.name} (#{s.grade})", s.id] }
+      inactive = Student.inactive.order(:name).map { |s| ["#{s.name} (#{s.grade})", s.id] }
+      { "利用中" => active, "それ以外" => inactive }
     else
       []
     end
