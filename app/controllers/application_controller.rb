@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
 
   def track_action
     filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
-    filtered = filter.filter(params.except(:controller, :action).to_unsafe_h)
+    filtered = filter.filter(params.except(:controller, :action, :authenticity_token, :utf8, :commit, :_method).to_unsafe_h)
     ahoy.track "#{controller_path}##{action_name}", filtered
   end
 end
