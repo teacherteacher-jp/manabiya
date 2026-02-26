@@ -51,7 +51,8 @@ class SchoolMemosController < ApplicationController
 
   def set_students_for_form
     all_students = Student.includes(:guardians, metalife_user: :metalife_events)
-    @recent_students, @other_students = all_students.partition(&:recently_entered?)
+    @recent_students, other_students = all_students.partition(&:recently_entered?)
+    @other_active_students, @other_inactive_students = other_students.partition(&:active?)
   end
 
   def school_memo_params

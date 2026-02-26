@@ -31,11 +31,11 @@
       </div>
     <% end %>
 
-    <% if @other_students.count > 0 %>
+    <% if @other_active_students.count > 0 %>
       <div>
         <h4 class="text-sm font-medium text-gray-600 mb-2">すべての生徒</h4>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <% @other_students.each do |student| %>
+          <% @other_active_students.each do |student| %>
             <div class="flex items-start border border-gray-200 rounded-lg p-3">
               <%= f.check_box :student_ids, { multiple: true, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-1", data: { student_name_checker_target: "checkbox", action: "change->student-name-checker#checkboxChanged" } }, student.id, nil %>
               <%= f.label "student_ids_#{student.id}", class: "ml-2 block text-sm" do %>
@@ -51,6 +51,30 @@
           <% end %>
         </div>
       </div>
+    <% end %>
+
+    <% if @other_inactive_students.count > 0 %>
+      <details class="mt-4">
+        <summary class="text-sm font-medium text-gray-500 cursor-pointer hover:text-gray-700">
+          利用中以外の生徒（<%= @other_inactive_students.count %>名）
+        </summary>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+          <% @other_inactive_students.each do |student| %>
+            <div class="flex items-start border border-gray-200 rounded-lg p-3">
+              <%= f.check_box :student_ids, { multiple: true, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-1", data: { student_name_checker_target: "checkbox", action: "change->student-name-checker#checkboxChanged" } }, student.id, nil %>
+              <%= f.label "student_ids_#{student.id}", class: "ml-2 block text-sm" do %>
+                <div class="text-gray-900"><%= student.name %> <span class="text-xs text-gray-500">(<%= student.grade %>)</span></div>
+                <% if student.metalife_user %>
+                  <div class="text-xs text-gray-500">MetaLife: <%= student.metalife_user.name %></div>
+                <% end %>
+                <% if student.guardians.any? %>
+                  <div class="text-xs text-gray-500">保護者: <%= student.guardians.map(&:name).join("、") %></div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </details>
     <% end %>
   </div>
 
