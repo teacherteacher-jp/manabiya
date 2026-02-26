@@ -4,7 +4,7 @@ class StudentsController < ApplicationController
 
   def index
     @scope = params[:scope] == "inactive" ? :inactive : :active
-    base = Student.includes(:guardians).order(Arel.sql('name COLLATE "C"'))
+    base = Student.includes(:guardians).order(:grade, Arel.sql('name COLLATE "C"'))
     @students = @scope == :active ? base.active : base.inactive
     @active_count = Student.active.count
     @inactive_count = Student.inactive.count
