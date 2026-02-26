@@ -3,7 +3,9 @@ class StudentsController < ApplicationController
   before_action :redirect_if_no_student_info_access
 
   def index
-    @students = Student.includes(:guardians).order(Arel.sql('name COLLATE "C"'))
+    @scope = params[:scope] == "inactive" ? :inactive : :active
+    base = Student.includes(:guardians).order(Arel.sql('name COLLATE "C"'))
+    @students = @scope == :active ? base.active : base.where.not(status: :active)
   end
 
   def show
