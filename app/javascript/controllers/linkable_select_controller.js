@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    members: Array,
+    members: Object,
     students: Object
   }
 
@@ -13,20 +13,17 @@ export default class extends Controller {
 
     idSelect.innerHTML = '<option value="">選択してください</option>'
 
-    if (type === "Member") {
-      this.membersValue.forEach(member => {
-        idSelect.add(new Option(member.name, member.id))
+    const groups = { Member: this.membersValue, Student: this.studentsValue }[type]
+    if (!groups) return
+
+    for (const [groupName, items] of Object.entries(groups)) {
+      if (items.length === 0) continue
+      const optgroup = document.createElement("optgroup")
+      optgroup.label = groupName
+      items.forEach(item => {
+        optgroup.appendChild(new Option(item.name, item.id))
       })
-    } else if (type === "Student") {
-      for (const [groupName, students] of Object.entries(this.studentsValue)) {
-        if (students.length === 0) continue
-        const optgroup = document.createElement("optgroup")
-        optgroup.label = groupName
-        students.forEach(student => {
-          optgroup.appendChild(new Option(student.name, student.id))
-        })
-        idSelect.add(optgroup)
-      }
+      idSelect.add(optgroup)
     }
   }
 }
