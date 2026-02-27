@@ -13,4 +13,14 @@ module MetalifeUsersHelper
       []
     end
   end
+
+  def linkable_members_json
+    Member.order(:name).map { |m| { name: m.name, id: m.id } }
+  end
+
+  def linkable_students_json
+    active, inactive = Student.order(:name).partition(&:active?)
+    format = ->(s) { { name: "#{s.name} (#{s.grade})", id: s.id } }
+    { "利用中" => active.map(&format), "それ以外" => inactive.map(&format) }
+  end
 end
