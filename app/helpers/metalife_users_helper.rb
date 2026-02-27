@@ -7,9 +7,9 @@ module MetalifeUsersHelper
       active, inactive = members_partitioned_by_recent_access
       { "最近のアクセスあり" => active.map { |m| [m.name, m.id] }, "それ以外" => inactive.map { |m| [m.name, m.id] } }
     when "Student"
-      active = Student.active.order(:name).map { |s| ["#{s.name} (#{s.grade})", s.id] }
-      inactive = Student.inactive.order(:name).map { |s| ["#{s.name} (#{s.grade})", s.id] }
-      { "利用中" => active, "それ以外" => inactive }
+      active, inactive = Student.order(:name).partition(&:active?)
+      format = ->(s) { ["#{s.name} (#{s.grade})", s.id] }
+      { "利用中" => active.map(&format), "それ以外" => inactive.map(&format) }
     else
       []
     end
