@@ -5,6 +5,16 @@ class MetalifeUser < ApplicationRecord
   validates :metalife_id, presence: true, uniqueness: true
   validates :name, presence: true
 
+  scope :linked, -> { where.not(linkable_type: nil) }
+  scope :unlinked_recently_active, -> {
+    where(linkable_type: nil)
+      .where(id: MetalifeEvent.where("occurred_at >= ?", 1.month.ago).select(:metalife_user_id))
+  }
+  scope :unlinked_inactive, -> {
+    where(linkable_type: nil)
+      .where.not(id: MetalifeEvent.where("occurred_at >= ?", 1.month.ago).select(:metalife_user_id))
+  }
+
   after_create_commit :notify_created
 
   def notify_created

@@ -2,7 +2,17 @@ class MetalifeUsersController < ApplicationController
   before_action :require_admin
 
   def index
-    @metalife_users = MetalifeUser.includes(:linkable).order(created_at: :desc)
+    @scope = %w[unlinked_active unlinked_inactive linked].include?(params[:scope]) ? params[:scope].to_sym : :unlinked_active
+    @linked_count = MetalifeUser.linked.count
+    @unlinked_active_count = MetalifeUser.unlinked_recently_active.count
+    @unlinked_inactive_count = MetalifeUser.unlinked_inactive.count
+
+    base = MetalifeUser.includes(:linkable).order(created_at: :desc)
+    @metalife_users = case @scope
+    when :unlinked_active then base.unlinked_recently_active
+    when :unlinked_inactive then base.unlinked_inactive
+    else base.linked
+    end
   end
 
   def update
