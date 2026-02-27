@@ -50,7 +50,7 @@ class SchoolMemosController < ApplicationController
   end
 
   def set_students_for_form
-    all_students = Student.includes(:guardians, metalife_user: :metalife_events)
+    all_students = Student.active.includes(:guardians, metalife_user: :metalife_events)
     @recent_students, @other_students = all_students.partition(&:recently_entered?)
   end
 

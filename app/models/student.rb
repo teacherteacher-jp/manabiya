@@ -25,6 +25,7 @@ class Student < ApplicationRecord
   }
 
   enum :status, { active: 0, paused: 1, graduated: 2, withdrawn: 3 }
+  scope :inactive, -> { where.not(status: :active) }
 
   class << self
     def status_in_japanese
